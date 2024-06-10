@@ -36,8 +36,8 @@ void Painter::draw_rect(Rect rect, bool filled, Color color) {
     // TODO: Push/pop color
     Color currcolor = get_current_color();
     SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
-    if (!filled) SDL_RenderDrawRectF(m_renderer, &rect);
-    else SDL_RenderFillRectF(m_renderer, &rect);
+	if (filled) SDL_RenderFillRectF(m_renderer, &rect);
+	else SDL_RenderDrawRectF(m_renderer, &rect);
     SDL_SetRenderDrawColor(m_renderer, currcolor.r, currcolor.g, currcolor.b, currcolor.a);
 }
 
