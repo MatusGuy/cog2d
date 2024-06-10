@@ -1,23 +1,18 @@
 #ifndef BALL_H
 #define BALL_H
 
-#include <types.hpp>
+#include <actor.hpp>
 
-// TODO: Make Actor class and inherit from it
-class Ball
+class Ball : public Actor
 {
 public:
 	Ball();
 
-	void update();
-	void draw();
+	void update() override;
+	void draw() override;
 
 	bool check_horizontal_bound();
 	bool check_vertical_bound();
-
-private:
-	Vector m_pos;
-	Vector m_vel;
 };
 
 #endif // BALL_H
