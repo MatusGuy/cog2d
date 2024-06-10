@@ -45,50 +45,48 @@ void Painter::draw_circle(Vector center, float radius, bool filled, Color color)
     Color currcolor = get_current_color();
     SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 
-    if (!filled) {
-        int diameter = (((int) radius) << 1);
-        int x = ((int) radius) - 1;
-        int y = 0;
-        int dx = 1;
-        int dy = 1;
-        int err = dx - diameter;
-        int centerX = (int) center.x;
-        int centerY = (int) center.y;
-
-        while (x >= y) {
-            SDL_RenderDrawPoint(m_renderer, centerX + x, centerY + y);
-            SDL_RenderDrawPoint(m_renderer, centerX + y, centerY + x);
-            SDL_RenderDrawPoint(m_renderer, centerX - y, centerY + x);
-            SDL_RenderDrawPoint(m_renderer, centerX - x, centerY + y);
-            SDL_RenderDrawPoint(m_renderer, centerX - x, centerY - y);
-            SDL_RenderDrawPoint(m_renderer, centerX - y, centerY - x);
-            SDL_RenderDrawPoint(m_renderer, centerX + y, centerY - x);
-            SDL_RenderDrawPoint(m_renderer, centerX + x, centerY - y);
-
-            if (err <= 0) {
-                y++;
-                err += dy;
-                dy += 2;
-            }
-
-            if (err > 0) {
-                x--;
-                dx += 2;
-                err += dx - diameter;
-            }
-        }
-
+	if (filled) {
+		for (int w = 0; w < radius * 2; w++) {
+			for (int h = 0; h < radius * 2; h++) {
+				float dx = radius - (float) w; // horizontal offset
+				float dy = radius - (float) h; // vertical offset
+				if ((dx*dx + dy*dy) <= (radius * radius)) {
+					SDL_RenderDrawPointF(m_renderer, center.x + dx, center.y + dy);
+				}
+			}
+		}
     } else {
+		int diameter = (((int) radius) << 1);
+		int x = ((int) radius) - 1;
+		int y = 0;
+		int dx = 1;
+		int dy = 1;
+		int err = dx - diameter;
+		int centerX = (int) center.x;
+		int centerY = (int) center.y;
 
-        for (int w = 0; w < radius * 2; w++) {
-            for (int h = 0; h < radius * 2; h++) {
-                float dx = radius - (float) w; // horizontal offset
-                float dy = radius - (float) h; // vertical offset
-                if ((dx*dx + dy*dy) <= (radius * radius)) {
-                    SDL_RenderDrawPointF(m_renderer, center.x + dx, center.y + dy);
-                }
-            }
-        }
+		while (x >= y) {
+			SDL_RenderDrawPoint(m_renderer, centerX + x, centerY + y);
+			SDL_RenderDrawPoint(m_renderer, centerX + y, centerY + x);
+			SDL_RenderDrawPoint(m_renderer, centerX - y, centerY + x);
+			SDL_RenderDrawPoint(m_renderer, centerX - x, centerY + y);
+			SDL_RenderDrawPoint(m_renderer, centerX - x, centerY - y);
+			SDL_RenderDrawPoint(m_renderer, centerX - y, centerY - x);
+			SDL_RenderDrawPoint(m_renderer, centerX + y, centerY - x);
+			SDL_RenderDrawPoint(m_renderer, centerX + x, centerY - y);
+
+			if (err <= 0) {
+				y++;
+				err += dy;
+				dy += 2;
+			}
+
+			if (err > 0) {
+				x--;
+				dx += 2;
+				err += dx - diameter;
+			}
+		}
     }
 
     SDL_SetRenderDrawColor(m_renderer, currcolor.r, currcolor.g, currcolor.b, currcolor.a);
