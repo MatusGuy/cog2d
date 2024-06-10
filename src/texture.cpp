@@ -5,7 +5,7 @@ Texture::Texture(SDL_Texture* tex) {
 
     int w, h;
     SDL_QueryTexture(m_texture, NULL, NULL, &w, &h);
-    m_size.w, m_size.h = (float) w, (float) h;
+	m_size.x, m_size.y = (float) w, (float) h;
 }
 
 Texture::~Texture() {

@@ -3,10 +3,6 @@
 
 #include <SDL2/SDL.h>
 
-typedef SDL_FPoint Vector;
-typedef SDL_FRect Rect;
-struct Size { float w, h; };
-
 class Color : public SDL_Color {
 public:
     Color(): SDL_Color {0,0,0,0} {}
@@ -31,6 +27,34 @@ protected:
     ~Singleton() = default;
     Singleton(const Singleton&) = delete;
     Singleton& operator=(const Singleton&) = delete;
+};
+
+class Vector {
+public:
+	float x = 0;
+	float y = 0;
+
+	Vector(float _x, float _y)
+	{
+		x = _x;
+		y = _y;
+	}
+
+	Vector() {}
+};
+
+class Rect {
+public:
+	Vector position;
+	Vector size;
+
+	Rect(float x, float y, float w, float h)
+	{
+		position = {x, y};
+		size = {w, h};
+	}
+
+	Rect() {}
 };
 
 #endif // TYPES_H
