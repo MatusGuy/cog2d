@@ -1,5 +1,6 @@
 #include <iostream>
 #include <painter.hpp>
+#include <actormanager.hpp>
 
 #include "ball.hpp"
 
@@ -28,13 +29,13 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	Ball ball;
+	auto ball = ActorManager::get().create<Ball>();
 
 	while (keep_running) {
 		poll_sdl_events();
 
-		ball.update();
-		ball.draw();
+		ball->update();
+		ball->draw();
 
 		Painter::get().update();
 	}
