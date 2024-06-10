@@ -36,7 +36,7 @@ void Ball::update()
 
 void Ball::draw()
 {
-	Painter::get().get().draw_circle({m_bbox.x + RADIUS, m_bbox.y + RADIUS}, RADIUS, true);
+	Painter::get().get().draw_circle({m_bbox.position.x + RADIUS, m_bbox.position.y + RADIUS}, RADIUS, true);
 }
 
 bool Ball::check_horizontal_bound()
@@ -44,7 +44,7 @@ bool Ball::check_horizontal_bound()
 	int w = -1;
 	SDL_GetWindowSize(Painter::get().get_window(), &w, nullptr);
 
-	return m_bbox.x < 0.f || m_bbox.x + m_bbox.w > static_cast<float>(w);
+	return m_bbox.position.x < 0.f || m_bbox.position.x + m_bbox.size.x > static_cast<float>(w);
 }
 
 bool Ball::check_vertical_bound()
@@ -52,5 +52,5 @@ bool Ball::check_vertical_bound()
 	int h = -1;
 	SDL_GetWindowSize(Painter::get().get_window(), nullptr, &h);
 
-	return m_bbox.y < 0.f || m_bbox.y + m_bbox.h > static_cast<float>(h);
+	return m_bbox.position.y < 0.f || m_bbox.position.y + m_bbox.size.y > static_cast<float>(h);
 }
