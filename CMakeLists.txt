@@ -12,16 +12,31 @@ file(GLOB_RECURSE COG2D_SRC CONFIGURE_DEPENDS src/*.cpp src/*.hpp)
 
 add_library(cog2d SHARED ${COG2D_SRC})
 
-# Dependencies #
-find_package(SDL2 REQUIRED)
-#find_package(SDL2_image REQUIRED)
-#find_package(SDL2_ttf REQUIRED)
-#find_package(SDL2_mixer REQUIRED)
+# Assets #
+#source_group(Assets REGULAR_EXPRESSION assets/.*)
 
-target_link_libraries(cog2d PUBLIC ${SDL2_LIBRARIES})
-target_include_directories(cog2d PUBLIC ${SDL2_INCLUDE_DIRS})
+# Dependencies #
+
+## SDL2 ##
+find_package(SDL2 REQUIRED)
+target_link_libraries(cog2d
+	PUBLIC
+	$<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
+	$<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
+)
+
+## SDL2_image ##
+find_package(SDL2_image REQUIRED)
+target_link_libraries(cog2d
+	PUBLIC
+	$<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
+)
+
+## SDL2_ttf ##
+## SDL2_mixer ##
 
 target_include_directories(cog2d PUBLIC ${PROJECT_SOURCE_DIR}/src)
 
 # Tests #
 add_subdirectory(tests)
+
