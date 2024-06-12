@@ -17,6 +17,12 @@ add_library(cog2d SHARED ${COG2D_SRC})
 
 # Dependencies #
 
+find_package(PkgConfig QUIET)
+
+if(PKG_CONFIG_FOUND)
+	option(COG2D_USE_PKGCONFIG "Use pkgconfig for finding dependencies" ON)
+endif()
+
 ## SDL2 ##
 find_package(SDL2 REQUIRED)
 target_link_libraries(cog2d
@@ -26,7 +32,11 @@ target_link_libraries(cog2d
 )
 
 ## SDL2_image ##
-find_package(SDL2_image REQUIRED)
+if(USE_PKGCONFIG)
+	pkg_check_modules(SDL2_image SDL2_image)
+else()
+	find_package(SDL2_image REQUIRED)
+endif()
 target_link_libraries(cog2d
 	PUBLIC
 	$<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
