@@ -1,6 +1,7 @@
 #include "inputmanager.hpp"
 
 #include "keyboardcontroller.hpp"
+#include "joypadcontroller.hpp"
 
 InputManager::InputManager():
 	m_actions(),
@@ -9,18 +10,19 @@ InputManager::InputManager():
 
 }
 
-InputAction* InputManager::register_action(InputAction action)
+InputAction* InputManager::register_action(InputAction& action)
 {
 	m_actions.push_back(action);
+	return &action;
 }
 
 void InputManager::init()
 {
-	// Keyboard is always connected... i think
-	KeyboardController* controller = new KeyboardController;
-	controller->m_id = 1;
+	// The keyboard should always be there for you :)
+	KeyboardController* keyboard = new KeyboardController;
+	//keyboard->m_id = 1;
 
-	add_controller(controller);
+	add_controller(keyboard);
 }
 
 void InputManager::add_controller(Controller* controller)
@@ -37,7 +39,34 @@ void InputManager::add_controller(Controller* controller)
 
 void InputManager::event(SDL_Event* ev)
 {
-	for (auto& controller : m_controllers)
+	switch (ev->type) {
+
+	case SDL_JOYDEVICEADDED: {
+		SDL_JoyDeviceEvent jev = ev->jdevice;
+
+		JoypadController* jcontroller = new JoypadController(jev.which);
+
+		add_controller(jcontroller);
+		return;
+	}
+
+	case SDL_JOYDEVICEREMOVED: {
+		SDL_JoyDeviceEvent jev = ev->jdevice;
+
+		for (int i = 0; i < m_controllers.size(); i++)
+		{
+			auto jcontroller = dynamic_cast<JoypadController*>(m_controllers[i]);
+			if (jcontroller && jcontroller->m_device_id == jev.which)
+			{
+				m_controllers.erase(m_controllers.begin()+i);
+			}
+		}
+		return;
+	}
+
+	}
+
+	for (Controller* controller : m_controllers)
 	{
 		controller->event(ev);
 	}
