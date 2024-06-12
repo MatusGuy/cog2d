@@ -9,7 +9,7 @@ public:
 	Actor();
 
 	virtual void update();
-	virtual void draw();
+	virtual void draw() = 0;
 
 protected:
 	Rect m_bbox;

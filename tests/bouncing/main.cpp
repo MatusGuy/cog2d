@@ -1,6 +1,7 @@
 #include <iostream>
 #include <painter.hpp>
 #include <actormanager.hpp>
+#include <inputmanager.hpp>
 
 #include "ball.hpp"
 
@@ -15,9 +16,17 @@ void init_sdl() {
 }
 
 void poll_sdl_events() {
-	SDL_Event event;
-	while(SDL_PollEvent(&event))
-		if (event.type == SDL_QUIT) keep_running = false;
+	SDL_Event ev;
+	while(SDL_PollEvent(&ev))
+	{
+		if (ev.type == SDL_QUIT)
+		{
+			keep_running = false;
+			break;
+		}
+
+		InputManager::get().event(&ev);
+	}
 }
 
 int main(int argc, char* argv[]) {
