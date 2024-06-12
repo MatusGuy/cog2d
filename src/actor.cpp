@@ -8,6 +8,5 @@ Actor::Actor():
 
 void Actor::update()
 {
-	m_bbox.pos.x += m_vel.x;
-	m_bbox.pos.y += m_vel.y;
+	m_bbox.pos += m_vel;
 }

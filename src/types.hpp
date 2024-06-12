@@ -43,6 +43,78 @@ public:
 	Vector() {}
 
 	inline SDL_FPoint to_sdl() { return {x, y}; }
+
+	Vector operator+(Vector& other) {
+		return Vector(x + other.x, y + other.y);
+	}
+
+	void operator+=(Vector& other) {
+		x += other.x;
+		y += other.y;
+	}
+
+	Vector operator-(Vector& other) {
+		return Vector(x - other.x, y - other.y);
+	}
+
+	void operator-=(Vector& other) {
+		x -= other.x;
+		y -= other.y;
+	}
+
+	Vector operator*(Vector& other) {
+		return Vector(x * other.x, y * other.y);
+	}
+
+	Vector operator*(int& other) {
+		return Vector(x * other, y * other);
+	}
+
+	Vector operator*(float& other) {
+		return Vector(x * other, y * other);
+	}
+
+	void operator*=(Vector& other) {
+		x *= other.x;
+		y *= other.y;
+	}
+
+	void operator*=(int& other) {
+		x *= other;
+		y *= other;
+	}
+
+	void operator*=(float& other) {
+		x *= other;
+		y *= other;
+	}
+
+	Vector operator/(Vector& other) {
+		return Vector(x / other.x, y / other.y);
+	}
+
+	Vector operator/(int& other) {
+		return Vector(x / other, y / other);
+	}
+
+	Vector operator/(float& other) {
+		return Vector(x / other, y / other);
+	}
+
+	void operator/=(Vector& other) {
+		x /= other.x;
+		y /= other.y;
+	}
+
+	void operator/=(int& other) {
+		x /= other;
+		y /= other;
+	}
+
+	void operator/=(float& other) {
+		x /= other;
+		y /= other;
+	}
 };
 
 class Rect {
@@ -56,9 +128,87 @@ public:
 		size = {w, h};
 	}
 
+	Rect(Vector _pos, Vector _size)
+	{
+		pos = _pos;
+		size = _size;
+	}
+
 	Rect() {}
 
 	inline SDL_FRect to_sdl() { return {pos.x, pos.y, size.x, size.y}; }
+
+	Rect operator+(Rect& other) {
+		return Rect(pos + other.pos, size + other.size);
+	}
+
+	void operator+=(Rect& other) {
+		pos += other.pos;
+		size += other.size;
+	}
+
+	Rect operator-(Rect& other) {
+		return Rect(pos - other.pos, size - other.size);
+	}
+
+	void operator-=(Rect& other) {
+		pos -= other.pos;
+		size -= other.size;
+	}
+
+	Rect operator*(Rect& other) {
+		return Rect(pos * other.pos, size * other.size);
+	}
+
+	Rect operator*(int& other) {
+		return Rect(pos * other, size * other);
+	}
+
+	Rect operator*(float& other) {
+		return Rect(pos * other, size * other);
+	}
+
+	void operator*=(Rect& other) {
+		pos *= other.pos;
+		size *= other.size;
+	}
+
+	void operator*=(int& other) {
+		pos *= other;
+		size *= other;
+	}
+
+	void operator*=(float& other) {
+		pos *= other;
+		size *= other;
+	}
+
+	Rect operator/(Rect& other) {
+		return Rect(pos / other.pos, size / other.size);
+	}
+
+	Rect operator/(int& other) {
+		return Rect(pos / other, size / other);
+	}
+
+	Rect operator/(float& other) {
+		return Rect(pos / other, size / other);
+	}
+
+	void operator/=(Rect& other) {
+		pos /= other.pos;
+		size /= other.size;
+	}
+
+	void operator/=(int& other) {
+		pos /= other;
+		size /= other;
+	}
+
+	void operator/=(float& other) {
+		pos /= other;
+		size /= other;
+	}
 };
 
 #endif // TYPES_H
