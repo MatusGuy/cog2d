@@ -6,9 +6,10 @@
 #include "ball.hpp"
 
 bool keep_running = true;
+bool paused = false;
 
 void init_sdl() {
-	int errcode = SDL_Init(SDL_INIT_AUDIO);
+	int errcode = SDL_Init(SDL_INIT_EVERYTHING);
 	if (errcode != 0) {
 		std::cerr << "An SDL error has occurred!: \"" << SDL_GetError() << "\" (" << errcode << ")" << std::endl;
 		std::exit(errcode);
@@ -38,6 +39,11 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
+	InputManager::get().register_action({0, "quit", "Quit", {{0, 1, SDL_SCANCODE_SPACE}}});
+	InputManager::get().init();
+
+	Controller* controller = InputManager::get().get_controller(0);
+
 	int w;
 	SDL_GetWindowSize(Painter::get().get_window(), &w, nullptr);
 	w -= 100;
@@ -47,8 +53,12 @@ int main(int argc, char* argv[]) {
 	while (keep_running) {
 		poll_sdl_events();
 
+		paused = controller->held(0);
+
 		for (Actor* const actor : ActorManager::get().get_actors()) {
-			actor->update();
+			if (!paused)
+				actor->update();
+
 			actor->draw();
 		}
 

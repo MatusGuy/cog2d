@@ -11,19 +11,25 @@
 #include "controller.hpp"
 
 struct InputAction {
+	uint8_t id;
 	std::string name;
 	std::string display_name;
 
-	uint8_t id;
+	struct Config {
+		uint8_t id;
+		uint8_t controller_type;
 
-	/**
-	 * @brief input_id
-	 *
-	 * An input id can be a scancode if using
-	 * a keyboard or a button id if using a
-	 * joypad.
-	 */
-	int input_id;
+		/**
+		 * @brief input_id
+		 *
+		 * An input id can be a scancode if using
+		 * a keyboard or a button id if using a
+		 * joypad.
+		 */
+		int input_id;
+	};
+
+	std::vector<Config> configs;
 };
 
 class InputManager : public Singleton<InputManager>
@@ -34,10 +40,18 @@ public:
 public:
 	InputManager();
 
+	InputAction* register_action(InputAction action);
+
+	void init();
+
+	void add_controller(Controller* controller);
+	inline Controller* get_controller(uint8_t id) { return m_controllers[id]; }
+
 	void event(SDL_Event* ev);
 
 private:
-	std::map<uint8_t, Controller*> m_controllers;
+	std::vector<InputAction> m_actions;
+	std::vector<Controller*> m_controllers;
 };
 
 #endif // INPUTMANAGER_HPP
