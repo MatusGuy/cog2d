@@ -8,7 +8,9 @@ class KeyboardController : public Controller
 public:
 	KeyboardController();
 
-	virtual void event(SDL_Event* ev) override;
+	void event(SDL_Event* ev) override;
+	static uint8_t type() { return 1; }
+	uint8_t get_type() override { return 1; }
 };
 
 #endif // KEYBOARDCONTROLLER_HPP

@@ -10,16 +10,23 @@ struct InputAction;
 class Controller
 {
 public:
+	uint8_t m_id = 0;
+
+public:
 	Controller();
 
-	void apply_control(InputAction* action);
+	void apply_action(InputAction* action);
 	void apply_finish();
 
 	virtual void event(SDL_Event* ev) = 0;
 
-	bool held(uint8_t id);
+	// 0 is reserved. These functions are meant to be overridden.
+	static uint8_t type() { return 0; }
+	virtual uint8_t get_type() = 0;
 
-private:
+	bool held(uint8_t id) const;
+
+protected:
 	std::map<int, uint8_t> m_actions;
 	std::map<uint8_t, bool> m_held;
 };
