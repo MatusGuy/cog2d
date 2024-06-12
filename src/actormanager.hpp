@@ -10,10 +10,10 @@ class ActorManager : public Singleton<ActorManager>
 public:
 	ActorManager();
 
-	template<class T>
-	T* create()
+	template<class T, typename... Args>
+	T* create(Args&&... args)
 	{
-		auto actor = new T;
+		auto actor = new T(std::forward<Args>(args)...);
 		m_actors.push_back(actor);
 		return actor;
 	}
