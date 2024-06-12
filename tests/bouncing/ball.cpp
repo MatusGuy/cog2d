@@ -18,6 +18,7 @@ void Ball::update()
 	bool hor = check_horizontal_bound();
 	bool ver = check_vertical_bound();
 
+	/*
 	if (hor) {
 		m_vel.x = -m_vel.x;
 	}
@@ -25,9 +26,12 @@ void Ball::update()
 	if (ver) {
 		m_vel.y = -m_vel.y;
 	}
+	*/
 
-	if (hor && ver)
-	{
+	m_vel.x *= hor ? -1 : 1;
+	m_vel.y *= ver ? -1 : 1;
+
+	if (hor && ver) {
 		std::cout << "CORNER!!!!" << std::endl;
 	}
 
@@ -36,7 +40,7 @@ void Ball::update()
 
 void Ball::draw()
 {
-	Painter::get().get().draw_circle({m_bbox.position.x + RADIUS, m_bbox.position.y + RADIUS}, RADIUS, true);
+	Painter::get().draw_circle({m_bbox.pos.x + RADIUS, m_bbox.pos.y + RADIUS}, RADIUS, true);
 }
 
 bool Ball::check_horizontal_bound()
@@ -44,7 +48,7 @@ bool Ball::check_horizontal_bound()
 	int w = -1;
 	SDL_GetWindowSize(Painter::get().get_window(), &w, nullptr);
 
-	return m_bbox.position.x < 0.f || m_bbox.position.x + m_bbox.size.x > static_cast<float>(w);
+	return m_bbox.pos.x < 0.f || m_bbox.pos.x + m_bbox.size.x > static_cast<float>(w);
 }
 
 bool Ball::check_vertical_bound()
@@ -52,5 +56,5 @@ bool Ball::check_vertical_bound()
 	int h = -1;
 	SDL_GetWindowSize(Painter::get().get_window(), nullptr, &h);
 
-	return m_bbox.position.y < 0.f || m_bbox.position.y + m_bbox.size.y > static_cast<float>(h);
+	return m_bbox.pos.y < 0.f || m_bbox.pos.y + m_bbox.size.y > static_cast<float>(h);
 }

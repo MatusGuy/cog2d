@@ -34,7 +34,7 @@ void Painter::update() {
 
 void Painter::draw_rect(Rect rect, bool filled, Color color) {
     // TODO: Push/pop color
-	SDL_FRect frect = {rect.position.x, rect.position.y, rect.size.x, rect.size.y};
+	SDL_FRect frect = {rect.pos.x, rect.pos.y, rect.size.x, rect.size.y};
     Color currcolor = get_current_color();
     SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 	if (filled) SDL_RenderFillRectF(m_renderer, &frect);
@@ -107,15 +107,15 @@ void Painter::draw_point(Vector point, Color color) {
     SDL_SetRenderDrawColor(m_renderer, currcolor.r, currcolor.g, currcolor.b, currcolor.a);
 }
 
-void Painter::draw_texture(Vector pos, Texture* tex, Vector size) {
-	SDL_FRect dest = {pos.x, pos.y, size.x, size.y};
-    SDL_RenderCopyF(m_renderer, tex->get_sdl_texture(), NULL, &dest);
+void Painter::draw_texture(Rect dest, Texture* tex) {
+	SDL_FRect dest2 = dest.to_sdl();
+	SDL_RenderCopyF(m_renderer, tex->get_sdl_texture(), NULL, &dest2);
 }
 
-void Painter::draw_texture(Vector pos, Texture* tex, Vector size, float angle, Vector center) {
-	SDL_FRect dest = {pos.x-(size.x/2), pos.y-(size.y/2), size.x, size.y};
-	SDL_FPoint fpoint = {center.x, center.y};
-	SDL_RenderCopyExF(m_renderer, tex->get_sdl_texture(), NULL, &dest, (double) angle, &fpoint, SDL_FLIP_NONE);
+void Painter::draw_texture(Rect dest, Texture* tex, float angle, Vector center) {
+	SDL_FRect dest2 = {dest.pos.x-(dest.size.x/2), dest.pos.y-(dest.size.y/2), dest.size.x, dest.size.y};
+	SDL_FPoint fpoint = dest.pos.to_sdl();
+	SDL_RenderCopyExF(m_renderer, tex->get_sdl_texture(), NULL, &dest2, (double) angle, &fpoint, SDL_FLIP_NONE);
 }
 
 Color Painter::get_current_color() {

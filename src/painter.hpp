@@ -27,8 +27,8 @@ public:
     void draw_circle(Vector center, float radius, bool filled = false, Color color = 0xFFFFFFFF);
     void draw_line(Vector a, Vector b, Color color = 0xFFFFFFFF);
     void draw_point(Vector point, Color color = 0xFFFFFFFF);
-	void draw_texture(Vector pos, Texture* tex, Vector size);
-	void draw_texture(Vector pos, Texture* tex, Vector size, float angle, Vector center = {0,0});
+	void draw_texture(Rect dest, Texture* tex);
+	void draw_texture(Rect dest, Texture* tex, float angle, Vector center = {0,0});
 
     inline Window* get_window() { return m_window; }
     inline Renderer* get_renderer() { return m_renderer; }

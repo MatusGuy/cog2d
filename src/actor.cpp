@@ -1,15 +1,15 @@
 #include "actor.hpp"
 
-Actor::Actor()
+Actor::Actor():
+	m_bbox(0, 0, 0, 0),
+	m_vel(0, 0)
 {
-	Rect m_bbox;
-	Vector m_vel;
 }
 
 void Actor::update()
 {
-	m_bbox.position.x += m_vel.x;
-	m_bbox.position.y += m_vel.y;
+	m_bbox.pos.x += m_vel.x;
+	m_bbox.pos.y += m_vel.y;
 }
 
 void Actor::draw()
