@@ -5,11 +5,17 @@
 
 #include <SDL2/SDL.h>
 
+#define COG2D_CONTROLLER_TYPE(t) \
+public: \
+	static uint8_t type() { return t; } \
+	uint8_t get_type() override { return t; }
+
 struct InputAction;
 
 class Controller
 {
 public:
+	// unused for now
 	uint8_t m_id = 0;
 
 public:

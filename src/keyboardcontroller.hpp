@@ -5,12 +5,12 @@
 
 class KeyboardController : public Controller
 {
+	COG2D_CONTROLLER_TYPE(1)
+
 public:
 	KeyboardController();
 
 	void event(SDL_Event* ev) override;
-	static uint8_t type() { return 1; }
-	uint8_t get_type() override { return 1; }
 };
 
 #endif // KEYBOARDCONTROLLER_HPP

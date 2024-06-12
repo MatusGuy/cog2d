@@ -16,7 +16,6 @@ struct InputAction {
 	std::string display_name;
 
 	struct Config {
-		uint8_t id;
 		uint8_t controller_type;
 
 		/**
@@ -40,7 +39,7 @@ public:
 public:
 	InputManager();
 
-	InputAction* register_action(InputAction action);
+	InputAction* register_action(InputAction& action);
 
 	void init();
 

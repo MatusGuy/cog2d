@@ -39,10 +39,22 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	InputManager::get().register_action({0, "quit", "Quit", {{0, 1, SDL_SCANCODE_SPACE}}});
+	InputAction action = {
+		0, // action id
+		"quit", // name
+		"Quit", // display name
+		{
+			// controller type, input id
+			{ 1, SDL_SCANCODE_SPACE },
+			{ 2, 0 },
+		}
+	};
+	InputManager::get().register_action(action);
 	InputManager::get().init();
 
 	Controller* controller = InputManager::get().get_controller(0);
+
+	Controller* joypad = nullptr;
 
 	int w;
 	SDL_GetWindowSize(Painter::get().get_window(), &w, nullptr);
@@ -53,7 +65,11 @@ int main(int argc, char* argv[]) {
 	while (keep_running) {
 		poll_sdl_events();
 
-		paused = controller->held(0);
+		// my pc puts the real joystick in /dev/input/js1 and theres
+		// nothing i can do about this...
+		joypad = InputManager::get().get_controller(2);
+
+		paused = controller->held(0) || (joypad && joypad->held(0));
 
 		for (Actor* const actor : ActorManager::get().get_actors()) {
 			if (!paused)
