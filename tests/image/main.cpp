@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 	while (keep_running) {
 		poll_sdl_events();
 
-		Painter::get().draw_texture({50,50}, logo, logo->get_size());
+		Painter::get().draw_texture({50,50, logo->get_size().x, logo->get_size().y}, logo);
 
 		Painter::get().update();
 	}
