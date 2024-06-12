@@ -38,13 +38,19 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	auto ball = ActorManager::get().create<Ball>();
+	int w;
+	SDL_GetWindowSize(Painter::get().get_window(), &w, nullptr);
+	w -= 100;
+	ActorManager::get().create<Ball>(Vector(), Vector(2,2));
+	ActorManager::get().create<Ball>(Vector(w, 0), Vector(2,2));
 
 	while (keep_running) {
 		poll_sdl_events();
 
-		ball->update();
-		ball->draw();
+		for (Actor* const actor : ActorManager::get().get_actors()) {
+			actor->update();
+			actor->draw();
+		}
 
 		Painter::get().update();
 	}
