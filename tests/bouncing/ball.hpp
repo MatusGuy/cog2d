@@ -5,7 +5,9 @@
 
 class Ball : public Actor
 {
+	int m_col = 0xFFFFFFFF;
 public:
+	Ball(Vector pos, Vector vel);
 	Ball();
 
 	void update() override;

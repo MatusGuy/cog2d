@@ -13,6 +13,13 @@ Ball::Ball():
 	m_vel = {2, 2};
 }
 
+Ball::Ball(Vector pos, Vector vel):
+	Actor()
+{
+	m_bbox = {pos.x, pos.y, RADIUS*2, RADIUS*2};
+	m_vel = vel;
+}
+
 void Ball::update()
 {
 	bool hor = check_horizontal_bound();
@@ -28,6 +35,9 @@ void Ball::update()
 	}
 	*/
 
+	if(hor || ver)
+		m_col = m_col == 0xFF0000FF ? 0xFFFFFFFF : 0xFF0000FF;
+
 	m_vel.x *= hor ? -1 : 1;
 	m_vel.y *= ver ? -1 : 1;
 
@@ -40,7 +50,7 @@ void Ball::update()
 
 void Ball::draw()
 {
-	Painter::get().draw_circle({m_bbox.pos.x + RADIUS, m_bbox.pos.y + RADIUS}, RADIUS, true);
+	Painter::get().draw_circle({m_bbox.pos.x + RADIUS, m_bbox.pos.y + RADIUS}, RADIUS, true, m_col);
 }
 
 bool Ball::check_horizontal_bound()
