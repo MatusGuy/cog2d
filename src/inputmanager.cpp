@@ -23,6 +23,12 @@ void InputManager::init()
 	//keyboard->m_id = 1;
 
 	add_controller(keyboard);
+
+	for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+		JoypadController* jcontroller = new JoypadController(i);
+
+		add_controller(jcontroller);
+	}
 }
 
 void InputManager::add_controller(Controller* controller)
@@ -43,6 +49,16 @@ void InputManager::event(SDL_Event* ev)
 
 	case SDL_JOYDEVICEADDED: {
 		SDL_JoyDeviceEvent jev = ev->jdevice;
+
+		for (int i = 0; i < m_controllers.size(); i++)
+		{
+			auto jcontroller = dynamic_cast<JoypadController*>(m_controllers[i]);
+			if (jcontroller && jcontroller->m_device_id == jev.which)
+			{
+				// joypad already exists
+				break;
+			}
+		}
 
 		JoypadController* jcontroller = new JoypadController(jev.which);
 
