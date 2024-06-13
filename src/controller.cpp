@@ -22,6 +22,7 @@ void Controller::apply_action(InputAction* action)
 		if (conf.controller_type == get_type())
 		{
 			config = &conf;
+			break;
 		}
 	}
 

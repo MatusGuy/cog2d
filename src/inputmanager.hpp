@@ -44,7 +44,10 @@ public:
 	void init();
 
 	void add_controller(Controller* controller);
-	inline Controller* get_controller(uint8_t id) { return m_controllers[id]; }
+	inline size_t get_controller_count() { return m_controllers.size(); }
+	inline Controller* get_controller(uint8_t id) {
+		return static_cast<size_t>(id+1) > get_controller_count() ? nullptr : m_controllers[id];
+	}
 
 	void event(SDL_Event* ev);
 
