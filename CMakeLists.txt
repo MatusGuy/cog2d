@@ -7,10 +7,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/)
 
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
 # Sources #
 file(GLOB_RECURSE COG2D_SRC CONFIGURE_DEPENDS src/*.cpp src/*.hpp)
 
-add_library(cog2d SHARED ${COG2D_SRC})
+add_library(cog2d STATIC ${COG2D_SRC})
 
 # Assets #
 #source_group(Assets REGULAR_EXPRESSION assets/.*)
@@ -47,6 +49,11 @@ endif()
 ## SDL2_mixer ##
 
 target_include_directories(cog2d PUBLIC ${PROJECT_SOURCE_DIR}/src)
+
+# Preprocessor definitions #
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+	target_compile_definitions(cog2d PUBLIC COG2D_DEBUG)
+endif()
 
 # Tests #
 add_subdirectory(tests)
