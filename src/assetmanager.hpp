@@ -6,6 +6,7 @@
 
 #include <texture.hpp>
 
+#define COG2D_USE_ASSETMANAGER COG2D_USING(AssetManager, assetmanager)
 class AssetManager : public Singleton<AssetManager>
 {
 public:

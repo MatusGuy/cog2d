@@ -9,32 +9,39 @@ void Painter::init() {
     if (!m_window) { m_error = SDL_GetError(); return; }
 
     m_renderer = SDL_CreateRenderer(m_window, -1,
-        SDL_RENDERER_ACCELERATED |
-        SDL_RENDERER_PRESENTVSYNC |
-        SDL_RENDERER_TARGETTEXTURE
+		SDL_RENDERER_ACCELERATED |
+		SDL_RENDERER_PRESENTVSYNC |
+		SDL_RENDERER_TARGETTEXTURE
     );
-    if (!m_renderer) { m_error = SDL_GetError(); return; }
+	if (!m_renderer) { m_error = SDL_GetError(); return; }
 
-    SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
 
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-    SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
-    SDL_SetHint(SDL_HINT_RENDER_BATCHING, "1");
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+	SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
+	SDL_SetHint(SDL_HINT_RENDER_BATCHING, "1");
 }
 
 void Painter::deinit() {
-    SDL_DestroyRenderer(m_renderer); m_renderer = nullptr;
-    SDL_DestroyWindow(m_window); m_window = nullptr;
+	if (m_renderer) {
+		SDL_DestroyRenderer(m_renderer);
+		m_renderer = nullptr;
+	}
+
+	if (m_window) {
+		SDL_DestroyWindow(m_window);
+		m_window = nullptr;
+	}
 }
 
 void Painter::update() {
     SDL_RenderPresent(m_renderer);
-    SDL_RenderClear(m_renderer);
+	SDL_RenderClear(m_renderer);
 }
 
 void Painter::draw_rect(Rect rect, bool filled, Color color) {
     // TODO: Push/pop color
-	SDL_FRect frect = {rect.pos.x, rect.pos.y, rect.size.x, rect.size.y};
+	SDL_FRect frect = rect.to_sdl();
     Color currcolor = get_current_color();
     SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 	if (filled) SDL_RenderFillRectF(m_renderer, &frect);

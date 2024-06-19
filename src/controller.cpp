@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "inputmanager.hpp"
+#include "logger.hpp"
 
 Controller::Controller():
 	m_id(0),
@@ -28,7 +29,9 @@ void Controller::apply_action(InputAction* action)
 
 	if (config == nullptr)
 	{
-		std::cerr << "Could not find config for controller type " << get_type() << std::endl;
+		std::stringstream stream;
+		stream << "Could not find config for controller type " << get_type();
+		COG2D_LOG_ERROR("cog2d", stream.str());
 		return;
 	}
 
