@@ -4,7 +4,8 @@
 
 #include <SDL2/SDL_image.h>
 
-#include <painter.hpp>
+#include "painter.hpp"
+#include "logger.hpp"
 
 AssetManager::AssetManager():
 	m_textures()
@@ -22,13 +23,13 @@ Texture* AssetManager::load_image(const std::string& path)
 	if (m_textures.count(path) > 0)
 		return m_textures[path];
 
-	Renderer* renderer = Painter::get().get_renderer();
+	SDL_Renderer* renderer = Painter::get().get_renderer();
 	SDL_Texture* sdltex = IMG_LoadTexture(renderer, path.c_str());
 
 	if (sdltex == nullptr) {
-		// TODO: error logging macro
-		std::cerr << "An SDL error has occurred while loading image \"" << path << "\": \""
-				  << Painter::get().get_error() << "\"" << std::endl;
+		std::stringstream stream;
+		stream << "Couldn't load image: " << SDL_GetError();
+		COG2D_LOG_ERROR("SDL", stream.str());
 		return nullptr;
 	}
 

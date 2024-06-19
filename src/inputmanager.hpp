@@ -31,6 +31,7 @@ struct InputAction {
 	std::vector<Config> configs;
 };
 
+#define COG2D_USE_INPUTMANAGER COG2D_USING(InputManager, inputmanager)
 class InputManager : public Singleton<InputManager>
 {
 public:

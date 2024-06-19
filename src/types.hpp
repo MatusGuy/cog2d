@@ -14,6 +14,7 @@ public:
 	}
 };
 
+#define COG2D_USING(c, n) c& n = c::get()
 template <typename T>
 class Singleton {
 public:

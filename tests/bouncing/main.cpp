@@ -11,21 +11,24 @@ public:
 public:
 
 	void init() override {
-		m_keyboard = InputManager::get().get_controller(0);
+		COG2D_USE_ACTORMANAGER;
+		COG2D_USE_INPUTMANAGER;
+
+		m_keyboard = inputmanager.get_controller(0);
 
 		// my pc puts the real joystick in /dev/input/js1 and theres
 		// nothing i can do about this...
-		m_joypad = InputManager::get().get_controller(2);
+		m_joypad = inputmanager.get_controller(2);
 
 		int w;
 		SDL_GetWindowSize(Painter::get().get_window(), &w, nullptr);
 		w -= 100;
-		ActorManager::get().create<Ball>(Vector(), Vector(2,2));
-		ActorManager::get().create<Ball>(Vector(w, 0), Vector(2,2));
+		actormanager.create<Ball>(Vector(), Vector(2,2));
+		actormanager.create<Ball>(Vector(w, 0), Vector(2,2));
 	}
 
 	void update() override {
-		m_paused = m_keyboard->held(0) || (m_joypad && m_joypad->held(0));
+		m_paused = (m_keyboard && m_keyboard->held(0)) || (m_joypad && m_joypad->held(0));
 	}
 
 	void draw() override {}

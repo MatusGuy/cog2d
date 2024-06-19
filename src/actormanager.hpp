@@ -5,6 +5,7 @@
 
 #include "actor.hpp"
 
+#define COG2D_USE_ACTORMANAGER COG2D_USING(ActorManager, actormanager)
 class ActorManager : public Singleton<ActorManager>
 {
 public:

@@ -13,6 +13,8 @@ public:
 
 	int run(int argc, char* argv[]);
 
+	static void quit();
+
 	virtual void init() = 0;
 	virtual void update() = 0;
 	virtual void draw() = 0;
