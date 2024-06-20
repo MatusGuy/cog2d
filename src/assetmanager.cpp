@@ -18,18 +18,22 @@ AssetManager::~AssetManager()
 	wipe_assets();
 }
 
-Texture* AssetManager::load_image(const std::string& path)
+Texture* AssetManager::load_image(std::string path)
 {
 	if (m_textures.count(path) > 0)
 		return m_textures[path];
+
+#ifdef COG2D_ASSET_PATH
+	path.insert(0, COG2D_ASSET_PATH "/");
+#endif
 
 	SDL_Renderer* renderer = Painter::get().get_renderer();
 	SDL_Texture* sdltex = IMG_LoadTexture(renderer, path.c_str());
 
 	if (sdltex == nullptr) {
-		std::stringstream stream;
-		stream << "Couldn't load image: " << SDL_GetError();
-		COG2D_LOG_ERROR("SDL", stream.str());
+		std::stringstream errstream;
+		errstream << "Couldn't load image: " << SDL_GetError();
+		COG2D_LOG_ERROR("SDL", errstream.str());
 		return nullptr;
 	}
 

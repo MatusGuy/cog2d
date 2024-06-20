@@ -53,6 +53,8 @@ target_include_directories(cog2d PUBLIC ${PROJECT_SOURCE_DIR}/src)
 # Preprocessor definitions #
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 	target_compile_definitions(cog2d PUBLIC COG2D_DEBUG)
+
+	target_compile_definitions(cog2d PUBLIC COG2D_ASSET_PATH="${PROJECT_SOURCE_DIR}/assets")
 endif()
 
 # Tests #
