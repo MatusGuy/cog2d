@@ -13,7 +13,7 @@ public:
 	AssetManager();
 	~AssetManager();
 
-	Texture* load_image(const std::string& path);
+	Texture* load_image(std::string path);
 	void wipe_assets();
 
 private:
