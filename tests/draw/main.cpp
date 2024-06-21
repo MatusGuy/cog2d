@@ -1,10 +1,6 @@
 #include <iostream>
 #include <program.hpp>
 
-#include <chrono>
-#include <thread>
-#include <mutex>
-
 class Test : public Program {
 public:
 	void init() override {}

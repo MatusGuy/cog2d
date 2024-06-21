@@ -5,6 +5,7 @@
 #include "inputmanager.hpp"
 #include "assetmanager.hpp"
 #include "actormanager.hpp"
+#include "soundengine.hpp"
 
 class Program
 {
