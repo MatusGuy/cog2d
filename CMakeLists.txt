@@ -36,7 +36,7 @@ target_link_libraries(cog2d
 ## SDL2_image ##
 if(COG2D_USE_PKGCONFIG)
 	pkg_check_modules(SDL2_image REQUIRED IMPORTED_TARGET SDL2_image)
-	target_link_libraries(cog2d PUBLIC PkgConfig::SDL2_image )
+	target_link_libraries(cog2d PUBLIC PkgConfig::SDL2_image)
 else()
 	find_package(SDL2_image REQUIRED)
 	target_link_libraries(cog2d
@@ -45,8 +45,19 @@ else()
 	)
 endif()
 
-## SDL2_ttf ##
 ## SDL2_mixer ##
+if(COG2D_USE_PKGCONFIG)
+	pkg_check_modules(SDL2_mixer REQUIRED IMPORTED_TARGET SDL2_mixer)
+	target_link_libraries(cog2d PUBLIC PkgConfig::SDL2_mixer )
+else()
+	find_package(SDL2_mixer REQUIRED)
+	target_link_libraries(cog2d
+		PUBLIC
+		$<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>
+	)
+endif()
+
+## SDL2_ttf ##
 
 target_include_directories(cog2d PUBLIC ${PROJECT_SOURCE_DIR}/src)
 
