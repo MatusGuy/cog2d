@@ -14,9 +14,6 @@ file(GLOB_RECURSE COG2D_SRC CONFIGURE_DEPENDS src/*.cpp src/*.hpp)
 
 add_library(cog2d STATIC ${COG2D_SRC})
 
-# Assets #
-#source_group(Assets REGULAR_EXPRESSION assets/.*)
-
 # Dependencies #
 
 find_package(PkgConfig QUIET)
@@ -64,10 +61,17 @@ target_include_directories(cog2d PUBLIC ${PROJECT_SOURCE_DIR}/src)
 # Preprocessor definitions #
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 	target_compile_definitions(cog2d PUBLIC COG2D_DEBUG)
-
-	target_compile_definitions(cog2d PUBLIC COG2D_ASSET_PATH="${PROJECT_SOURCE_DIR}/assets")
 endif()
 
+# Later, remove this definition when deploying
+target_compile_definitions(cog2d PUBLIC COG2D_ASSET_PATH="${PROJECT_SOURCE_DIR}")
+
 # Tests #
-add_subdirectory(tests)
+
+# Should probably turn this off once this goes big
+option(COG2D_TESTS "Add little programs that test cog2d." ON)
+
+if(COG2D_TESTS)
+	add_subdirectory(tests)
+endif()
 

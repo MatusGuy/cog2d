@@ -8,7 +8,7 @@ public:
 public:
 	void init() override {
 		// FIXME
-		m_logo = AssetManager::get().load_image("images/cog2d-512x512.png");
+		m_logo = AssetManager::get().load_image("assets/images/cog2d-512x512.png");
 		//if (m_logo == nullptr) {
 		//	return 1;
 		//}
