@@ -13,7 +13,7 @@ public:
 		COG2D_USE_ASSETMANAGER;
 		COG2D_USE_SOUNDENGINE;
 
-		Mix_Chunk* sfx = assetmanager.load_sfx("sounds/fard.wav");
+		Mix_Chunk* sfx = assetmanager.load_sfx("assets/sounds/fard.wav");
 		if (sfx == nullptr) {
 			return;
 		}
