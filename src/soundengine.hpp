@@ -17,6 +17,7 @@ public:
 	void deinit();
 
 	void play_sfx(Mix_Chunk* sfx, int loops = 0);
+	void play_music(Mix_Music* music, int loops = 0);
 
 	inline std::string get_error() { return m_error; }
 

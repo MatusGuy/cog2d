@@ -29,3 +29,13 @@ void SoundEngine::play_sfx(Mix_Chunk* sfx, int loops)
 		Mix_FreeChunk(sfx);
 	}
 }
+
+void SoundEngine::play_music(Mix_Music* music, int loops)
+{
+	// TODO: channel support
+	if (Mix_PlayMusic(music, loops) == -1) {
+		m_error = SDL_GetError();
+
+		Mix_FreeMusic(music);
+	}
+}

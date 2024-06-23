@@ -18,7 +18,12 @@ public:
 			return;
 		}
 
-		soundengine.play_sfx(sfx);
+		Mix_Music* music = assetmanager.load_music("assets/music/fard_song.ogg");
+		if (music == nullptr) {
+			return;
+		}
+
+		soundengine.play_music(music);
 	}
 
 	void update() override {}
