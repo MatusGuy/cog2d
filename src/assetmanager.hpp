@@ -15,14 +15,16 @@ public:
 	AssetManager();
 	~AssetManager();
 
-	Texture* load_image(std::string path);
-	Mix_Chunk* load_sfx(std::string path);
+	Texture* load_image(const std::string& path);
+	Mix_Chunk* load_sfx(const std::string& path);
+	Mix_Music* load_music(const std::string& path);
 
 	void wipe_assets();
 
 private:
 	std::map<std::string, Texture*> m_textures;
 	std::map<std::string, Mix_Chunk*> m_sfx;
+	std::map<std::string, Mix_Music*> m_music;
 };
 
 #endif // ASSETMANAGER_H

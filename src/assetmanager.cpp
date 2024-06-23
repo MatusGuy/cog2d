@@ -18,17 +18,18 @@ AssetManager::~AssetManager()
 	wipe_assets();
 }
 
-Texture* AssetManager::load_image(std::string path)
+Texture* AssetManager::load_image(const std::string& path)
 {
 	if (m_textures.count(path) > 0)
 		return m_textures[path];
 
+	std::string realpath = path;
 #ifdef COG2D_ASSET_PATH
-	path.insert(0, COG2D_ASSET_PATH "/");
+	realpath.insert(0, COG2D_ASSET_PATH "/");
 #endif
 
 	SDL_Renderer* renderer = Painter::get().get_renderer();
-	SDL_Texture* tex = IMG_LoadTexture(renderer, path.c_str());
+	SDL_Texture* tex = IMG_LoadTexture(renderer, realpath.c_str());
 
 	if (tex == nullptr) {
 		std::stringstream errstream;
@@ -44,16 +45,17 @@ Texture* AssetManager::load_image(std::string path)
 	return asset;
 }
 
-Mix_Chunk* AssetManager::load_sfx(std::string path)
+Mix_Chunk* AssetManager::load_sfx(const std::string& path)
 {
 	if (m_sfx.count(path) > 0)
 		return m_sfx[path];
 
+	std::string realpath = path;
 #ifdef COG2D_ASSET_PATH
-	path.insert(0, COG2D_ASSET_PATH "/");
+	realpath.insert(0, COG2D_ASSET_PATH "/");
 #endif
 
-	Mix_Chunk* asset = Mix_LoadWAV(path.c_str());
+	Mix_Chunk* asset = Mix_LoadWAV(realpath.c_str());
 
 	if (asset == nullptr) {
 		std::stringstream errstream;
@@ -67,8 +69,38 @@ Mix_Chunk* AssetManager::load_sfx(std::string path)
 	return asset;
 }
 
+Mix_Music* AssetManager::load_music(const std::string& path)
+{
+	if (m_music.count(path) > 0)
+		return m_music[path];
+
+	std::string realpath = path;
+#ifdef COG2D_ASSET_PATH
+	realpath.insert(0, COG2D_ASSET_PATH "/");
+#endif
+
+	Mix_Music* asset = Mix_LoadMUS(realpath.c_str());
+
+	if (asset == nullptr) {
+		std::stringstream errstream;
+		errstream << "Couldn't load music: " << Mix_GetError();
+		COG2D_LOG_ERROR("SDL", errstream.str());
+		return nullptr;
+	}
+
+	m_music[path] = asset;
+
+	return asset;
+}
+
 void AssetManager::wipe_assets()
 {
+	for (auto& [key, asset] : m_music)
+	{
+		Mix_FreeMusic(asset);
+		asset = nullptr;
+	}
+
 	for (auto& [key, asset] : m_sfx)
 	{
 		Mix_FreeChunk(asset);
