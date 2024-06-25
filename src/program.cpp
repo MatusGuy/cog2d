@@ -1,13 +1,9 @@
 #include "program.hpp"
 
 #include <iostream>
+#include <fstream>
 
 #include "logger.hpp"
-#include "painter.hpp"
-#include "inputmanager.hpp"
-#include "assetmanager.hpp"
-#include "actormanager.hpp"
-#include "soundengine.hpp"
 
 Program::Program():
 	m_keep_running(true),
@@ -38,6 +34,10 @@ int Program::run(int argc, char* argv[])
 
 	if (register_actions()) {
 		InputManager::get().init();
+	}
+
+	if (s_settings.systems & System::SYSTEM_CONFIG) {
+		Config::get().init(s_settings);
 	}
 
 	// Run this after all essential systems
@@ -74,6 +74,13 @@ void Program::quit()
 	COG2D_USE_PAINTER;
 	COG2D_USE_ASSETMANAGER;
 	COG2D_USE_SOUNDENGINE;
+	COG2D_USE_CONFIG;
+
+	if (s_settings.systems & System::SYSTEM_CONFIG) {
+		std::ofstream cfgfile(config.get_config_path(s_settings));
+		config.save(cfgfile);
+		cfgfile.close();
+	}
 
 	assetmanager.wipe_assets();
 

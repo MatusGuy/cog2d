@@ -11,8 +11,9 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 # Sources #
 file(GLOB_RECURSE COG2D_SRC CONFIGURE_DEPENDS src/*.cpp src/*.hpp)
-
 add_library(cog2d STATIC ${COG2D_SRC})
+
+target_include_directories(cog2d PUBLIC ${PROJECT_SOURCE_DIR}/src)
 
 # Dependencies #
 
@@ -45,7 +46,7 @@ endif()
 ## SDL2_mixer ##
 if(COG2D_USE_PKGCONFIG)
 	pkg_check_modules(SDL2_mixer REQUIRED IMPORTED_TARGET SDL2_mixer)
-	target_link_libraries(cog2d PUBLIC PkgConfig::SDL2_mixer )
+	target_link_libraries(cog2d PUBLIC PkgConfig::SDL2_mixer)
 else()
 	find_package(SDL2_mixer REQUIRED)
 	target_link_libraries(cog2d
@@ -56,7 +57,21 @@ endif()
 
 ## SDL2_ttf ##
 
-target_include_directories(cog2d PUBLIC ${PROJECT_SOURCE_DIR}/src)
+## json ##
+
+include(FetchContent)
+
+# The heck does this warning even mean?? Leave me alone!
+cmake_policy(SET CMP0135 OLD)
+
+FetchContent_Declare(
+	json
+	URL "https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz"
+)
+
+FetchContent_MakeAvailable(json)
+
+target_include_directories(cog2d PUBLIC ${nlohmann_json_SOURCE_DIR}/include/)
 
 # Preprocessor definitions #
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")

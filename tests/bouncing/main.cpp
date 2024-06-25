@@ -9,6 +9,9 @@ public:
 	Controller* m_joypad = nullptr;
 
 public:
+	Test(): Program() {
+		s_settings.systems ^= System::SYSTEM_CONFIG;
+	}
 
 	void init() override {
 		COG2D_USE_ACTORMANAGER;

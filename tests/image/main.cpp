@@ -6,6 +6,10 @@ public:
 	Texture* m_logo = nullptr;
 
 public:
+	Test(): Program() {
+		s_settings.systems ^= System::SYSTEM_CONFIG;
+	}
+
 	void init() override {
 		// FIXME
 		m_logo = AssetManager::get().load_image("assets/images/cog2d-512x512.png");
