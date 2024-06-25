@@ -13,6 +13,10 @@ public:
 	bool debounce = false;
 
 public:
+	Test(): Program() {
+		s_settings.systems ^= System::SYSTEM_CONFIG;
+	}
+
 	void init() override {
 		COG2D_USE_ASSETMANAGER;
 		COG2D_USE_INPUTMANAGER;
