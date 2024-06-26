@@ -7,14 +7,14 @@
 
 Program::Program():
 	m_keep_running(true),
-	m_paused(false)
+	m_paused(false),
+	m_settings(new ProgramSettings)
 {
-
 }
 
 int Program::run(int argc, char* argv[])
 {
-	std::atexit(&Program::quit);
+	//std::atexit(&Program::quit);
 	init_sdl();
 
 	COG2D_USE_PAINTER;
@@ -36,8 +36,9 @@ int Program::run(int argc, char* argv[])
 		InputManager::get().init();
 	}
 
-	if (s_settings.systems & System::SYSTEM_CONFIG) {
-		Config::get().init(s_settings);
+	register_settings();
+	if (m_settings->systems & System::SYSTEM_CONFIG) {
+		Config::get().init(m_settings);
 	}
 
 	// Run this after all essential systems
@@ -76,8 +77,8 @@ void Program::quit()
 	COG2D_USE_SOUNDENGINE;
 	COG2D_USE_CONFIG;
 
-	if (s_settings.systems & System::SYSTEM_CONFIG) {
-		std::ofstream cfgfile(config.get_config_path(s_settings));
+	if (m_settings->systems & System::SYSTEM_CONFIG) {
+		std::ofstream cfgfile(config.get_config_path(m_settings));
 		config.save(cfgfile);
 		cfgfile.close();
 	}

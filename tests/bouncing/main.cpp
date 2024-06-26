@@ -10,7 +10,7 @@ public:
 
 public:
 	Test(): Program() {
-		s_settings.systems ^= System::SYSTEM_CONFIG;
+		m_settings->systems ^= System::SYSTEM_CONFIG;
 	}
 
 	void init() override {

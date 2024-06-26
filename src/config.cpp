@@ -9,7 +9,7 @@ Config::Config()
 
 }
 
-void Config::init(const ProgramSettings& prgsettings)
+void Config::init(const ProgramSettings* prgsettings)
 {
 	using JsonType = nlohmann::detail::value_t;
 
@@ -39,9 +39,9 @@ void Config::init(const ProgramSettings& prgsettings)
 	}
 }
 
-std::filesystem::path Config::get_config_path(const ProgramSettings& prgsettings)
+std::filesystem::path Config::get_config_path(const ProgramSettings* prgsettings)
 {
-	std::filesystem::path prefpath = SDL_GetPrefPath(prgsettings.org_name.c_str(), prgsettings.app_name.c_str());
+	std::filesystem::path prefpath = SDL_GetPrefPath(prgsettings->org_name.c_str(), prgsettings->app_name.c_str());
 	return prefpath/"config.json";
 }
 
@@ -59,49 +59,4 @@ void Config::save(std::ofstream &cfgfile)
 	}
 
 	cfgfile << std::setw(4) << jsonobj << std::endl;
-}
-
-template<typename T>
-void Config::register_setting(const std::string &name, T default_value, T *ptr) {
-	if (ptr == nullptr) {
-		ptr = new T;
-	}
-
-	(*ptr) = default_value;
-
-	m_settings[name] = ptr;
-}
-
-template<typename T>
-void Config::set(const std::string &name, T value) {
-	if (m_settings.count(name) == -1) {
-		return;
-	}
-
-	ConfigValue val = m_settings[name];
-
-	if (!std::holds_alternative<T*>(val)) {
-		return;
-	}
-
-	T* ptr = std::get<T*>(val);
-	(*ptr) = value;
-}
-
-
-template<typename T>
-const T* Config::at(const std::string &name)
-{
-	if (m_settings.count(name) == -1) {
-		return nullptr;
-	}
-
-	ConfigValue val = m_settings[name];
-
-	if (!std::holds_alternative<T*>(val)) {
-		return nullptr;
-	}
-
-	T* ptr = std::get<T*>(val);
-	return ptr;
 }

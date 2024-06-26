@@ -25,17 +25,17 @@ struct ProgramSettings {
 	std::uint8_t systems = System::SYSTEM_EVERYTHING;
 };
 
-static ProgramSettings s_settings;
 class Program
 {
 public:
+	ProgramSettings* m_settings;
 
 public:
 	Program();
 
 	int run(int argc, char* argv[]);
 
-	static void quit();
+	void quit();
 
 	virtual void init() = 0;
 	virtual void update() = 0;

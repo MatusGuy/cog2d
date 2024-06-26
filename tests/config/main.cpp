@@ -5,9 +5,9 @@
 class Test : public Program {
 public:
 	Test(): Program() {
-		s_settings.systems = System::SYSTEM_CONFIG;
-		s_settings.org_name = "cog2d";
-		s_settings.app_name = "config test";
+		m_settings->systems = System::SYSTEM_CONFIG;
+		m_settings->org_name = "cog2d";
+		m_settings->app_name = "config test";
 	}
 
 	void init() override {
