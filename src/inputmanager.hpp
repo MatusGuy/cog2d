@@ -18,8 +18,8 @@ struct InputAction {
 	struct Config {
 		uint8_t controller_type;
 
-		/**
-		 * @brief input_id
+		/*!
+		 * \brief input_id
 		 *
 		 * An input id can be a scancode if using
 		 * a keyboard or a button id if using a

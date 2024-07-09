@@ -10,7 +10,6 @@ Release/
 tools/innosetup/Output
 
 # Doxygen related files
-Doxyfile
 docs/doxygen/
 
 # Qt Creator project file
