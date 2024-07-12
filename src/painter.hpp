@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 
 #include "texture.hpp"
+#include "font.hpp"
 
 #define TITLE "cog2d"
 #define SCREEN_WIDTH 800
@@ -27,6 +28,8 @@ public:
     void draw_point(Vector point, Color color = 0xFFFFFFFF);
 	void draw_texture(Rect dest, Texture* tex);
 	void draw_texture(Rect dest, Texture* tex, float angle, Vector center = {0,0});
+
+	void draw_text(Font* font, Vector pos, const std::string& text, Color color = 0xFFFFFFFF);
 
 	inline SDL_Window* get_window() { return m_window; }
 	inline SDL_Renderer* get_renderer() { return m_renderer; }

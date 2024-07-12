@@ -93,6 +93,30 @@ Mix_Music* AssetManager::load_music(const std::string& path)
 	return asset;
 }
 
+TTF_Font* AssetManager::load_font(const std::string& path, int ptsz)
+{
+	if (m_music.count(path) > 0)
+		return m_music[path];
+
+	std::string realpath = path;
+#ifdef COG2D_ASSET_PATH
+	realpath.insert(0, COG2D_ASSET_PATH "/");
+#endif
+
+	Mix_Music* asset = TTF_OpenFont(realpath.c_str(), );
+
+	if (asset == nullptr) {
+		std::stringstream errstream;
+		errstream << "Couldn't load font: " << Mix_GetError();
+		COG2D_LOG_ERROR("SDL", errstream.str());
+		return nullptr;
+	}
+
+	m_music[path] = asset;
+
+	return asset;
+}
+
 void AssetManager::wipe_assets()
 {
 	for (auto& [key, asset] : m_music)

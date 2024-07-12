@@ -56,6 +56,16 @@ else()
 endif()
 
 ## SDL2_ttf ##
+if(COG2D_USE_PKGCONFIG)
+	pkg_check_modules(SDL2_ttf REQUIRED IMPORTED_TARGET SDL2_ttf)
+	target_link_libraries(cog2d PUBLIC PkgConfig::SDL2_ttf)
+else()
+	find_package(SDL2_ttf REQUIRED)
+	target_link_libraries(cog2d
+		PUBLIC
+		$<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
+	)
+endif()
 
 ## json ##
 

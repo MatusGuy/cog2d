@@ -125,6 +125,10 @@ void Painter::draw_texture(Rect dest, Texture* tex, float angle, Vector center) 
 	SDL_RenderCopyExF(m_renderer, tex->get_sdl_texture(), NULL, &dest2, (double) angle, &fpoint, SDL_FLIP_NONE);
 }
 
+void Painter::draw_text(Font* font, Vector pos, const std::string& text, Color color) {
+	SDL_Surface* TTF_RenderUTF8_Solid(font->get_font(), text.c_str(), color);
+}
+
 Color Painter::get_current_color() {
     Color resp;
     SDL_GetRenderDrawColor(m_renderer, &resp.r, &resp.g, &resp.b, &resp.a);
