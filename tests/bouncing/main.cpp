@@ -24,7 +24,7 @@ public:
 		m_joypad = inputmanager.get_controller(2);
 
 		int w;
-		SDL_GetWindowSize(Painter::get().get_window(), &w, nullptr);
+		SDL_GetWindowSize(GraphicsEngine::get().get_window(), &w, nullptr);
 		w -= 100;
 		actormanager.create<Ball>(Vector(), Vector(2,2));
 		actormanager.create<Ball>(Vector(w, 0), Vector(2,2));

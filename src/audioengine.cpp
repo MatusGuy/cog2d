@@ -1,26 +1,26 @@
-#include "soundengine.hpp"
+#include "audioengine.hpp"
 
 #include "logger.hpp"
 
-SoundEngine::SoundEngine():
+AudioEngine::AudioEngine():
 	m_error()
 {
 
 }
 
-void SoundEngine::init()
+void AudioEngine::init()
 {
 	if (!Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096)) {
 		m_error = SDL_GetError();
 	}
 }
 
-void SoundEngine::deinit()
+void AudioEngine::deinit()
 {
 	Mix_CloseAudio();
 }
 
-void SoundEngine::play_sfx(Mix_Chunk* sfx, int loops)
+void AudioEngine::play_sfx(Mix_Chunk* sfx, int loops)
 {
 	// TODO: channel support
 	if (Mix_PlayChannel(-1, sfx, loops) == -1) {
@@ -30,7 +30,7 @@ void SoundEngine::play_sfx(Mix_Chunk* sfx, int loops)
 	}
 }
 
-void SoundEngine::play_music(Mix_Music* music, int loops)
+void AudioEngine::play_music(Mix_Music* music, int loops)
 {
 	// TODO: channel support
 	if (Mix_PlayMusic(music, loops) == -1) {

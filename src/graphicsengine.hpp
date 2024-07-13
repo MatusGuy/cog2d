@@ -1,5 +1,5 @@
-#ifndef PAINTER_H
-#define PAINTER_H
+#ifndef GRAPHICSENGINE_H
+#define GRAPHICSENGINE_H
 
 #include <string>
 #include <cmath>
@@ -14,8 +14,8 @@
 
 class Texture;
 
-#define COG2D_USE_PAINTER COG2D_USING(Painter, painter)
-class Painter : public Singleton<Painter> {
+#define COG2D_USE_GRAPHICSENGINE COG2D_USING(GraphicsEngine, graphicsengine)
+class GraphicsEngine : public Singleton<GraphicsEngine> {
 public:
     void init();
     void deinit();
@@ -45,4 +45,4 @@ private:
     std::string m_error = "";
 };
 
-#endif // PAINTER_H
+#endif // GRAPHICSENGINE_H

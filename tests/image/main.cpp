@@ -21,7 +21,7 @@ public:
 	void update() override {}
 
 	void draw() override {
-		Painter::get().draw_texture({50,50, m_logo->get_size().x, m_logo->get_size().y}, m_logo);
+		GraphicsEngine::get().draw_texture({{50,50}, {-1,-1}}, m_logo);
 	}
 
 	bool event(SDL_Event* ev) override { return true; }

@@ -4,7 +4,8 @@
 
 #include <SDL2/SDL_image.h>
 
-#include "painter.hpp"
+#include "graphicsengine.hpp"
+#include "texture.hpp"
 #include "logger.hpp"
 
 AssetManager::AssetManager():
@@ -23,22 +24,9 @@ Texture* AssetManager::load_image(const std::string& path)
 	if (m_textures.count(path) > 0)
 		return m_textures[path];
 
-	std::string realpath = path;
-#ifdef COG2D_ASSET_PATH
-	realpath.insert(0, COG2D_ASSET_PATH "/");
-#endif
-
-	SDL_Renderer* renderer = Painter::get().get_renderer();
-	SDL_Texture* tex = IMG_LoadTexture(renderer, realpath.c_str());
-
-	if (tex == nullptr) {
-		std::stringstream errstream;
-		errstream << "Couldn't load image: " << SDL_GetError();
-		COG2D_LOG_ERROR("SDL", errstream.str());
-		return nullptr;
-	}
-
-	Texture* asset = new Texture(tex);
+	Texture* asset = new Texture([this, path]() -> SDL_Texture* {
+									return AssetManager::image_recipe(path);
+								});
 
 	m_textures[path] = asset;
 
@@ -136,4 +124,24 @@ void AssetManager::wipe_assets()
 		delete asset;
 		asset = nullptr;
 	}
+}
+
+SDL_Texture* AssetManager::image_recipe(const std::string& path)
+{
+	std::string realpath = path;
+#ifdef COG2D_ASSET_PATH
+	realpath.insert(0, COG2D_ASSET_PATH "/");
+#endif
+
+	SDL_Renderer* renderer = GraphicsEngine::get().get_renderer();
+	SDL_Texture* tex = IMG_LoadTexture(renderer, realpath.c_str());
+
+	if (tex == nullptr) {
+		std::stringstream errstream;
+		errstream << "Couldn't load image: " << SDL_GetError();
+		COG2D_LOG_ERROR("SDL", errstream.str());
+		return nullptr;
+	}
+
+	return tex;
 }

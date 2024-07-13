@@ -1,11 +1,11 @@
 #ifndef PROGRAM_HPP
 #define PROGRAM_HPP
 
-#include "painter.hpp"
+#include "graphicsengine.hpp"
 #include "inputmanager.hpp"
 #include "assetmanager.hpp"
 #include "actormanager.hpp"
-#include "soundengine.hpp"
+#include "audioengine.hpp"
 #include "config.hpp"
 
 enum System : std::uint8_t {

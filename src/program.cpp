@@ -17,19 +17,19 @@ int Program::run(int argc, char* argv[])
 	//std::atexit(&Program::quit);
 	init_sdl();
 
-	COG2D_USE_PAINTER;
+	COG2D_USE_GRAPHICSENGINE;
 	COG2D_USE_INPUTMANAGER;
 	COG2D_USE_ACTORMANAGER;
-	COG2D_USE_SOUNDENGINE;
+	COG2D_USE_AUDIOENGINE;
 
-	painter.init();
-	if (!painter.get_error().empty()) {
-		COG2D_CRASH("SDL", painter.get_error());
+	graphicsengine.init();
+	if (!graphicsengine.get_error().empty()) {
+		COG2D_CRASH("SDL", graphicsengine.get_error());
 	}
 
-	soundengine.init();
-	if (!soundengine.get_error().empty()) {
-		COG2D_CRASH("SDL", soundengine.get_error());
+	audioengine.init();
+	if (!audioengine.get_error().empty()) {
+		COG2D_CRASH("SDL", audioengine.get_error());
 	}
 
 	if (register_actions()) {
@@ -62,7 +62,7 @@ int Program::run(int argc, char* argv[])
 			actor->draw();
 		}
 
-		painter.update();
+		graphicsengine.update();
 	}
 
 	quit();
@@ -72,9 +72,9 @@ int Program::run(int argc, char* argv[])
 
 void Program::quit()
 {
-	COG2D_USE_PAINTER;
+	COG2D_USE_GRAPHICSENGINE;
 	COG2D_USE_ASSETMANAGER;
-	COG2D_USE_SOUNDENGINE;
+	COG2D_USE_AUDIOENGINE;
 	COG2D_USE_CONFIG;
 
 	if (m_settings->systems & System::SYSTEM_CONFIG) {
@@ -85,9 +85,9 @@ void Program::quit()
 
 	assetmanager.wipe_assets();
 
-	soundengine.deinit();
+	audioengine.deinit();
 
-	painter.deinit();
+	graphicsengine.deinit();
 
 	SDL_Quit();
 }

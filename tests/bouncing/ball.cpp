@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <painter.hpp>
+#include <graphicsengine.hpp>
 
 constexpr float RADIUS = 50.f;
 
@@ -50,13 +50,13 @@ void Ball::update()
 
 void Ball::draw()
 {
-	Painter::get().draw_circle({m_bbox.pos.x + RADIUS, m_bbox.pos.y + RADIUS}, RADIUS, true, m_col);
+	GraphicsEngine::get().draw_circle({m_bbox.pos.x + RADIUS, m_bbox.pos.y + RADIUS}, RADIUS, true, m_col);
 }
 
 bool Ball::check_horizontal_bound()
 {
 	int w = -1;
-	SDL_GetWindowSize(Painter::get().get_window(), &w, nullptr);
+	SDL_GetWindowSize(GraphicsEngine::get().get_window(), &w, nullptr);
 
 	return m_bbox.pos.x < 0.f || m_bbox.pos.x + m_bbox.size.x > static_cast<float>(w);
 }
@@ -64,7 +64,7 @@ bool Ball::check_horizontal_bound()
 bool Ball::check_vertical_bound()
 {
 	int h = -1;
-	SDL_GetWindowSize(Painter::get().get_window(), nullptr, &h);
+	SDL_GetWindowSize(GraphicsEngine::get().get_window(), nullptr, &h);
 
 	return m_bbox.pos.y < 0.f || m_bbox.pos.y + m_bbox.size.y > static_cast<float>(h);
 }

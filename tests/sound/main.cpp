@@ -2,7 +2,7 @@
 #include <program.hpp>
 
 #include <assetmanager.hpp>
-#include <soundengine.hpp>
+#include <audioengine.hpp>
 
 class Test : public Program {
 public:
@@ -32,12 +32,12 @@ public:
 	}
 
 	void update() override {
-		COG2D_USE_SOUNDENGINE;
+		COG2D_USE_AUDIOENGINE;
 
 		if(m_keyboard->held(0) && debounce == false)
 		{
 			debounce = true;
-			soundengine.play_music(music);
+			audioengine.play_music(music);
 		}
 		else if(!m_keyboard->held(0))
 		{

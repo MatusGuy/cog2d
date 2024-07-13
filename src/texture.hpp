@@ -1,21 +1,33 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
+#include <functional>
 #include <SDL2/SDL.h>
 
 #include "types.hpp"
 
 class Texture {
 public:
-    Texture(SDL_Texture* tex);
-    ~Texture();
+	using Recipe = std::function<SDL_Texture*(void)>;
 
-    inline SDL_Texture* get_sdl_texture() { return m_texture; }
-	inline const Vector& get_size() { return m_size; }
-
-private:
-    SDL_Texture* m_texture;
+public:
+	SDL_Texture* m_texture;
+	bool m_valid;
+	Recipe m_recipe;
 	Vector m_size;
+
+public:
+	Texture(Recipe recipe);
+	Texture(SDL_Texture* tex, Recipe recipe);
+	Texture(SDL_Texture* tex);
+	~Texture();
+
+	bool try_recreate();
+
+	inline SDL_Texture* get_sdl_texture() { return m_texture; }
+
+	inline Vector get_size() { return m_size; }
+	Vector query_size();
 };
 
 #endif // TEXTURE_H

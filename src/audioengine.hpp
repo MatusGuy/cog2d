@@ -1,5 +1,5 @@
-#ifndef SOUNDENGINE_H
-#define SOUNDENGINE_H
+#ifndef AUDIOENGINE_H
+#define AUDIOENGINE_H
 
 #include <string>
 
@@ -7,11 +7,11 @@
 
 #include "types.hpp"
 
-#define COG2D_USE_SOUNDENGINE COG2D_USING(SoundEngine, soundengine)
-class SoundEngine : public Singleton<SoundEngine>
+#define COG2D_USE_AUDIOENGINE COG2D_USING(AudioEngine, audioengine)
+class AudioEngine : public Singleton<AudioEngine>
 {
 public:
-	SoundEngine();
+	AudioEngine();
 
 	void init();
 	void deinit();
@@ -25,4 +25,4 @@ private:
 	std::string m_error;
 };
 
-#endif // SOUNDENGINE_H
+#endif // AUDIOENGINE_H
