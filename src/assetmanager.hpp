@@ -15,7 +15,9 @@ public:
 	AssetManager();
 	~AssetManager();
 
-	Texture* load_image(const std::string& path);
+	void add_texture(Texture* tex);
+	Texture* add_image(const std::string& path);
+
 	Mix_Chunk* load_sfx(const std::string& path);
 	Mix_Music* load_music(const std::string& path);
 
@@ -24,7 +26,7 @@ public:
 private:
 	static SDL_Texture* image_recipe(const std::string& path);
 
-	std::map<std::string, Texture*> m_textures;
+	std::vector<Texture*> m_textures;
 	std::map<std::string, Mix_Chunk*> m_sfx;
 	std::map<std::string, Mix_Music*> m_music;
 };

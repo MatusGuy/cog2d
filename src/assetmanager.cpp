@@ -19,15 +19,15 @@ AssetManager::~AssetManager()
 	wipe_assets();
 }
 
-Texture* AssetManager::load_image(const std::string& path)
+void AssetManager::add_texture(Texture* tex)
 {
-	if (m_textures.count(path) > 0)
-		return m_textures[path];
+	m_textures.push_back(tex);
+}
 
+Texture* AssetManager::add_image(const std::string& path)
+{
 	Texture* asset = new Texture(std::bind(&AssetManager::image_recipe, path));
-
-	m_textures[path] = asset;
-
+	add_texture(asset);
 	return asset;
 }
 
@@ -117,7 +117,7 @@ void AssetManager::wipe_assets()
 		asset = nullptr;
 	}
 
-	for (auto& [key, asset] : m_textures)
+	for (auto asset : m_textures)
 	{
 		delete asset;
 		asset = nullptr;
