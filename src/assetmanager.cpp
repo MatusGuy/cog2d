@@ -21,6 +21,9 @@ AssetManager::~AssetManager()
 
 void AssetManager::add_texture(Texture* tex)
 {
+	if (!tex)
+		return;
+
 	m_textures.push_back(tex);
 }
 
@@ -79,17 +82,18 @@ Mix_Music* AssetManager::load_music(const std::string& path)
 	return asset;
 }
 
-TTF_Font* AssetManager::load_font(const std::string& path, int ptsz)
+Font* AssetManager::load_font(const std::string& path, int ptsz)
 {
-	if (m_music.count(path) > 0)
-		return m_music[path];
+	if (m_fonts.count(path) > 0)
+		return m_fonts[path];
 
 	std::string realpath = path;
 #ifdef COG2D_ASSET_PATH
 	realpath.insert(0, COG2D_ASSET_PATH "/");
 #endif
 
-	Mix_Music* asset = TTF_OpenFont(realpath.c_str(), );
+	TTF_Font* font = TTF_OpenFont(realpath.c_str(), ptsz);
+	Font* asset = new Font(font);
 
 	if (asset == nullptr) {
 		std::stringstream errstream;
@@ -98,7 +102,7 @@ TTF_Font* AssetManager::load_font(const std::string& path, int ptsz)
 		return nullptr;
 	}
 
-	m_music[path] = asset;
+	m_fonts[path] = asset;
 
 	return asset;
 }
@@ -114,6 +118,12 @@ void AssetManager::wipe_assets()
 	for (auto& [key, asset] : m_sfx)
 	{
 		Mix_FreeChunk(asset);
+		asset = nullptr;
+	}
+
+	for (auto& [key, asset] : m_fonts)
+	{
+		delete asset;
 		asset = nullptr;
 	}
 

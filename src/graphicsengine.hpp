@@ -12,10 +12,14 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
-class Texture;
-
 #define COG2D_USE_GRAPHICSENGINE COG2D_USING(GraphicsEngine, graphicsengine)
 class GraphicsEngine : public Singleton<GraphicsEngine> {
+private:
+	SDL_Window* m_window = nullptr;
+	SDL_Renderer* m_renderer = nullptr;
+
+	std::string m_error = "";
+
 public:
     void init();
     void deinit();
@@ -29,7 +33,8 @@ public:
 	void draw_texture(Rect dest, Texture* tex);
 	void draw_texture(Rect dest, Texture* tex, float angle, Vector center = {0,0});
 
-	void draw_text(Font* font, Vector pos, const std::string& text, Color color = 0xFFFFFFFF);
+	// TODO: Move this to another class?
+	Texture* create_text(Font* font, const std::string& text, Color color = 0xFFFFFFFF);
 
 	inline SDL_Window* get_window() { return m_window; }
 	inline SDL_Renderer* get_renderer() { return m_renderer; }
@@ -39,10 +44,7 @@ public:
     inline const std::string& get_error() { return m_error; }
 
 private:
-	SDL_Window* m_window = nullptr;
-	SDL_Renderer* m_renderer = nullptr;
-
-    std::string m_error = "";
+	SDL_Texture* text_recipe(Font* font, const std::string& text, Color color);
 };
 
 #endif // GRAPHICSENGINE_H

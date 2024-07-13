@@ -89,6 +89,7 @@ void Program::quit()
 
 	graphicsengine.deinit();
 
+	TTF_Quit();
 	SDL_Quit();
 }
 
@@ -98,6 +99,13 @@ void Program::init_sdl() {
 		std::stringstream stream;
 		stream << SDL_GetError() << " (" << errcode << ")";
 		COG2D_CRASH("SDL", stream.str());
+	}
+
+	errcode = TTF_Init();
+	if (errcode != 0) {
+		std::stringstream stream;
+		stream << SDL_GetError() << " (" << errcode << ")";
+		COG2D_CRASH("SDL_ttf", stream.str());
 	}
 }
 

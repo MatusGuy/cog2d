@@ -1,7 +1,5 @@
 #include "graphicsengine.hpp"
 
-#include "assetmanager.hpp"
-
 void GraphicsEngine::init() {
     m_window = SDL_CreateWindow(TITLE,
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -139,22 +137,16 @@ void GraphicsEngine::draw_texture(Rect dest, Texture* tex, float angle, Vector c
 	SDL_RenderCopyExF(m_renderer, tex->get_sdl_texture(), NULL, &dest2, (double) angle, &fpoint, SDL_FLIP_NONE);
 }
 
-Texture* GraphicsEngine::create_text(Font* font, const std::string& text, Color color) {
-	Texture* tex = new Texture(std::bind(&GraphicsEngine::text_recipe, this, font, text, color));
-	AssetManager::get().add_texture(tex);
-	return tex;
+<<<<<<< HEAD:src/painter.cpp
+void Painter::draw_text(Font* font, Vector pos, const std::string& text, Color color) {
+	SDL_Surface* TTF_RenderUTF8_Solid(font->get_font(), text.c_str(), color);
 }
 
+Color Painter::get_current_color() {
+=======
 Color GraphicsEngine::get_current_color() {
+>>>>>>> master:src/graphicsengine.cpp
     Color resp;
     SDL_GetRenderDrawColor(m_renderer, &resp.r, &resp.g, &resp.b, &resp.a);
     return resp;
-}
-
-SDL_Texture* GraphicsEngine::text_recipe(Font* font, const std::string& text, Color color)
-{
-	SDL_Surface* sur = TTF_RenderUTF8_Solid(font->get_font(), text.c_str(), color);
-	SDL_Texture* tex = SDL_CreateTextureFromSurface(m_renderer, sur);
-	SDL_FreeSurface(sur);
-	return tex;
 }
