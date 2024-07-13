@@ -18,7 +18,13 @@ void Logger::log(Level lv, const std::string &lvname, const std::string &cat, co
 
 void Logger::log(Level lv, const std::string &lvname, const std::string &msg)
 {
-	std::cout << "[" << get_color_code(lv) << lvname << "\033[0m] " << msg << std::endl;
+	std::ostream* stream = nullptr;
+	if (lv == ERROR)
+		stream = &std::cerr;
+	else
+		stream = &std::cout;
+
+	*stream << "[" << get_color_code(lv) << lvname << "\033[0m] " << msg << std::endl;
 }
 
 std::string Logger::get_color_code(Level lv)
