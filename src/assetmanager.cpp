@@ -24,9 +24,7 @@ Texture* AssetManager::load_image(const std::string& path)
 	if (m_textures.count(path) > 0)
 		return m_textures[path];
 
-	Texture* asset = new Texture([this, path]() -> SDL_Texture* {
-									return AssetManager::image_recipe(path);
-								});
+	Texture* asset = new Texture(std::bind(&AssetManager::image_recipe, path));
 
 	m_textures[path] = asset;
 
