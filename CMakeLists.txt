@@ -72,7 +72,9 @@ endif()
 include(FetchContent)
 
 # The heck does this warning even mean?? Leave me alone!
-cmake_policy(SET CMP0135 OLD)
+if(CMAKE_VERSION VERSION_GREATER "3.24.0")
+	cmake_policy(SET CMP0135 OLD)
+endif()
 
 FetchContent_Declare(
 	json
