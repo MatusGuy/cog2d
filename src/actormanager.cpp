@@ -1,5 +1,7 @@
 #include "actormanager.hpp"
 
+#include "logger.hpp"
+
 ActorManager::ActorManager():
 	m_actors()
 {
@@ -16,7 +18,7 @@ void ActorManager::update()
 	for (int i = 0; i < m_actors.size(); i++) {
 		Actor* actor = m_actors[i];
 		if (!actor->is_active())
-			return;
+			continue;
 
 		actor->update();
 	}

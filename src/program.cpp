@@ -57,6 +57,9 @@ int Program::run(int argc, char* argv[])
 		draw();
 
 		for (Actor* actor : actormanager.get_actors()) {
+			if (!actor->is_active())
+				continue;
+
 			actor->draw();
 		}
 
