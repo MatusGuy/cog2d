@@ -24,12 +24,12 @@ int Program::run(int argc, char* argv[])
 
 	graphicsengine.init();
 	if (!graphicsengine.get_error().empty()) {
-		COG2D_CRASH("SDL", graphicsengine.get_error());
+		COG2D_LOG_FATAL("SDL", graphicsengine.get_error());
 	}
 
 	audioengine.init();
 	if (!audioengine.get_error().empty()) {
-		COG2D_CRASH("SDL", audioengine.get_error());
+		COG2D_LOG_FATAL("SDL", audioengine.get_error());
 	}
 
 	if (register_actions()) {
@@ -51,9 +51,7 @@ int Program::run(int argc, char* argv[])
 		update();
 
 		if (!m_paused) {
-			for (Actor* actor : actormanager.get_actors()) {
-				actor->update();
-			}
+			actormanager.update();
 		}
 
 		draw();
@@ -98,14 +96,14 @@ void Program::init_sdl() {
 	if (errcode != 0) {
 		std::stringstream stream;
 		stream << SDL_GetError() << " (" << errcode << ")";
-		COG2D_CRASH("SDL", stream.str());
+		COG2D_LOG_FATAL("SDL", stream.str());
 	}
 
 	errcode = TTF_Init();
 	if (errcode != 0) {
 		std::stringstream stream;
 		stream << SDL_GetError() << " (" << errcode << ")";
-		COG2D_CRASH("SDL_ttf", stream.str());
+		COG2D_LOG_FATAL("SDL_ttf", stream.str());
 	}
 }
 

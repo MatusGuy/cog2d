@@ -2,7 +2,8 @@
 #define ASSETMANAGER_H
 
 #include <string>
-#include <map>
+#include <unordered_map>
+#include <list>
 
 #include "texture.hpp"
 
@@ -18,9 +19,10 @@ public:
 	AssetManager();
 	~AssetManager();
 
-	void add_texture(Texture* tex);
-	Texture* add_image(const std::string& path);
+	void add_texture(Texture* texture);
+	void destroy_texture(Texture* texture);
 
+	Texture* load_image(const std::string& path);
 	Mix_Chunk* load_sfx(const std::string& path);
 	Mix_Music* load_music(const std::string& path);
 	Font* load_font(const std::string& path, int ptsz);
@@ -28,14 +30,13 @@ public:
 	void wipe_assets();
 
 private:
-	static SDL_Texture* image_recipe(const std::string& path);
-
-	std::vector<Texture*> m_textures;
+	std::list<Texture*> m_textures;
+	std::unordered_map<std::string, Texture*> m_images;
 
 	// TODO: Seperate these somehow
-	std::map<std::string, Mix_Chunk*> m_sfx;
-	std::map<std::string, Mix_Music*> m_music;
-	std::map<std::string, Font*> m_fonts;
+	std::unordered_map<std::string, Mix_Chunk*> m_sfx;
+	std::unordered_map<std::string, Mix_Music*> m_music;
+	std::unordered_map<std::string, Font*> m_fonts;
 };
 
 #endif // ASSETMANAGER_H

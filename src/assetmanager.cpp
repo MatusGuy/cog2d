@@ -9,7 +9,10 @@
 #include "logger.hpp"
 
 AssetManager::AssetManager():
-	m_textures()
+	m_textures(),
+	m_fonts(),
+	m_music(),
+	m_sfx()
 {
 
 }
@@ -19,18 +22,46 @@ AssetManager::~AssetManager()
 	wipe_assets();
 }
 
-void AssetManager::add_texture(Texture* tex)
+void AssetManager::add_texture(Texture* texture)
 {
-	if (!tex)
-		return;
-
-	m_textures.push_back(tex);
+	m_textures.push_back(texture);
 }
 
-Texture* AssetManager::add_image(const std::string& path)
+void AssetManager::destroy_texture(Texture* texture)
 {
-	Texture* asset = new Texture(std::bind(&AssetManager::image_recipe, path));
+	auto texi = std::find(m_textures.begin(), m_textures.end(), texture);
+	if (texi == m_textures.end()) {
+		return;
+	}
+
+	m_textures.erase(texi);
+
+	delete texture;
+}
+
+Texture* AssetManager::load_image(const std::string& path)
+{
+	if (m_images.count(path) > 0)
+		return m_images[path];
+
+	std::string realpath = path;
+#ifdef COG2D_ASSET_PATH
+	realpath.insert(0, COG2D_ASSET_PATH "/");
+#endif
+
+	SDL_Renderer* renderer = GraphicsEngine::get().get_renderer();
+	SDL_Texture* tex = IMG_LoadTexture(renderer, realpath.c_str());
+
+	if (tex == nullptr) {
+		std::stringstream errstream;
+		errstream << "Couldn't load image: " << SDL_GetError();
+		COG2D_LOG_ERROR("SDL", errstream.str());
+		return nullptr;
+	}
+
+	Texture* asset = new Texture(tex);
 	add_texture(asset);
+	m_images[path] = asset;
 	return asset;
 }
 
@@ -127,29 +158,9 @@ void AssetManager::wipe_assets()
 		asset = nullptr;
 	}
 
-	for (auto asset : m_textures)
+	for (auto& asset : m_textures)
 	{
 		delete asset;
 		asset = nullptr;
 	}
-}
-
-SDL_Texture* AssetManager::image_recipe(const std::string& path)
-{
-	std::string realpath = path;
-#ifdef COG2D_ASSET_PATH
-	realpath.insert(0, COG2D_ASSET_PATH "/");
-#endif
-
-	SDL_Renderer* renderer = GraphicsEngine::get().get_renderer();
-	SDL_Texture* tex = IMG_LoadTexture(renderer, realpath.c_str());
-
-	if (tex == nullptr) {
-		std::stringstream errstream;
-		errstream << "Couldn't load image: " << SDL_GetError();
-		COG2D_LOG_ERROR("SDL", errstream.str());
-		return nullptr;
-	}
-
-	return tex;
 }

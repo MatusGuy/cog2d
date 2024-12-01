@@ -21,15 +21,15 @@ private:
 	std::string m_error = "";
 
 public:
-    void init();
-    void deinit();
+	void init();
+	void deinit();
 
-    void update();
+	void update();
 
 	void draw_rect(Rect rect, bool filled = false, Color color = 0xFFFFFFFF);
-    void draw_circle(Vector center, float radius, bool filled = false, Color color = 0xFFFFFFFF);
-    void draw_line(Vector a, Vector b, Color color = 0xFFFFFFFF);
-    void draw_point(Vector point, Color color = 0xFFFFFFFF);
+	void draw_circle(Vector center, float radius, bool filled = false, Color color = 0xFFFFFFFF);
+	void draw_line(Vector a, Vector b, Color color = 0xFFFFFFFF);
+	void draw_point(Vector point, Color color = 0xFFFFFFFF);
 	void draw_texture(Rect dest, Texture* tex);
 	void draw_texture(Rect dest, Texture* tex, float angle, Vector center = {0,0});
 
@@ -39,12 +39,9 @@ public:
 	inline SDL_Window* get_window() { return m_window; }
 	inline SDL_Renderer* get_renderer() { return m_renderer; }
 
-    Color get_current_color();
+	Color get_current_color();
 
-    inline const std::string& get_error() { return m_error; }
-
-private:
-	SDL_Texture* text_recipe(Font* font, const std::string& text, Color color);
+	inline const std::string& get_error() { return m_error; }
 };
 
 #endif // GRAPHICSENGINE_H

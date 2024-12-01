@@ -1,6 +1,7 @@
 #include "keyboardcontroller.hpp"
 
 #include <iostream>
+#include <logger.hpp>
 
 KeyboardController::KeyboardController():
 	Controller()

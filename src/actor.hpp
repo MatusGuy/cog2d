@@ -36,6 +36,8 @@ public:
 	 */
 	inline Vector& get_vel() { return m_vel; }
 
+	virtual bool is_active() { return true; }
+
 protected:
 	Rect m_bbox;
 	Vector m_vel;

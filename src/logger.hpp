@@ -18,7 +18,7 @@
 #define COG2D_LOG_INFO COG2D_LOG(info)
 #define COG2D_LOG_WARN COG2D_LOG(warn)
 #define COG2D_LOG_ERROR COG2D_LOG(error)
-#define COG2D_CRASH COG2D_LOG(fatal)
+#define COG2D_LOG_FATAL COG2D_LOG(fatal)
 
 #define COG2D_USE_LOGGER COG2D_USING(Logger, logger)
 class Logger : public Singleton<Logger>

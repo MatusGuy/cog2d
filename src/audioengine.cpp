@@ -32,7 +32,6 @@ void AudioEngine::play_sfx(Mix_Chunk* sfx, int loops)
 
 void AudioEngine::play_music(Mix_Music* music, int loops)
 {
-	// TODO: channel support
 	if (Mix_PlayMusic(music, loops) == -1) {
 		m_error = SDL_GetError();
 

@@ -8,18 +8,10 @@
 
 class Texture {
 public:
-	// HACK: What's that? this type wastes 32 bytes? Oh god...
-	using Recipe = std::function<SDL_Texture*(void)>;
-
-public:
 	SDL_Texture* m_texture;
-	bool m_valid;
-	Recipe m_recipe;
 	Vector m_size;
 
 public:
-	Texture(Recipe recipe);
-	Texture(SDL_Texture* tex, Recipe recipe);
 	Texture(SDL_Texture* tex);
 	~Texture();
 

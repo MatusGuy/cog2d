@@ -30,16 +30,20 @@ public:
 	T* create(Args&&... args)
 	{
 		auto actor = new T(std::forward<Args>(args)...);
-		m_actors.push_back(actor);
+		add(actor);
 		return actor;
 	}
+
+	void add(Actor* actor);
 
 	/*!
 	 * \return All actors in the manager.
 	 */
-	inline const std::vector<Actor*>& get_actors() const {
+	inline std::vector<Actor*>& get_actors() {
 		return m_actors;
 	}
+
+	void update();
 
 private:
 	std::vector<Actor*> m_actors;
