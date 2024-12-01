@@ -13,9 +13,10 @@ void ActorManager::add(Actor* actor)
 
 void ActorManager::update()
 {
-	for (Actor* actor : get_actors()) {
+	for (int i = 0; i < m_actors.size(); i++) {
+		Actor* actor = m_actors[i];
 		if (!actor->is_active())
-			continue;
+			return;
 
 		actor->update();
 	}

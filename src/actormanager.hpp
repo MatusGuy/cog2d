@@ -17,6 +17,9 @@
 class ActorManager : public Singleton<ActorManager>
 {
 public:
+	using Actors = std::vector<Actor*>;
+
+public:
 	ActorManager();
 
 	/*!
@@ -39,14 +42,14 @@ public:
 	/*!
 	 * \return All actors in the manager.
 	 */
-	inline std::vector<Actor*>& get_actors() {
+	inline Actors& get_actors() {
 		return m_actors;
 	}
 
 	void update();
 
 private:
-	std::vector<Actor*> m_actors;
+	Actors m_actors;
 };
 
 #endif // ACTORMANAGER_HPP
