@@ -23,7 +23,13 @@ enum System : std::uint8_t {
 
 struct ProgramSettings {
 	std::string_view title = "cog2d";
-	int width = 800, height = 600;
+
+	int lwidth = 800, lheight = 600;
+	int wwidth = lwidth, wheight = lheight;
+	inline void set_size(int w, int h) {
+		lwidth = w; lheight = h;
+		wwidth = w; wheight = h;
+	}
 
 	std::string org_name;
 	std::string app_name;

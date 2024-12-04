@@ -8,9 +8,7 @@
 #include "texture.hpp"
 #include "font.hpp"
 
-#define TITLE "cog2d"
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
+struct ProgramSettings;
 
 #define COG2D_USE_GRAPHICSENGINE COG2D_USING(GraphicsEngine, graphicsengine)
 class GraphicsEngine : public Singleton<GraphicsEngine> {
@@ -20,8 +18,10 @@ private:
 
 	std::string m_error = "";
 
+	Vector_t<int> m_logical_size;
+
 public:
-	void init(const std::string_view& title, int width, int height);
+	void init(ProgramSettings* settings);
 	void deinit();
 
 	void update();
@@ -42,6 +42,7 @@ public:
 	Color get_current_color();
 
 	inline const std::string& get_error() { return m_error; }
+	inline const Vector_t<int>& get_logical_size() { return m_logical_size; }
 };
 
 #endif // GRAPHICSENGINE_H

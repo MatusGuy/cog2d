@@ -1,11 +1,11 @@
 #include "graphicsengine.hpp"
 
-#include "assetmanager.hpp"
+#include "program.hpp"
 
-void GraphicsEngine::init(const std::string_view& title, int width, int height) {
-	m_window = SDL_CreateWindow(title.data(),
+void GraphicsEngine::init(ProgramSettings* settings) {
+	m_window = SDL_CreateWindow(settings->title.data(),
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		width, height,
+		settings->wwidth, settings->wheight,
 		SDL_WINDOW_RESIZABLE
 	);
 	if (!m_window) { m_error = SDL_GetError(); return; }
@@ -22,6 +22,14 @@ void GraphicsEngine::init(const std::string_view& title, int width, int height) 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 	SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 	SDL_SetHint(SDL_HINT_RENDER_BATCHING, "1");
+
+	SDL_Rect viewport = {0, 0, settings->lwidth, settings->lheight};
+	SDL_RenderSetViewport(m_renderer, &viewport);
+	SDL_RenderSetLogicalSize(m_renderer, settings->lwidth, settings->lheight);
+	SDL_SetWindowMinimumSize(m_window, settings->lwidth, settings->lheight);
+
+	m_logical_size.x = settings->lwidth;
+	m_logical_size.y = settings->lheight;
 }
 
 void GraphicsEngine::deinit() {
@@ -53,8 +61,8 @@ void GraphicsEngine::draw_rect(Rect rect, bool filled, Color color) {
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 
 #ifdef COG2D_GRAPHICS_USE_INT
-	if (filled) SDL_RenderFillRect(m_renderer, &frect);
-	else SDL_RenderDrawRect(m_renderer, &frect);
+	if (filled) SDL_RenderFillRect(m_renderer, &rect);
+	else SDL_RenderDrawRect(m_renderer, &rect);
 #else
 	if (filled) SDL_RenderFillRectF(m_renderer, &frect);
 	else SDL_RenderDrawRectF(m_renderer, &frect);
