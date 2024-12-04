@@ -1,6 +1,8 @@
 #ifndef PROGRAM_HPP
 #define PROGRAM_HPP
 
+#include "types.hpp"
+
 #include "graphicsengine.hpp"
 #include "inputmanager.hpp"
 #include "assetmanager.hpp"
