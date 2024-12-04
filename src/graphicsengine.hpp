@@ -21,7 +21,7 @@ private:
 	std::string m_error = "";
 
 public:
-	void init();
+	void init(const std::string_view& title, int width, int height);
 	void deinit();
 
 	void update();

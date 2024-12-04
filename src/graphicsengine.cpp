@@ -2,10 +2,10 @@
 
 #include "assetmanager.hpp"
 
-void GraphicsEngine::init() {
-	m_window = SDL_CreateWindow(TITLE,
+void GraphicsEngine::init(const std::string_view& title, int width, int height) {
+	m_window = SDL_CreateWindow(title.data(),
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		SCREEN_WIDTH, SCREEN_HEIGHT,
+		width, height,
 		SDL_WINDOW_RESIZABLE
 	);
 	if (!m_window) { m_error = SDL_GetError(); return; }
@@ -43,11 +43,23 @@ void GraphicsEngine::update() {
 
 void GraphicsEngine::draw_rect(Rect rect, bool filled, Color color) {
 	// TODO: Push/pop color
-	SDL_FRect frect = rect.to_sdl();
+#ifdef COG2D_GRAPHICS_USE_INT
+	SDL_Rect rect = rect.to_sdl_rect();
+#else
+	SDL_FRect frect = rect.to_sdl_frect();
+#endif
+
 	Color currcolor = get_current_color();
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+
+#ifdef COG2D_GRAPHICS_USE_INT
+	if (filled) SDL_RenderFillRect(m_renderer, &frect);
+	else SDL_RenderDrawRect(m_renderer, &frect);
+#else
 	if (filled) SDL_RenderFillRectF(m_renderer, &frect);
 	else SDL_RenderDrawRectF(m_renderer, &frect);
+#endif
+
 	SDL_SetRenderDrawColor(m_renderer, currcolor.r, currcolor.g, currcolor.b, currcolor.a);
 }
 
@@ -61,7 +73,11 @@ void GraphicsEngine::draw_circle(Vector center, float radius, bool filled, Color
 				float dx = radius - (float) w; // horizontal offset
 				float dy = radius - (float) h; // vertical offset
 				if ((dx*dx + dy*dy) <= (radius * radius)) {
+#ifdef COG2D_GRAPHICS_USE_INT
+					SDL_RenderDrawPoint(m_renderer, static_cast<int>(center.x + dx), static_cast<int>(center.y + dy));
+#else
 					SDL_RenderDrawPointF(m_renderer, center.x + dx, center.y + dy);
+#endif
 				}
 			}
 		}
@@ -105,14 +121,22 @@ void GraphicsEngine::draw_circle(Vector center, float radius, bool filled, Color
 void GraphicsEngine::draw_line(Vector a, Vector b, Color color) {
 	Color currcolor = get_current_color();
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+#ifdef COG2D_GRAPHICS_USE_INT
+	SDL_RenderDrawLine(m_renderer, static_cast<int>(a.x), static_cast<int>(a.y), static_cast<int>(b.x), static_cast<int>(b.y));
+#else
 	SDL_RenderDrawLineF(m_renderer, a.x, a.y, b.x, b.y);
+#endif
 	SDL_SetRenderDrawColor(m_renderer, currcolor.r, currcolor.g, currcolor.b, currcolor.a);
 }
 
 void GraphicsEngine::draw_point(Vector point, Color color) {
 	Color currcolor = get_current_color();
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+#ifdef COG2D_GRAPHICS_USE_INT
+	SDL_RenderDrawLine(m_renderer, static_cast<int>(point.x), static_cast<int>(point.y));
+#else
 	SDL_RenderDrawPointF(m_renderer, point.x, point.y);
+#endif
 	SDL_SetRenderDrawColor(m_renderer, currcolor.r, currcolor.g, currcolor.b, currcolor.a);
 }
 
@@ -121,14 +145,26 @@ void GraphicsEngine::draw_texture(Rect dest, Texture* tex) {
 		dest.size = tex->m_size;
 	}
 
-	SDL_FRect dest2 = dest.to_sdl();
+#ifdef COG2D_GRAPHICS_USE_INT
+	SDL_Rect dest2 = dest.to_sdl_rect();
 	SDL_RenderCopyF(m_renderer, tex->get_sdl_texture(), NULL, &dest2);
+#else
+	SDL_FRect dest2 = dest.to_sdl_frect();
+	SDL_RenderCopyF(m_renderer, tex->get_sdl_texture(), NULL, &dest2);
+#endif
 }
 
 void GraphicsEngine::draw_texture(Rect dest, Texture* tex, float angle, Vector center) {
+#ifdef COG2D_GRAPHICS_USE_INT
+	SDL_Rect dest2 = {static_cast<int>(dest.pos.x-(dest.size.x/2)), static_cast<int>(dest.pos.y-(dest.size.y/2)),
+					  static_cast<int>(dest.size.x), static_cast<int>(dest.size.y)};
+	SDL_Point fpoint = dest.pos.to_sdl_point();
+	SDL_RenderCopyEx(m_renderer, tex->get_sdl_texture(), NULL, &dest2, (double) angle, &fpoint, SDL_FLIP_NONE);
+#else
 	SDL_FRect dest2 = {dest.pos.x-(dest.size.x/2), dest.pos.y-(dest.size.y/2), dest.size.x, dest.size.y};
-	SDL_FPoint fpoint = dest.pos.to_sdl();
+	SDL_FPoint fpoint = dest.pos.to_sdl_fpoint();
 	SDL_RenderCopyExF(m_renderer, tex->get_sdl_texture(), NULL, &dest2, (double) angle, &fpoint, SDL_FLIP_NONE);
+#endif
 }
 
 Texture* GraphicsEngine::create_text(Font* font, const std::string& text, Color color) {

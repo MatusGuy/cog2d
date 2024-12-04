@@ -22,7 +22,7 @@ int Program::run(int argc, char* argv[])
 	COG2D_USE_ACTORMANAGER;
 	COG2D_USE_AUDIOENGINE;
 
-	graphicsengine.init();
+	graphicsengine.init(m_settings->title, m_settings->width, m_settings->height);
 	if (!graphicsengine.get_error().empty()) {
 		COG2D_LOG_FATAL("SDL", graphicsengine.get_error());
 	}

@@ -22,8 +22,12 @@ enum System : std::uint8_t {
 };
 
 struct ProgramSettings {
+	std::string_view title = "cog2d";
+	int width = 800, height = 600;
+
 	std::string org_name;
 	std::string app_name;
+
 	std::uint8_t systems = System::SYSTEM_EVERYTHING;
 };
 
