@@ -3,12 +3,16 @@
 
 #include <string>
 #include <cmath>
+#include <memory>
 #include <SDL2/SDL.h>
 
 #include "texture.hpp"
 #include "font.hpp"
 
 struct ProgramSettings;
+
+using SDLSurfacePtr = std::unique_ptr<SDL_Surface, decltype(&SDL_FreeSurface)>;
+#define COG2D_UNIQUE_SDLSURFACE(name, surface) SDLSurfacePtr name(surface, SDL_FreeSurface)
 
 #define COG2D_USE_GRAPHICSENGINE COG2D_USING(GraphicsEngine, graphicsengine)
 class GraphicsEngine : public Singleton<GraphicsEngine> {

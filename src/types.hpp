@@ -9,8 +9,8 @@
 		typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type \
 	>
 
-#if __has_include("SDL2/SDL.h")
-#include "SDL2/SDL.h"
+#if __has_include(<SDL2/SDL.h>)
+#include <SDL2/SDL.h>
 #else
 struct SDL_Color { uint8_t r, g, b, a; };
 struct SDL_Point { int x, y; };
@@ -29,7 +29,7 @@ public:
 		*(uint32_t*) this = rgba;
 	}
 
-	inline bool operator==(Color other) {
+	inline bool operator==(const Color& other) {
 		// TODO: Big endian
 		return r == other.r &&
 			   g == other.g &&

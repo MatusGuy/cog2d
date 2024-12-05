@@ -1,8 +1,8 @@
 #include "bitmapfont.hpp"
 
-#include "graphicsengine.hpp"
 #include "assetmanager.hpp"
 #include "logger.hpp"
+#include "types.hpp"
 
 static constexpr std::string_view s_chars = " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
@@ -20,7 +20,7 @@ void BitmapFont::load()
 	COG2D_USE_ASSETMANAGER;
 	COG2D_USE_GRAPHICSENGINE;
 
-	SDL_Surface* surface = IMG_Load(m_path.string().data()); // TODO: RAII
+	COG2D_UNIQUE_SDLSURFACE(surface, IMG_Load(m_path.string().data()));
 
 	if (!surface) {
 		COG2D_LOG_ERROR("BitmapFont", std::format("Couldn't open '{}'.", m_path.string()));
@@ -74,12 +74,10 @@ void BitmapFont::load()
 		m_glyphs[c] = g;
 	}
 
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(graphicsengine.get_renderer(), surface);
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(graphicsengine.get_renderer(), surface.get());
 	m_texture = new Texture(texture);
 	assetmanager.add_texture(m_texture);
 	assetmanager.m_images[m_path.string()] = m_texture;
-
-	SDL_FreeSurface(surface);
 }
 
 void BitmapFont::write_text(Texture* texture, std::string_view text, const Vector& pos)
@@ -120,7 +118,7 @@ Texture* BitmapFont::create_text(std::string_view text)
 	return texture;
 }
 
-Color BitmapFont::get_pixel(SDL_Surface *surface, Vector_t<int> pos)
+Color BitmapFont::get_pixel(SDLSurfacePtr& surface, Vector_t<int> pos)
 {
 	uint8_t bpp = surface->format->BytesPerPixel;
 	/* Here p is the address to the pixel we want to retrieve */

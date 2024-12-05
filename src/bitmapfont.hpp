@@ -3,8 +3,9 @@
 
 #include <filesystem>
 
-#include <types.hpp>
-#include <texture.hpp>
+#include "graphicsengine.hpp"
+#include "types.hpp"
+#include "texture.hpp"
 
 class BitmapFont
 {
@@ -35,7 +36,7 @@ private:
 	int m_horizontal_spacing;
 
 private:
-	static Color get_pixel(SDL_Surface* surface, Vector_t<int> pos);
+	static Color get_pixel(SDLSurfacePtr& surface, Vector_t<int> pos);
 };
 
 #endif // BITMAPFONT_HPP
