@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-#include <SDL2/SDL_image.h>
-
 #include "graphicsengine.hpp"
 #include "texture.hpp"
 #include "logger.hpp"

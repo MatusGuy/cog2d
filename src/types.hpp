@@ -28,6 +28,14 @@ public:
 		// wow
 		*(uint32_t*) this = rgba;
 	}
+
+	inline bool operator==(Color other) {
+		// TODO: Big endian
+		return r == other.r &&
+			   g == other.g &&
+			   b == other.b &&
+			   a == other.a;
+	}
 };
 
 #define COG2D_USING(c, n) c& n = c::get()

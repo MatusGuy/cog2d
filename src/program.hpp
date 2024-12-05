@@ -24,12 +24,22 @@ enum System : std::uint8_t {
 struct ProgramSettings {
 	std::string_view title = "cog2d";
 
+	// TODO: Maybe move these graphics related settings to a struct?
 	int lwidth = 800, lheight = 600;
 	int wwidth = lwidth, wheight = lheight;
 	inline void set_size(int w, int h) {
 		lwidth = w; lheight = h;
 		wwidth = w; wheight = h;
 	}
+
+	uint32_t window_flags = SDL_WINDOW_RESIZABLE;
+	uint32_t render_flags = SDL_RENDERER_ACCELERATED |
+							SDL_RENDERER_PRESENTVSYNC |
+							SDL_RENDERER_TARGETTEXTURE;
+	SDL_BlendMode blend_mode = SDL_BLENDMODE_BLEND;
+	std::string_view scale_quality = "best";
+	bool vsync = true;
+	bool batching = true;
 
 	std::string org_name;
 	std::string app_name;

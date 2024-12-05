@@ -12,7 +12,7 @@ public:
 	Vector m_size;
 
 public:
-	Texture(SDL_Texture* tex);
+	explicit Texture(SDL_Texture* tex);
 	~Texture();
 
 	bool try_recreate();

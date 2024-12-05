@@ -6,22 +6,18 @@ void GraphicsEngine::init(ProgramSettings* settings) {
 	m_window = SDL_CreateWindow(settings->title.data(),
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		settings->wwidth, settings->wheight,
-		SDL_WINDOW_RESIZABLE
+		settings->window_flags
 	);
 	if (!m_window) { m_error = SDL_GetError(); return; }
 
-	m_renderer = SDL_CreateRenderer(m_window, -1,
-		SDL_RENDERER_ACCELERATED |
-		SDL_RENDERER_PRESENTVSYNC |
-		SDL_RENDERER_TARGETTEXTURE
-	);
+	m_renderer = SDL_CreateRenderer(m_window, -1, settings->render_flags);
 	if (!m_renderer) { m_error = SDL_GetError(); return; }
 
-	SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderDrawBlendMode(m_renderer, settings->blend_mode);
 
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-	SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
-	SDL_SetHint(SDL_HINT_RENDER_BATCHING, "1");
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, settings->scale_quality.data());
+	SDL_SetHint(SDL_HINT_RENDER_VSYNC, settings->vsync ? "1" : "0");
+	SDL_SetHint(SDL_HINT_RENDER_BATCHING, settings->batching ? "1" : "0");
 
 	SDL_Rect viewport = {0, 0, settings->lwidth, settings->lheight};
 	SDL_RenderSetViewport(m_renderer, &viewport);
