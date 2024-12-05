@@ -7,7 +7,7 @@
  * \brief A moving object on a scene
  *
  * It can be used to represent a player, an enemy, or
- * just a normal object in your game.
+ * just a normal object in the game.
  */
 class Actor
 {
