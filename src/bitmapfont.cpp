@@ -80,6 +80,20 @@ void BitmapFont::load()
 	assetmanager.m_images[m_path.string()] = m_texture;
 }
 
+int BitmapFont::get_text_width(std::string_view text)
+{
+	int w = 0;
+	for (char c : text) {
+		Glyph g = m_glyphs[c];
+		w += g.width + m_horizontal_spacing;
+	}
+
+	// This removes the horizontal spacing for the last character
+	w -= m_horizontal_spacing;
+
+	return w;
+}
+
 void BitmapFont::write_text(Texture* texture, std::string_view text, const Vector& pos)
 {
 	COG2D_USE_GRAPHICSENGINE;
@@ -109,9 +123,10 @@ Texture* BitmapFont::create_text(std::string_view text)
 	COG2D_USE_ASSETMANAGER;
 	COG2D_USE_GRAPHICSENGINE;
 
-	// TODO: variable width
-	SDL_Texture* stexture = SDL_CreateTexture(graphicsengine.get_renderer(), SDL_PIXELFORMAT_RGBA8888,
-											 SDL_TEXTUREACCESS_TARGET, 500, m_glyph_height);
+	int width = get_text_width(text);
+	SDL_Texture* stexture = SDL_CreateTexture(graphicsengine.get_renderer(),
+											  SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
+											  width, m_glyph_height);
 	auto texture = new Texture(stexture);
 	write_text(texture, text, {0,0});
 	assetmanager.add_texture(texture);
@@ -151,7 +166,7 @@ Color BitmapFont::get_pixel(SDLSurfacePtr& surface, Vector_t<int> pos)
 		return 0;
 	}
 
-	Color rgb;
-	SDL_GetRGBA(data, surface->format, &rgb.r, &rgb.g, &rgb.b, &rgb.a);
-	return rgb;
+	Color rgba;
+	SDL_GetRGBA(data, surface->format, &rgba.r, &rgba.g, &rgba.b, &rgba.a);
+	return rgba;
 }

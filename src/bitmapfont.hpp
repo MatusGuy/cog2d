@@ -14,6 +14,7 @@ public:
 
 	void load();
 
+	int get_text_width(std::string_view text);
 	void write_text(Texture* texture, std::string_view text, const Vector& pos = {0,0});
 	Texture* create_text(std::string_view text);
 
@@ -28,7 +29,7 @@ private:
 	//using Glyph = Rect_t<int>;
 	struct Glyph {
 		Vector_t<int> pos;
-		int width;
+		int width = -1;
 	};
 	int m_glyph_height;
 	std::unordered_map<char, Glyph> m_glyphs;
