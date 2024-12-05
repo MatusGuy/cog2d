@@ -4,7 +4,7 @@
 #include "assetmanager.hpp"
 #include "logger.hpp"
 
-static constexpr std::string_view s_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+static constexpr std::string_view s_chars = " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
 BitmapFont::BitmapFont(std::filesystem::path path):
 	m_path(path),
@@ -90,11 +90,14 @@ void BitmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 	int x = pos.x;
 	for (char c : text) {
 		Glyph g = m_glyphs[c];
-		SDL_Rect src = {g.pos.x, g.pos.y, g.width, m_glyph_height};
-		SDL_Rect dest = {x, static_cast<int>(pos.y), g.width, m_glyph_height};
+		if (c != ' ')
+		{
+			SDL_Rect src = {g.pos.x, g.pos.y, g.width, m_glyph_height};
+			SDL_Rect dest = {x, static_cast<int>(pos.y), g.width, m_glyph_height};
 
-		// TODO: Support RenderCopyF (lazy)
-		SDL_RenderCopy(graphicsengine.get_renderer(), m_texture->get_sdl_texture(), &src, &dest);
+			// TODO: Support RenderCopyF (lazy)
+			SDL_RenderCopy(graphicsengine.get_renderer(), m_texture->get_sdl_texture(), &src, &dest);
+		}
 
 		x += g.width + m_horizontal_spacing;
 	}
