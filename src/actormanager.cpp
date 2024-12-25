@@ -1,5 +1,6 @@
 #include "actormanager.hpp"
 
+#include "collisionsystem.hpp"
 #include "logger.hpp"
 
 ActorManager::ActorManager():
@@ -15,6 +16,8 @@ void ActorManager::add(Actor* actor)
 
 void ActorManager::update()
 {
+	COG2D_USE_COLLISIONSYSTEM;
+
 	for (int i = 0; i < m_actors.size(); i++) {
 		Actor* actor = m_actors[i];
 		if (!actor->is_active())
@@ -22,4 +25,6 @@ void ActorManager::update()
 
 		actor->update();
 	}
+
+	collisionsystem.update();
 }

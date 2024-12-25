@@ -1,7 +1,7 @@
 #ifndef ACTOR_HPP
 #define ACTOR_HPP
 
-#include "types.hpp"
+#include "collisionbody.hpp"
 
 /*!
  * \brief A moving object on a scene
@@ -9,8 +9,14 @@
  * It can be used to represent a player, an enemy, or
  * just a normal object in the game.
  */
-class Actor
+// TODO: Special type of actor without collision?
+// "Why is this inheritly bad?"
+// "Well, because, the diamond problem."
+class Actor : public CollisionBody
 {
+public:
+	Vector m_vel;
+
 public:
 	Actor();
 
@@ -26,21 +32,7 @@ public:
 	 */
 	virtual void draw() = 0;
 
-	/*!
-	 * \return The bounding box
-	 */
-	inline Rect& get_bbox() { return m_bbox; }
-
-	/*!
-	 * \return The bounding vel
-	 */
-	inline Vector& get_vel() { return m_vel; }
-
 	virtual bool is_active() { return true; }
-
-protected:
-	Rect m_bbox;
-	Vector m_vel;
 };
 
 #endif // ACTOR_HPP

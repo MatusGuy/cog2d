@@ -1,6 +1,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <cstdint>
 #include <type_traits>
 
 #define COG2D_NUMERIC_TEMPLATE \
@@ -68,6 +69,13 @@ public:
 
 	Vector_t() {}
 
+	inline Vector_t<T> abs() { return { std::abs(x), std::abs(y) }; }
+
+	void operator=(const Vector_t<T>& other) {
+		x = other.x;
+		y = other.y;
+	}
+
 	inline SDL_Point to_sdl_point() { return {static_cast<int>(x), static_cast<int>(y)}; }
 	inline SDL_FPoint to_sdl_fpoint() { return {static_cast<float>(x), static_cast<float>(y)}; }
 
@@ -124,6 +132,11 @@ public:
 		x /= other;
 		y /= other;
 	}
+
+	// It makes sense, trust me
+	bool operator<(Vector_t<T>& other) {
+		return x < other.x && y < other.y;
+	}
 };
 using Vector = Vector_t<>;
 
@@ -146,6 +159,11 @@ public:
 	}
 
 	Rect_t() {}
+
+	void operator=(const Rect_t<T>& other) {
+		pos = other.pos;
+		size = other.size;
+	}
 
 	inline SDL_Rect to_sdl_rect() {
 		return {static_cast<int>(pos.x), static_cast<int>(pos.y), static_cast<int>(size.x), static_cast<int>(size.y)};
@@ -207,6 +225,21 @@ public:
 	void operator/=(T& other) {
 		pos /= other;
 		size /= other;
+	}
+
+	inline T get_left() const { return pos.x; }
+	inline T get_top() const { return pos.y; }
+	inline T get_right() const { return pos.x + size.x; }
+	inline T get_bottom() const { return pos.y + size.y; }
+
+	bool overlaps(const Rect_t<T>& other) const
+	{
+		if (get_right() < other.get_left() || get_left() > other.get_right())
+			return false;
+		if (get_bottom() < other.get_top() || get_top() > other.get_bottom())
+			return false;
+
+		return true;
 	}
 };
 using Rect = Rect_t<>;

@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "actor.hpp"
-
+#include "collisionsystem.hpp"
 
 /*!
  * \class ActorManager

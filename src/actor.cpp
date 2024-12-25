@@ -1,12 +1,12 @@
 #include "actor.hpp"
 
 Actor::Actor():
-	m_bbox(0, 0, 0, 0),
+	CollisionBody(),
 	m_vel(0, 0)
 {
 }
 
 void Actor::update()
 {
-	m_bbox.pos += m_vel;
+	m_movement = m_vel;
 }

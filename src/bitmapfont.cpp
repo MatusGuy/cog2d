@@ -1,5 +1,7 @@
 #include "bitmapfont.hpp"
 
+#include <format>
+
 #include "assetmanager.hpp"
 #include "logger.hpp"
 #include "types.hpp"

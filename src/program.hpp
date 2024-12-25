@@ -7,6 +7,7 @@
 #include "inputmanager.hpp"
 #include "assetmanager.hpp"
 #include "actormanager.hpp"
+#include "collisionsystem.hpp"
 #include "audioengine.hpp"
 #include "config.hpp"
 

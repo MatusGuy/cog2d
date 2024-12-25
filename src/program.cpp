@@ -21,6 +21,7 @@ int Program::run(int argc, char* argv[])
 	COG2D_USE_INPUTMANAGER;
 	COG2D_USE_ACTORMANAGER;
 	COG2D_USE_AUDIOENGINE;
+	COG2D_USE_COLLISIONSYSTEM;
 
 	graphicsengine.init(m_settings);
 	if (!graphicsengine.get_error().empty()) {
