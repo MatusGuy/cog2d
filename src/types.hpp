@@ -71,6 +71,9 @@ public:
 
 	inline Vector_t<T> abs() { return { std::abs(x), std::abs(y) }; }
 
+	/// Average between two vectors
+	inline Vector_t<T> avg(const Vector_t<T>& other) { return { (x + other.x) / 2, (y + other.y) / 2 }; }
+
 	void operator=(const Vector_t<T>& other) {
 		x = other.x;
 		y = other.y;
@@ -237,6 +240,16 @@ public:
 		if (get_right() < other.get_left() || get_left() > other.get_right())
 			return false;
 		if (get_bottom() < other.get_top() || get_top() > other.get_bottom())
+			return false;
+
+		return true;
+	}
+
+	bool overlaps_exc(const Rect_t<T>& other) const
+	{
+		if (get_right() <= other.get_left() || get_left() >= other.get_right())
+			return false;
+		if (get_bottom() <= other.get_top() || get_top() >= other.get_bottom())
 			return false;
 
 		return true;

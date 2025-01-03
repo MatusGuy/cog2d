@@ -9,7 +9,7 @@ CollisionBody::CollisionBody():
 
 }
 
-Rect CollisionBody::get_destination()
+Rect CollisionBody::get_dest()
 {
 	Rect rect = m_bbox;
 	rect.pos += m_movement;
@@ -18,7 +18,7 @@ Rect CollisionBody::get_destination()
 
 void CollisionBody::apply_movement()
 {
-	m_bbox = get_destination();
+	m_bbox = get_dest();
 	m_movement.x = 0;
 	m_movement.y = 0;
 	m_last_collider = nullptr;

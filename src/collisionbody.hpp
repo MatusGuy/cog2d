@@ -16,7 +16,7 @@ public:
 public:
 	CollisionBody();
 
-	Rect get_destination();
+	Rect get_dest();
 	void apply_movement();
 };
 

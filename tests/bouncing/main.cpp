@@ -26,8 +26,8 @@ public:
 		int w;
 		SDL_GetWindowSize(GraphicsEngine::get().get_window(), &w, nullptr);
 		w -= 100;
-		actormanager.create<Ball>(Vector(), Vector(2,2));
-		actormanager.create<Ball>(Vector(w, 0), Vector(2,2));
+		actormanager.create<Ball>(Vector(), Vector(3,2));
+		actormanager.create<Ball>(Vector(w, 0), Vector(2,3));
 	}
 
 	void update() override {
