@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 3.14)
 
 project(cog2d LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -12,6 +9,8 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 # Sources #
 file(GLOB_RECURSE COG2D_SRC CONFIGURE_DEPENDS src/*.cpp src/*.hpp)
 add_library(cog2d STATIC ${COG2D_SRC})
+
+target_compile_features(cog2d PUBLIC cxx_std_20)
 
 target_include_directories(cog2d PUBLIC ${PROJECT_SOURCE_DIR}/src)
 
