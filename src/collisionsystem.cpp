@@ -34,6 +34,11 @@ void CollisionSystem::update() {
 
 void CollisionSystem::rect_rect(CollisionBody* a, CollisionBody* b)
 {
+	// TODO: There should be a way to specify if the interaction should
+	// trigger if both are accepted or only one is.
+	if (!m_groups[a->m_group][b->m_group] && !m_groups[b->m_group][a->m_group])
+		return;
+
 	Rect& r1 = a->m_bbox;
 	Rect& r2 = b->m_bbox;
 	Rect d1 = a->get_dest();
@@ -43,7 +48,7 @@ void CollisionSystem::rect_rect(CollisionBody* a, CollisionBody* b)
 
 	// TODO: in_bounds function
 
-	if (!d1.overlaps_exc(r2)/* || !d1.overlaps(r2) || !d2.overlaps(r1)*/)
+	if (!d1.overlaps_exc(r2))
 		return;
 
 	float itop = d1.get_bottom() - d2.get_top();

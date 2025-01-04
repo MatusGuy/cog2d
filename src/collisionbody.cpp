@@ -3,8 +3,7 @@
 
 CollisionBody::CollisionBody():
 	m_bbox(0, 0, 0, 0),
-	m_movement(0, 0),
-	m_last_collider(nullptr)
+	m_movement(0, 0)
 {
 
 }
@@ -21,5 +20,4 @@ void CollisionBody::apply_movement()
 	m_bbox = get_dest();
 	m_movement.x = 0;
 	m_movement.y = 0;
-	m_last_collider = nullptr;
 }
