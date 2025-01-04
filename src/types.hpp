@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <type_traits>
+#include <format>
 
 #define COG2D_NUMERIC_TEMPLATE \
 	template< \
@@ -140,8 +141,35 @@ public:
 	bool operator<(Vector_t<T>& other) {
 		return x < other.x && y < other.y;
 	}
+
 };
 using Vector = Vector_t<>;
+
+// FIXME: This will cause bugs! I don't know how any
+// of this wizardry works! I just want my std::format to
+// workie.
+template<typename T>
+struct std::formatter<Vector_t<T>, char>
+{
+	template<class ParseContext>
+	constexpr ParseContext::iterator parse(ParseContext& ctx)
+	{
+		auto it = ctx.begin();
+		if (it == ctx.end())
+			return it;
+
+		if (it != ctx.end() && *it != '}')
+			throw std::format_error("Invalid format args for Vector.");
+
+		return it;
+	}
+
+	template<class FmtContext>
+	FmtContext::iterator format(Vector_t<T> vec, FmtContext& ctx) const
+	{
+		return std::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
+	}
+};
 
 COG2D_NUMERIC_TEMPLATE
 class Rect_t {
