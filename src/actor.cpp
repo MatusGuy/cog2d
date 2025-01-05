@@ -8,5 +8,5 @@ Actor::Actor():
 
 void Actor::update()
 {
-	m_movement = m_vel;
+	m_mov = m_vel;
 }

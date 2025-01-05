@@ -3,13 +3,18 @@
 
 #include <vector>
 
+#include "collisionsystem.hpp"
 #include "types.hpp"
 
 class CollisionBody
 {
 public:
-	Vector m_movement;
+	Vector m_mov;
 	Rect m_bbox;
+
+	// TODO: improve upon this - maybe make some sort of
+	// priority system?
+	bool m_static;
 
 	/**
 	 * This int refers to a collision group in the
@@ -22,6 +27,8 @@ public:
 
 	Rect get_dest();
 	void apply_movement();
+
+	virtual CollisionSystem::Response collision(CollisionBody* other) { return CollisionSystem::COLRESP_ACCEPT; }
 };
 
 #endif // COLLISIONBODY_HPP
