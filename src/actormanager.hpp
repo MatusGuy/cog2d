@@ -14,7 +14,7 @@
  * They are updated & drawn by the \ref Program.
  */
 #define COG2D_USE_ACTORMANAGER COG2D_USING(ActorManager, actormanager)
-class ActorManager : public Singleton<ActorManager>
+class ActorManager : public Currenton<ActorManager>
 {
 public:
 	using Actors = std::vector<Actor*>;

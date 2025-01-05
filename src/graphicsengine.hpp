@@ -15,7 +15,8 @@ using SDLSurfacePtr = std::unique_ptr<SDL_Surface, decltype(&SDL_FreeSurface)>;
 #define COG2D_UNIQUE_SDLSURFACE(name, surface) SDLSurfacePtr name(surface, SDL_FreeSurface)
 
 #define COG2D_USE_GRAPHICSENGINE COG2D_USING(GraphicsEngine, graphicsengine)
-class GraphicsEngine : public Singleton<GraphicsEngine> {
+class GraphicsEngine : public Currenton<GraphicsEngine> {
+
 private:
 	SDL_Window* m_window = nullptr;
 	SDL_Renderer* m_renderer = nullptr;

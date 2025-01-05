@@ -8,7 +8,7 @@
 class CollisionBody;
 
 #define COG2D_USE_COLLISIONSYSTEM COG2D_USING(CollisionSystem, collisionsystem)
-class CollisionSystem : public Singleton<CollisionSystem> {
+class CollisionSystem : public Currenton<CollisionSystem> {
 public:
 	/// @brief A collision group.
 	// std::vector has a specializaion for bool that

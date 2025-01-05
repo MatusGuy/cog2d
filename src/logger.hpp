@@ -22,7 +22,7 @@
 #define COG2D_LOG_FATAL COG2D_LOG(fatal)
 
 #define COG2D_USE_LOGGER COG2D_USING(Logger, logger)
-class Logger : public Singleton<Logger>
+class Logger : public Currenton<Logger>
 {
 public:
 	using Level = uint8_t;

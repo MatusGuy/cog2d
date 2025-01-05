@@ -8,7 +8,7 @@
 #include "types.hpp"
 
 #define COG2D_USE_AUDIOENGINE COG2D_USING(AudioEngine, audioengine)
-class AudioEngine : public Singleton<AudioEngine>
+class AudioEngine : public Currenton<AudioEngine>
 {
 public:
 	AudioEngine();

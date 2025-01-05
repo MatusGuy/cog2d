@@ -32,7 +32,7 @@ struct InputAction {
 };
 
 #define COG2D_USE_INPUTMANAGER COG2D_USING(InputManager, inputmanager)
-class InputManager : public Singleton<InputManager>
+class InputManager : public Currenton<InputManager>
 {
 public:
 	uint8_t m_max_concurrent_players = 255;

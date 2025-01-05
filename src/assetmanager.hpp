@@ -14,7 +14,7 @@
 class Font;
 
 #define COG2D_USE_ASSETMANAGER COG2D_USING(AssetManager, assetmanager)
-class AssetManager : public Singleton<AssetManager>
+class AssetManager : public Currenton<AssetManager>
 {
 public:
 	std::list<Texture*> m_textures;

@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <type_traits>
 #include <format>
+#include <memory>
 
 #define COG2D_NUMERIC_TEMPLATE \
 	template< \
@@ -26,9 +27,12 @@ public:
 	Color(): SDL_Color {0,0,0,0} {}
 	Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a): SDL_Color{r,g,b,a} {}
 
-	Color(uint32_t rgba): SDL_Color{} {
+	/**
+	 * @param abgr The color in \bold abgr format (e.g. 0xFF0000FF for red)
+	 */
+	Color(uint32_t abgr): SDL_Color{} {
 		// wow
-		*(uint32_t*) this = rgba;
+		*(uint32_t*) this = abgr;
 	}
 
 	inline bool operator==(const Color& other) {
@@ -41,6 +45,55 @@ public:
 };
 
 #define COG2D_USING(c, n) c& n = c::get()
+
+/**
+ *   A 'Currenton' allows access to the currently active instance of a
+ *   class via the static current() function. It is kind of like a
+ *   singleton, but without handling the object construction itself or
+ *   in other words its a glorified global variable that points to the
+ *   current instance of a class.
+ */
+template<class C>
+class Currenton
+{
+public:
+	static Currenton<C>* s_current;
+
+protected:
+	virtual ~Currenton() {
+		if (s_current == this)
+		{
+			s_current = nullptr;
+		}
+	}
+
+public:
+	static C& get() { return *static_cast<C*>(s_current); }
+};
+
+template<class C>
+Currenton<C>* Currenton<C>::s_current = nullptr;
+
+#define COG2D_SINGLETON(CLASS) \
+public: \
+	static std::unique_ptr<CLASS> s_instance; \
+	\
+public: \
+	static CLASS& get() { \
+		return *CLASS::s_instance; \
+	} \
+
+
+
+
+/*
+	CLASS(const CLASS&) = delete; \
+	CLASS& operator=(const CLASS&) = delete; \
+	CLASS(CLASS&&) = delete; \
+	CLASS& operator=(CLASS&&) = delete;
+	*/
+/*
+// TODO: Delete me!
 template <typename T>
 class Singleton {
 public:
@@ -55,6 +108,7 @@ protected:
 	Singleton(const Singleton&) = delete;
 	Singleton& operator=(const Singleton&) = delete;
 };
+*/
 
 COG2D_NUMERIC_TEMPLATE
 class Vector_t {

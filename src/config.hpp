@@ -19,7 +19,7 @@ struct ConfigSetting {
 };
 
 #define COG2D_USE_CONFIG COG2D_USING(Config, config)
-class Config : public Singleton<Config>
+class Config : public Currenton<Config>
 {
 public:
 	Config();

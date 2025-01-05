@@ -14,8 +14,18 @@ Program::Program():
 
 int Program::run(int argc, char* argv[])
 {
+	Logger::s_current = new Logger;
+
 	//std::atexit(&Program::quit);
 	init_sdl();
+
+	GraphicsEngine::s_current = new GraphicsEngine;
+	InputManager::s_current = new InputManager;
+	ActorManager::s_current = new ActorManager;
+	AudioEngine::s_current = new AudioEngine;
+	CollisionSystem::s_current = new CollisionSystem;
+	AssetManager::s_current = new AssetManager;
+	Config::s_current = new Config;
 
 	COG2D_USE_GRAPHICSENGINE;
 	COG2D_USE_INPUTMANAGER;
@@ -50,10 +60,6 @@ int Program::run(int argc, char* argv[])
 		poll_sdl_events();
 
 		update();
-
-		if (!m_paused) {
-			actormanager.update();
-		}
 
 		draw();
 

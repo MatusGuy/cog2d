@@ -73,7 +73,7 @@ public:
 
 protected:
 	bool m_keep_running;
-	bool m_paused;
+	bool m_paused; // FIXME: Remove me!
 
 private:
 	void init_sdl();
