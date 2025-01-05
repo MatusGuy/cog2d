@@ -21,9 +21,7 @@ int Program::run(int argc, char* argv[])
 
 	GraphicsEngine::s_current = new GraphicsEngine;
 	InputManager::s_current = new InputManager;
-	ActorManager::s_current = new ActorManager;
 	AudioEngine::s_current = new AudioEngine;
-	CollisionSystem::s_current = new CollisionSystem;
 	AssetManager::s_current = new AssetManager;
 	Config::s_current = new Config;
 
