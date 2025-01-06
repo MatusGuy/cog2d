@@ -7,6 +7,7 @@ class Screen
 {
 public:
 	Screen();
+	virtual ~Screen() {}
 
 	virtual void init() = 0;
 	virtual void update() = 0;

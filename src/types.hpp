@@ -137,6 +137,8 @@ public:
 	inline SDL_Point to_sdl_point() { return {static_cast<int>(x), static_cast<int>(y)}; }
 	inline SDL_FPoint to_sdl_fpoint() { return {static_cast<float>(x), static_cast<float>(y)}; }
 
+	explicit operator Vector_t<float>() const { return {static_cast<float>(x), static_cast<float>(y)}; }
+
 	Vector_t<T> operator+(Vector_t<T>& other) {
 		return Vector_t<T>(x + other.x, y + other.y);
 	}

@@ -6,7 +6,7 @@
 #include <memory>
 #include <SDL2/SDL.h>
 
-#include "texture.hpp"
+#include "assetmanager.hpp"
 #include "font.hpp"
 
 struct ProgramSettings;
@@ -36,7 +36,7 @@ public:
 	void draw_line(Vector a, Vector b, Color color = 0xFFFFFFFF);
 	void draw_point(Vector point, Color color = 0xFFFFFFFF);
 	void draw_texture(Rect dest, Texture* tex);
-	void draw_texture(Rect dest, Texture* tex, float angle, Vector center = {0,0});
+	void draw_texture(Rect dest, Texture* tex, float angle, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 	// TODO: Move this to another class?
 	Texture* create_text(Font* font, const std::string& text, Color color = 0xFFFFFFFF);

@@ -4,6 +4,10 @@
 #include <fstream>
 
 #include "logger.hpp"
+#include "graphicsengine.hpp"
+#include "audioengine.hpp"
+#include "assetmanager.hpp"
+#include "config.hpp"
 
 Program::Program():
 	m_keep_running(true),
@@ -28,9 +32,7 @@ int Program::run(int argc, char* argv[])
 
 	COG2D_USE_GRAPHICSENGINE;
 	COG2D_USE_INPUTMANAGER;
-	COG2D_USE_ACTORMANAGER;
 	COG2D_USE_AUDIOENGINE;
-	COG2D_USE_COLLISIONSYSTEM;
 
 	graphicsengine.init(m_settings);
 	if (!graphicsengine.get_error().empty()) {
@@ -55,8 +57,13 @@ int Program::run(int argc, char* argv[])
 	// have been initialized.
 	init();
 
+	std::uint32_t now = SDL_GetTicks();
+
 	while (m_keep_running) {
 		poll_sdl_events();
+
+		m_prog_time = SDL_GetTicks();
+		m_delta_time = m_prog_time - now;
 
 		std::unique_ptr<Screen>& screen = m_screen_stack.top();
 		screen->update();

@@ -4,15 +4,15 @@
 #include <stack>
 
 #include "types.hpp"
-
-#include "graphicsengine.hpp"
 #include "inputmanager.hpp"
-#include "assetmanager.hpp"
-#include "actormanager.hpp"
-#include "collisionsystem.hpp"
-#include "audioengine.hpp"
-#include "config.hpp"
 #include "screen.hpp"
+
+#define COG2D_MAIN(prgclass) \
+	int main(int argc, char* argv[]) { \
+		prgclass prg; \
+		prgclass::s_current = &prg; \
+		return prg.run(argc, argv); \
+	}
 
 enum System : std::uint8_t {
 	SYSTEM_VIDEO = 0x1,
@@ -50,10 +50,14 @@ struct ProgramSettings {
 	std::uint8_t systems = System::SYSTEM_EVERYTHING;
 };
 
-class Program
+#define COG2D_USE_PROGRAM COG2D_USING(Program, program)
+class Program : public Currenton<Program>
 {
 public:
 	ProgramSettings* m_settings;
+
+	std::uint32_t m_prog_time;
+	std::uint32_t m_delta_time;
 
 public:
 	Program();

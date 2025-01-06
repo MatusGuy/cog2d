@@ -145,8 +145,12 @@ void GraphicsEngine::draw_point(Vector point, Color color) {
 }
 
 void GraphicsEngine::draw_texture(Rect dest, Texture* tex) {
-	if (dest.size.x < 0 && dest.size.y < 0) {
-		dest.size = tex->m_size;
+	if (dest.size.x < 0) {
+		dest.size.x = tex->m_size.x;
+	}
+
+	if (dest.size.y < 0) {
+		dest.size.y = tex->m_size.y;
 	}
 
 #ifdef COG2D_GRAPHICS_USE_INT
@@ -158,7 +162,7 @@ void GraphicsEngine::draw_texture(Rect dest, Texture* tex) {
 #endif
 }
 
-void GraphicsEngine::draw_texture(Rect dest, Texture* tex, float angle, Vector center) {
+void GraphicsEngine::draw_texture(Rect dest, Texture* tex, float angle, SDL_RendererFlip flip) {
 #ifdef COG2D_GRAPHICS_USE_INT
 	SDL_Rect dest2 = {static_cast<int>(dest.pos.x-(dest.size.x/2)), static_cast<int>(dest.pos.y-(dest.size.y/2)),
 					  static_cast<int>(dest.size.x), static_cast<int>(dest.size.y)};
@@ -167,7 +171,7 @@ void GraphicsEngine::draw_texture(Rect dest, Texture* tex, float angle, Vector c
 #else
 	SDL_FRect dest2 = {dest.pos.x-(dest.size.x/2), dest.pos.y-(dest.size.y/2), dest.size.x, dest.size.y};
 	SDL_FPoint fpoint = dest.pos.to_sdl_fpoint();
-	SDL_RenderCopyExF(m_renderer, tex->get_sdl_texture(), NULL, &dest2, (double) angle, &fpoint, SDL_FLIP_NONE);
+	SDL_RenderCopyExF(m_renderer, tex->get_sdl_texture(), NULL, &dest2, (double) angle, &fpoint, flip);
 #endif
 }
 
