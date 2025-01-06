@@ -1,6 +1,8 @@
 #ifndef PROGRAM_HPP
 #define PROGRAM_HPP
 
+#include <stack>
+
 #include "types.hpp"
 
 #include "graphicsengine.hpp"
@@ -10,14 +12,14 @@
 #include "collisionsystem.hpp"
 #include "audioengine.hpp"
 #include "config.hpp"
+#include "screen.hpp"
 
 enum System : std::uint8_t {
 	SYSTEM_VIDEO = 0x1,
 	SYSTEM_INPUT = 0x2,
 	SYSTEM_ASSET = 0x4,
-	SYSTEM_ACTOR = 0x8,
-	SYSTEM_SOUND = 0x16,
-	SYSTEM_CONFIG = 0x32,
+	SYSTEM_SOUND = 0x8,
+	SYSTEM_CONFIG = 0x16,
 
 	SYSTEM_EVERYTHING = 0xFF
 };
@@ -60,9 +62,10 @@ public:
 
 	void quit();
 
+	void push_screen(Screen* screen);
+	void pop_screen();
+
 	virtual void init() = 0;
-	virtual void update() = 0;
-	virtual void draw() = 0;
 	virtual bool event(SDL_Event* ev) = 0;
 
 	// Return false if you won't be using the InputManager.
@@ -76,9 +79,11 @@ protected:
 	bool m_paused; // FIXME: Remove me!
 
 private:
+	std::stack<std::unique_ptr<Screen>> m_screen_stack;
+
+private:
 	void init_sdl();
 	void poll_sdl_events();
-
 };
 
 #endif // PROGRAM_HPP

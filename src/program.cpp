@@ -8,7 +8,8 @@
 Program::Program():
 	m_keep_running(true),
 	m_paused(false),
-	m_settings(new ProgramSettings)
+	m_settings(new ProgramSettings),
+	m_screen_stack()
 {
 }
 
@@ -57,16 +58,9 @@ int Program::run(int argc, char* argv[])
 	while (m_keep_running) {
 		poll_sdl_events();
 
-		update();
-
-		draw();
-
-		for (Actor* actor : actormanager.get_actors()) {
-			if (!actor->is_active())
-				continue;
-
-			actor->draw();
-		}
+		std::unique_ptr<Screen>& screen = m_screen_stack.top();
+		screen->update();
+		screen->draw();
 
 		graphicsengine.update();
 	}
@@ -99,6 +93,13 @@ void Program::quit()
 	SDL_Quit();
 }
 
+void Program::push_screen(Screen* screen)
+{
+	m_screen_stack.push(std::unique_ptr<Screen>(screen));
+
+	screen->init();
+}
+
 void Program::init_sdl() {
 	int errcode = SDL_Init(SDL_INIT_EVERYTHING);
 	if (errcode != 0) {
@@ -127,6 +128,10 @@ void Program::poll_sdl_events()
 		}
 
 		if (!event(&ev)) {
+			continue;
+		}
+
+		if (!m_screen_stack.top()->event(&ev)) {
 			continue;
 		}
 

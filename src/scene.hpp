@@ -12,8 +12,9 @@ public:
 	void init() override;
 	void update() override;
 	void draw() override;
+	bool event(SDL_Event *ev) override;
 
-private:
+protected:
 	// TODO: do these even need to be currentons lol?
 	ActorManager m_actormanager;
 	CollisionSystem m_collisionsystem;

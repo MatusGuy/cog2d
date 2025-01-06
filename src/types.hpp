@@ -205,8 +205,7 @@ using Vector = Vector_t<>;
 template<typename T>
 struct std::formatter<Vector_t<T>, char>
 {
-	template<class ParseContext>
-	constexpr ParseContext::iterator parse(ParseContext& ctx)
+	constexpr auto parse(auto& ctx)
 	{
 		auto it = ctx.begin();
 		if (it == ctx.end())
@@ -218,8 +217,7 @@ struct std::formatter<Vector_t<T>, char>
 		return it;
 	}
 
-	template<class FmtContext>
-	FmtContext::iterator format(Vector_t<T> vec, FmtContext& ctx) const
+	auto format(Vector_t<T> vec, auto& ctx) const
 	{
 		return std::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
 	}
