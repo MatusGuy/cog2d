@@ -15,6 +15,7 @@ BitmapFont::BitmapFont(std::filesystem::path path):
 	m_horizontal_spacing(0),
 	m_glyphs()
 {
+
 }
 
 void BitmapFont::load()
@@ -22,7 +23,12 @@ void BitmapFont::load()
 	COG2D_USE_ASSETMANAGER;
 	COG2D_USE_GRAPHICSENGINE;
 
-	COG2D_UNIQUE_SDLSURFACE(surface, IMG_Load(m_path.string().data()));
+	std::filesystem::path path;
+#ifdef COG2D_ASSET_PATH
+	path = COG2D_ASSET_PATH / m_path;
+#endif
+
+	COG2D_UNIQUE_SDLSURFACE(surface, IMG_Load(path.string().data()));
 
 	if (!surface) {
 		COG2D_LOG_ERROR("BitmapFont", std::format("Couldn't open '{}'.", m_path.string()));

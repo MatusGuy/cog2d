@@ -4,7 +4,7 @@ project(cog2d LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/)
 
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
 
 # Sources #
 file(GLOB_RECURSE COG2D_SRC CONFIGURE_DEPENDS src/*.cpp src/*.hpp)
@@ -19,7 +19,7 @@ target_include_directories(cog2d PUBLIC ${PROJECT_SOURCE_DIR}/src)
 find_package(PkgConfig QUIET)
 
 if(PKG_CONFIG_FOUND)
-	option(COG2D_USE_PKGCONFIG "Use pkgconfig for finding dependencies" ON)
+	option(COG2D_USE_PKGCONFIG "Use pkgconfig for finding dependencies" YES)
 endif()
 
 ## SDL2 ##
@@ -79,23 +79,25 @@ FetchContent_Declare(
 	json
 	URL "https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz"
 )
-
 FetchContent_MakeAvailable(json)
-
 target_include_directories(cog2d PUBLIC ${nlohmann_json_SOURCE_DIR}/include/)
 
 # Preprocessor definitions #
-if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	target_compile_definitions(cog2d PUBLIC COG2D_DEBUG)
 endif()
 
-# Later, remove this definition when deploying
-target_compile_definitions(cog2d PUBLIC COG2D_ASSET_PATH="${PROJECT_SOURCE_DIR}")
+set(COG2D_ASSET_PATH "${CMAKE_SOURCE_DIR}" CACHE STRING "Where cog2d looks for assets.")
+target_compile_definitions(cog2d PUBLIC COG2D_ASSET_PATH="${COG2D_ASSET_PATH}")
+
+option(COG2D_GRAPHICS_USE_INT "Disable SDL's subpixel rendering." NO)
+if(COG2D_GRAPHICS_USE_INT)
+	target_compile_definitions(cog2d PUBLIC COG2D_GRAPHICS_USE_INT)
+endif()
 
 # Tests #
 
-# Should probably turn this off once this goes big
-option(COG2D_TESTS "Add little programs that test cog2d." ON)
+option(COG2D_TESTS "Add little programs that test cog2d." NO)
 
 if(COG2D_TESTS)
 	add_subdirectory(tests)

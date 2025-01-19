@@ -44,8 +44,7 @@ Texture* AssetManager::load_image(const std::string& path)
 
 	std::string realpath = path;
 #ifdef COG2D_ASSET_PATH
-	// FIXME: God fucking damn it... Fix the paths you lazy bitch!!!!!
-	//realpath.insert(0, COG2D_ASSET_PATH "/");
+	realpath.insert(0, COG2D_ASSET_PATH "/");
 #endif
 
 	SDL_Renderer* renderer = GraphicsEngine::get().get_renderer();
