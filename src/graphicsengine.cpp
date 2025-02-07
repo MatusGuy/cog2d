@@ -26,9 +26,21 @@ void GraphicsEngine::init(ProgramSettings* settings) {
 
 	m_logical_size.x = settings->lwidth;
 	m_logical_size.y = settings->lheight;
+
+	if (settings->proxy_texture) {
+		m_proxy = SDL_CreateTexture(m_renderer,
+									SDL_PIXELFORMAT_RGBA8888,
+									SDL_TEXTUREACCESS_TARGET,
+									settings->lwidth, settings->lheight);
+	}
 }
 
 void GraphicsEngine::deinit() {
+	if (m_proxy) {
+		SDL_DestroyTexture(m_proxy);
+		m_proxy = nullptr;
+	}
+
 	if (m_renderer) {
 		SDL_DestroyRenderer(m_renderer);
 		m_renderer = nullptr;
@@ -40,28 +52,45 @@ void GraphicsEngine::deinit() {
 	}
 }
 
-void GraphicsEngine::update() {
-	SDL_RenderPresent(m_renderer);
+void GraphicsEngine::pre_draw() {
 	SDL_RenderClear(m_renderer);
+
+	if (m_proxy)
+	{
+		SDL_SetRenderTarget(m_renderer, m_proxy);
+		SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 0xFF);
+		SDL_Rect rect = Rect_t<int>({0,0}, get_logical_size()).to_sdl_rect();
+		SDL_RenderFillRect(m_renderer, &rect);
+	}
+}
+
+void GraphicsEngine::post_draw()
+{
+	SDL_SetRenderTarget(m_renderer, nullptr);
+
+	if (m_proxy)
+		SDL_RenderCopy(m_renderer, m_proxy, nullptr, nullptr);
+
+	SDL_RenderPresent(m_renderer);
 }
 
 void GraphicsEngine::draw_rect(Rect rect, bool filled, Color color) {
 	// TODO: Push/pop color
 #ifdef COG2D_GRAPHICS_USE_INT
-	SDL_Rect rect = rect.to_sdl_rect();
+	SDL_Rect srect = rect.to_sdl_rect();
 #else
-	SDL_FRect frect = rect.to_sdl_frect();
+	SDL_FRect srect = rect.to_sdl_frect();
 #endif
 
 	Color currcolor = get_current_color();
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 
 #ifdef COG2D_GRAPHICS_USE_INT
-	if (filled) SDL_RenderFillRect(m_renderer, &rect);
-	else SDL_RenderDrawRect(m_renderer, &rect);
+	if (filled) SDL_RenderFillRect(m_renderer, &srect);
+	else SDL_RenderDrawRect(m_renderer, &srect);
 #else
-	if (filled) SDL_RenderFillRectF(m_renderer, &frect);
-	else SDL_RenderDrawRectF(m_renderer, &frect);
+	if (filled) SDL_RenderFillRectF(m_renderer, &srect);
+	else SDL_RenderDrawRectF(m_renderer, &srect);
 #endif
 
 	SDL_SetRenderDrawColor(m_renderer, currcolor.r, currcolor.g, currcolor.b, currcolor.a);
@@ -137,7 +166,7 @@ void GraphicsEngine::draw_point(Vector point, Color color) {
 	Color currcolor = get_current_color();
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 #ifdef COG2D_GRAPHICS_USE_INT
-	SDL_RenderDrawLine(m_renderer, static_cast<int>(point.x), static_cast<int>(point.y));
+	SDL_RenderDrawPoint(m_renderer, static_cast<int>(point.x), static_cast<int>(point.y));
 #else
 	SDL_RenderDrawPointF(m_renderer, point.x, point.y);
 #endif
@@ -155,7 +184,7 @@ void GraphicsEngine::draw_texture(Rect dest, Texture* tex) {
 
 #ifdef COG2D_GRAPHICS_USE_INT
 	SDL_Rect dest2 = dest.to_sdl_rect();
-	SDL_RenderCopyF(m_renderer, tex->get_sdl_texture(), NULL, &dest2);
+	SDL_RenderCopy(m_renderer, tex->get_sdl_texture(), NULL, &dest2);
 #else
 	SDL_FRect dest2 = dest.to_sdl_frect();
 	SDL_RenderCopyF(m_renderer, tex->get_sdl_texture(), NULL, &dest2);

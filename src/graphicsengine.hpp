@@ -16,10 +16,10 @@ using SDLSurfacePtr = std::unique_ptr<SDL_Surface, decltype(&SDL_FreeSurface)>;
 
 #define COG2D_USE_GRAPHICSENGINE COG2D_USING(GraphicsEngine, graphicsengine)
 class GraphicsEngine : public Currenton<GraphicsEngine> {
-
 private:
 	SDL_Window* m_window = nullptr;
 	SDL_Renderer* m_renderer = nullptr;
+	SDL_Texture* m_proxy = nullptr;
 
 	std::string m_error = "";
 
@@ -29,7 +29,8 @@ public:
 	void init(ProgramSettings* settings);
 	void deinit();
 
-	void update();
+	void pre_draw();
+	void post_draw();
 
 	void draw_rect(Rect rect, bool filled = false, Color color = 0xFFFFFFFF);
 	void draw_circle(Vector center, float radius, bool filled = false, Color color = 0xFFFFFFFF);

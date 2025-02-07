@@ -67,9 +67,10 @@ int Program::run(int argc, char* argv[])
 
 		std::unique_ptr<Screen>& screen = m_screen_stack.top();
 		screen->update();
-		screen->draw();
 
-		graphicsengine.update();
+		graphicsengine.pre_draw();
+		screen->draw();
+		graphicsengine.post_draw();
 	}
 
 	quit();

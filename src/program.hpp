@@ -43,6 +43,7 @@ struct ProgramSettings {
 	std::string_view scale_quality = "best";
 	bool vsync = true;
 	bool batching = true;
+	bool proxy_texture = false;
 
 	std::string org_name;
 	std::string app_name;
