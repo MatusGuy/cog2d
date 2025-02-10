@@ -66,6 +66,15 @@ else()
 	)
 endif()
 
+## fmt ##
+if(COG2D_USE_PKGCONFIG)
+	pkg_check_modules(fmt REQUIRED IMPORTED_TARGET fmt)
+	target_link_libraries(cog2d PUBLIC PkgConfig::fmt)
+else()
+	find_package(fmt REQUIRED)
+	target_link_libraries(cog2d PUBLIC fmt::fmt)
+endif()
+
 ## json ##
 
 include(FetchContent)

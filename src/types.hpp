@@ -3,7 +3,7 @@
 
 #include <cstdint>
 #include <type_traits>
-#include <format>
+#include <fmt/format.h>
 #include <memory>
 
 #define COG2D_NUMERIC_TEMPLATE \
@@ -205,7 +205,7 @@ using Vector = Vector_t<>;
 // of this wizardry works! I just want my std::format to
 // workie.
 template<typename T>
-struct std::formatter<Vector_t<T>, char>
+struct fmt::formatter<Vector_t<T>, char>
 {
 	constexpr auto parse(auto& ctx)
 	{
@@ -214,14 +214,14 @@ struct std::formatter<Vector_t<T>, char>
 			return it;
 
 		if (it != ctx.end() && *it != '}')
-			throw std::format_error("Invalid format args for Vector.");
+			throw fmt::format_error("Invalid format args for Vector.");
 
 		return it;
 	}
 
 	auto format(Vector_t<T> vec, auto& ctx) const
 	{
-		return std::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
+		return fmt::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
 	}
 };
 
