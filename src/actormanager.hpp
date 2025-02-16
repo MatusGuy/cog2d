@@ -13,8 +13,8 @@
  * This class controls all \ref Actor instances.
  * They are updated & drawn by the \ref Program.
  */
-#define COG2D_USE_ACTORMANAGER COG2D_USING(ActorManager, actormanager)
-class ActorManager : public Currenton<ActorManager>
+
+class ActorManager
 {
 public:
 	using Actors = std::vector<Actor*>;

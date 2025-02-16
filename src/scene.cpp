@@ -8,16 +8,13 @@ Scene::Scene():
 
 }
 
-void Scene::init()
-{
-	ActorManager::s_current = &m_actormanager;
-	CollisionSystem::s_current = &m_collisionsystem;
-}
-
+void Scene::init() {}
 
 void Scene::update()
 {
 	m_actormanager.update();
+    // FIXME: Is this a good way to handle this?
+    m_collisionsystem.update(m_actormanager);
 }
 
 void Scene::draw()
