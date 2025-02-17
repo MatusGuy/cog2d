@@ -1,5 +1,6 @@
 #include "collisionsystem.hpp"
 
+#include "actormanager.hpp"
 #include "logger.hpp"
 
 CollisionSystem::CollisionSystem()

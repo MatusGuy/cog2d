@@ -3,10 +3,10 @@
 
 #include <vector>
 
-#include "actormanager.hpp"
 #include "types.hpp"
 
 class CollisionBody;
+class ActorManager;
 
 class CollisionSystem
 {
