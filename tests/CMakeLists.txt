@@ -1,6 +1,5 @@
 file(GLOB_RECURSE test_src CONFIGURE_DEPENDS
-        ${PROJECT_SOURCE_DIR}/tests/*.cpp
-        ${PROJECT_SOURCE_DIR}/tests/*.hpp
+        ${PROJECT_SOURCE_DIR}/tests/*.[ch]pp
 )
 
 add_executable(cog2d_tests ${test_src} ${PROJECT_SOURCE_DIR}/tests/main.cpp)
