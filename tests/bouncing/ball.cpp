@@ -6,18 +6,11 @@
 
 constexpr float RADIUS = 50.f;
 
-Ball::Ball():
-	Actor()
-{
-	m_bbox = {0, 0, RADIUS*2, RADIUS*2};
-	m_vel = {2, 2};
-}
-
 Ball::Ball(Vector pos, Vector vel):
 	Actor()
 {
-	m_bbox = {pos.x, pos.y, RADIUS*2, RADIUS*2};
-	m_vel = vel;
+    m_bbox = {pos, {RADIUS * 2, RADIUS * 2}};
+    m_vel = vel;
 }
 
 void Ball::update()
@@ -36,9 +29,9 @@ void Ball::update()
 	*/
 
 	if(hor || ver)
-		m_col = m_col == 0xFF0000FF ? 0xFFFFFFFF : 0xFF0000FF;
+        m_col = (m_col == 0xFF0000FF) ? 0xFFFFFFFF : 0xFF0000FF;
 
-	m_vel.x *= hor ? -1 : 1;
+    m_vel.x *= hor ? -1 : 1;
 	m_vel.y *= ver ? -1 : 1;
 
 	if (hor && ver) {
@@ -50,21 +43,24 @@ void Ball::update()
 
 void Ball::draw()
 {
-	GraphicsEngine::get().draw_circle({m_bbox.pos.x + RADIUS, m_bbox.pos.y + RADIUS}, RADIUS, true, m_col);
+    COG2D_USE_GRAPHICSENGINE;
+    graphicsengine.draw_circle({m_bbox.pos.x + RADIUS, m_bbox.pos.y + RADIUS}, RADIUS, true, m_col);
 }
 
 bool Ball::check_horizontal_bound()
 {
-	int w = -1;
-	SDL_GetWindowSize(GraphicsEngine::get().get_window(), &w, nullptr);
+    COG2D_USE_GRAPHICSENGINE;
+    int w = -1;
+    SDL_GetWindowSize(graphicsengine.get_window(), &w, nullptr);
 
-	return m_bbox.pos.x < 0.f || m_bbox.pos.x + m_bbox.size.x > static_cast<float>(w);
+    return m_bbox.pos.x < 0.f || m_bbox.pos.x + m_bbox.size.x > static_cast<float>(w);
 }
 
 bool Ball::check_vertical_bound()
 {
-	int h = -1;
-	SDL_GetWindowSize(GraphicsEngine::get().get_window(), nullptr, &h);
+    COG2D_USE_GRAPHICSENGINE;
+    int h = -1;
+    SDL_GetWindowSize(graphicsengine.get_window(), nullptr, &h);
 
-	return m_bbox.pos.y < 0.f || m_bbox.pos.y + m_bbox.size.y > static_cast<float>(h);
+    return m_bbox.pos.y < 0.f || m_bbox.pos.y + m_bbox.size.y > static_cast<float>(h);
 }

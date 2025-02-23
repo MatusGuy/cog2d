@@ -5,16 +5,17 @@
 
 class Ball : public Actor
 {
-	int m_col = 0xFFFFFFFF;
 public:
-	Ball(Vector pos, Vector vel);
-	Ball();
+    Ball(Vector pos = {0, 0}, Vector vel = {2, 2});
 
-	void update() override;
-	void draw() override;
+    void update() override;
+    void draw() override;
 
-	bool check_horizontal_bound();
-	bool check_vertical_bound();
+private:
+    int m_col = 0xFFFFFFFF;
+
+    bool check_horizontal_bound();
+    bool check_vertical_bound();
 };
 
 #endif // BALL_H

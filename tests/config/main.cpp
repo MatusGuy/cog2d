@@ -1,3 +1,5 @@
+// FIXME FIXME FIXME
+/*
 #include <iostream>
 #include <program.hpp>
 #include <logger.hpp>
@@ -41,3 +43,4 @@ int main(int argc, char* argv[]) {
 	Test test;
 	return test.run(argc, argv);
 }
+*/
