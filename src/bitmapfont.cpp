@@ -1,6 +1,6 @@
 #include "bitmapfont.hpp"
 
-#include <format>
+#include <fmt/format.h>
 
 #include "assetmanager.hpp"
 #include "logger.hpp"
@@ -31,7 +31,7 @@ void BitmapFont::load()
 	COG2D_UNIQUE_SDLSURFACE(surface, IMG_Load(path.string().data()));
 
 	if (!surface) {
-		COG2D_LOG_ERROR("BitmapFont", std::format("Couldn't open '{}'.", m_path.string()));
+		COG2D_LOG_ERROR("BitmapFont", fmt::format("Couldn't open '{}'.", m_path.string()));
 		return;
 	}
 

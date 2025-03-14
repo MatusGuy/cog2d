@@ -6,9 +6,10 @@
 #include "types.hpp"
 
 class CollisionBody;
+class ActorManager;
 
-#define COG2D_USE_COLLISIONSYSTEM COG2D_USING(CollisionSystem, collisionsystem)
-class CollisionSystem : public Currenton<CollisionSystem> {
+class CollisionSystem
+{
 public:
 	/// @brief A collision group.
 	// std::vector has a specializaion for bool that
@@ -28,10 +29,9 @@ public:
 public:
 	CollisionSystem();
 
-	void update();
+    void update(ActorManager &actormanager);
 
-	void rect_rect(CollisionBody* a, CollisionBody* b);
-
+    void rect_rect(CollisionBody *a, CollisionBody *b);
 };
 
 #endif // COLLISIONSYSTEM_HPP

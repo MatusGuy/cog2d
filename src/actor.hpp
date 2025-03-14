@@ -16,6 +16,8 @@ class Actor : public CollisionBody
 {
 public:
 	Vector m_vel;
+    Vector m_accel;
+    float m_grav;
 
 public:
 	Actor();
@@ -33,6 +35,8 @@ public:
 	virtual void draw() = 0;
 
 	virtual bool is_active() { return true; }
+
+    void gravity();
 };
 
 #endif // ACTOR_HPP

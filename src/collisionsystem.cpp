@@ -8,16 +8,14 @@ CollisionSystem::CollisionSystem()
 
 }
 
-void CollisionSystem::update() {
-	COG2D_USE_ACTORMANAGER;
+void CollisionSystem::update(ActorManager &actormanager)
+{
+    ActorManager::Actors &actors = actormanager.get_actors();
 
-	ActorManager::Actors& actors = actormanager.get_actors();
+    // iterator for inner for loop
+    ActorManager::Actors::iterator iter;
 
-	// iterator for inner for loop
-	ActorManager::Actors::iterator iter;
-
-
-	for (Actor* a : actors) {
+    for (Actor* a : actors) {
 		for (iter = actors.begin() + 1; iter != actors.end(); iter++) {
 			Actor* b = *iter;
 			if (!a->is_active() || !b->is_active() || a == b)
