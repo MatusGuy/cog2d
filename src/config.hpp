@@ -28,7 +28,7 @@ public:
 
 	/// WARNING: your pointers are mine now
 	template<typename T>
-	void register_setting(const std::string &name, T default_value, T *ptr = nullptr) {
+	void register_setting(const std::string &name, T default_value, T* ptr = nullptr) {
 		if (ptr == nullptr) {
 			ptr = new T;
 		}

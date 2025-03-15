@@ -28,8 +28,6 @@ void TileLayer::draw()
 		int xi = id - (yi * set.m_set_sz.x);
 		Rect_t<int> src;
 
-		// 16 = Tile size in texture
-		// TODO: Tileset type that can also specify tile size and stuff
 		src.size = Vector_t<int>(16, 16);
 		src.pos = Vector_t<int>(xi, yi) * src.size;
 
