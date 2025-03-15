@@ -6,6 +6,12 @@
 #include <fmt/format.h>
 #include <memory>
 
+#define COG2D_CONTAINER(container, t, tname) \
+	using tname = container<t>; \
+	container<t>
+
+#define COG2D_CONTAINER_PLURAL(container, t) COG2D_CONTAINER(container, t, t##s)
+
 #define COG2D_NUMERIC_TEMPLATE \
 	template< \
 		typename T = float, \

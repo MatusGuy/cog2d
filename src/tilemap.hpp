@@ -3,6 +3,7 @@
 
 #include <filesystem>
 
+#include "tileset.hpp"
 #include "tilelayer.hpp"
 
 // TODO: Superclass that contains this and objects.
@@ -10,7 +11,8 @@
 class TileMap
 {
 public:
-	std::vector<TileLayer> m_layers;
+	COG2D_CONTAINER_PLURAL(std::vector, TileSet) m_sets;
+	COG2D_CONTAINER_PLURAL(std::vector, TileLayer) m_layers;
 
 public:
 	TileMap();
@@ -18,6 +20,8 @@ public:
 	void parse(std::filesystem::path path);
 
 	void draw();
+
+	TileSet& get_tileset(std::uint32_t tileid);
 };
 
 #endif // TILEMAP_HPP

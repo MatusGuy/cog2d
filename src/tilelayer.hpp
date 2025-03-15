@@ -5,7 +5,8 @@
 
 #include "types.hpp"
 
-class Texture;
+class TileSet;
+class TileMap;
 
 class TileLayer
 {
@@ -16,7 +17,7 @@ public:
 	Vector_t<int> m_size;
 	Tiles m_tiles;
 
-	Texture* m_tileset;
+	TileMap* m_map;
 
 public:
 	TileLayer();
