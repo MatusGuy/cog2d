@@ -59,8 +59,7 @@ void GraphicsEngine::pre_draw() {
 	{
 		SDL_SetRenderTarget(m_renderer, m_proxy);
 		SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 0xFF);
-		SDL_Rect rect = Rect_t<int>({0,0}, get_logical_size()).to_sdl_rect();
-		SDL_RenderFillRect(m_renderer, &rect);
+		SDL_RenderFillRect(m_renderer, nullptr);
 	}
 }
 

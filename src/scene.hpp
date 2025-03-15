@@ -15,7 +15,6 @@ public:
 	bool event(SDL_Event *ev) override;
 
 protected:
-	// TODO: do these even need to be currentons lol?
 	ActorManager m_actormanager;
 	CollisionSystem m_collisionsystem;
 };

@@ -339,4 +339,25 @@ public:
 };
 using Rect = Rect_t<>;
 
+template<typename T>
+struct fmt::formatter<Rect_t<T>, char>
+{
+	constexpr auto parse(auto& ctx)
+	{
+		auto it = ctx.begin();
+		if (it == ctx.end())
+			return it;
+
+		if (it != ctx.end() && *it != '}')
+			throw fmt::format_error("Invalid format args for Rect.");
+
+		return it;
+	}
+
+	auto format(Rect_t<T> rec, auto& ctx) const
+	{
+		return fmt::format_to(ctx.out(), "({}, {})", rec.pos, rec.size);
+	}
+};
+
 #endif // TYPES_H

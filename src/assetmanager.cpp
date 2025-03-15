@@ -1,6 +1,7 @@
 #include "assetmanager.hpp"
 
 #include <iostream>
+#include <algorithm>
 
 #include "graphicsengine.hpp"
 #include "texture.hpp"

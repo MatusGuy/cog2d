@@ -15,7 +15,9 @@ public:
 public:
 	TileMap();
 
-	void parse(const std::filesystem::path& path);
+	void parse(std::filesystem::path path);
+
+	void draw();
 };
 
 #endif // TILEMAP_HPP

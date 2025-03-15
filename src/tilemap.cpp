@@ -1,5 +1,7 @@
 #include "tilemap.hpp"
 
+#include <fstream>
+
 #include <nlohmann/json.hpp>
 
 TileMap::TileMap()
@@ -7,11 +9,10 @@ TileMap::TileMap()
 
 }
 
-void TileMap::parse(const std::filesystem::path& path)
+void TileMap::parse(std::filesystem::path path)
 {
-	std::filesystem::path path;
 #ifdef COG2D_ASSET_PATH
-	path = COG2D_ASSET_PATH / m_path;
+	path = COG2D_ASSET_PATH / path;
 #endif
 
 	std::ifstream file(path);
@@ -36,13 +37,15 @@ void TileMap::parse(const std::filesystem::path& path)
 
 		layer.m_tiles.reserve(layer.m_size.x * layer.m_size.y);
 
-		layer = data.get<std::vector>(); // hahahaha
-		/*
-		for (int x = 0; x < layer.m_size.x; ++x) {
-			for (int y = 0; y < layer.m_size.y; ++y) {
-				col[y * layer.m_size.y + x] = data[x];
-			}
-		}
-		*/
+		layer.m_tiles = data.get<TileLayer::Tiles>(); // hahahaha
+
+		m_layers.push_back(layer);
+	}
+}
+
+void TileMap::draw()
+{
+	for (auto layer : m_layers) {
+		layer.draw();
 	}
 }
