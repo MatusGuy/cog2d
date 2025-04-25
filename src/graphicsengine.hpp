@@ -9,6 +9,8 @@
 #include "assetmanager.hpp"
 #include "font.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 struct ProgramSettings;
 
 using SDLSurfacePtr = std::unique_ptr<SDL_Surface, decltype(&SDL_FreeSurface)>;
@@ -51,5 +53,7 @@ public:
 	inline const std::string& get_error() { return m_error; }
 	inline const Vector_t<int>& get_logical_size() { return m_logical_size; }
 };
+
+COG2D_NAMESPACE_END_DECL
 
 #endif  // GRAPHICSENGINE_H

@@ -4,6 +4,8 @@
 #include "screen.hpp"
 #include "actormanager.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 class Scene : public Screen
 {
 public:
@@ -19,5 +21,7 @@ protected:
 	ActorManager m_actormanager;
 	CollisionSystem m_collisionsystem;
 };
+
+COG2D_NAMESPACE_END_DECL
 
 #endif  // SCENE_HPP

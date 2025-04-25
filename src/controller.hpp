@@ -5,6 +5,10 @@
 
 #include <SDL2/SDL.h>
 
+#include "types.hpp"
+
+COG2D_NAMESPACE_BEGIN_DECL
+
 #define COG2D_CONTROLLER_TYPE(t) \
 public:                          \
 	static uint8_t type()        \
@@ -42,5 +46,7 @@ protected:
 	std::map<int, uint8_t> m_actions;
 	std::map<uint8_t, bool> m_held;
 };
+
+COG2D_NAMESPACE_END_DECL
 
 #endif  // CONTROLLER_HPP

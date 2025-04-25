@@ -5,6 +5,8 @@
 
 #include "types.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 class CollisionBody;
 class ActorManager;
 
@@ -34,5 +36,7 @@ public:
 
 	void rect_rect(CollisionBody* a, CollisionBody* b);
 };
+
+COG2D_NAMESPACE_END_DECL
 
 #endif  // COLLISIONSYSTEM_HPP

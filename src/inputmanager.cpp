@@ -3,6 +3,8 @@
 #include "keyboardcontroller.hpp"
 #include "joypadcontroller.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 InputManager::InputManager()
     : m_actions(),
       m_controllers()
@@ -78,3 +80,5 @@ void InputManager::event(SDL_Event* ev)
 		controller->event(ev);
 	}
 }
+
+COG2D_NAMESPACE_END_IMPL

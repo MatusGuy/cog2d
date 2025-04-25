@@ -1,5 +1,7 @@
 #include "collisionbody.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 CollisionBody::CollisionBody()
     : m_bbox(0, 0, 0, 0),
       m_mov(0, 0)
@@ -19,3 +21,5 @@ void CollisionBody::apply_movement()
 	m_mov.x = 0;
 	m_mov.y = 0;
 }
+
+COG2D_NAMESPACE_END_IMPL

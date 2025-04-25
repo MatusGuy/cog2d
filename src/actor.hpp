@@ -3,6 +3,8 @@
 
 #include "collisionbody.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 /*!
  * \brief A moving object on a scene
  *
@@ -38,5 +40,7 @@ public:
 
 	void gravity();
 };
+
+COG2D_NAMESPACE_END_DECL
 
 #endif  // ACTOR_HPP

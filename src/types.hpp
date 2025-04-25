@@ -6,9 +6,14 @@
 #include <fmt/format.h>
 #include <memory>
 
-#define COG2D_NUMERIC_TEMPLATE   \
-	template<typename T = float, \
-	         typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
+#define COG2D_NAMESPACE_BEGIN_DECL namespace cog2d {
+#define COG2D_NAMESPACE_END_DECL \
+	}                            \
+	;
+#define COG2D_NAMESPACE_BEGIN_IMPL COG2D_NAMESPACE_BEGIN_DECL
+#define COG2D_NAMESPACE_END_IMPL COG2D_NAMESPACE_END_DECL
+
+COG2D_NAMESPACE_BEGIN_DECL
 
 #if __has_include(<SDL2/SDL.h>)
 #include <SDL2/SDL.h>
@@ -64,14 +69,14 @@ public:
 	}
 };
 
-#define COG2D_USING(c, n) c& n = c::get()
+#define COG2D_USING(c, n) cog2d::c& n = cog2d::c::get()
 
 /**
- *   A 'Currenton' allows access to the currently active instance of a
- *   class via the static current() function. It is kind of like a
- *   singleton, but without handling the object construction itself or
- *   in other words its a glorified global variable that points to the
- *   current instance of a class.
+ * A 'Currenton' allows access to the currently active instance of a
+ * class via the static current() function. It is kind of like a
+ * singleton, but without handling the object construction itself or
+ * in other words its a glorified global variable that points to the
+ * current instance of a class.
  */
 template<class C>
 class Currenton
@@ -127,6 +132,10 @@ protected:
     Singleton& operator=(const Singleton&) = delete;
 };
 */
+
+#define COG2D_NUMERIC_TEMPLATE   \
+	template<typename T = float, \
+	         typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
 
 COG2D_NUMERIC_TEMPLATE
 class Vector_t
@@ -217,30 +226,6 @@ public:
 	bool operator<(Vector_t<T>& other) { return x < other.x && y < other.y; }
 };
 using Vector = Vector_t<>;
-
-// FIXME: This will cause bugs! I don't know how any
-// of this wizardry works! I just want my std::format to
-// workie.
-template<typename T>
-struct fmt::formatter<Vector_t<T>, char>
-{
-	constexpr auto parse(auto& ctx)
-	{
-		auto it = ctx.begin();
-		if (it == ctx.end())
-			return it;
-
-		if (it != ctx.end() && *it != '}')
-			throw fmt::format_error("Invalid format args for Vector.");
-
-		return it;
-	}
-
-	auto format(Vector_t<T> vec, auto& ctx) const
-	{
-		return fmt::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
-	}
-};
 
 COG2D_NUMERIC_TEMPLATE
 class Rect_t
@@ -355,5 +340,31 @@ public:
 	}
 };
 using Rect = Rect_t<>;
+
+COG2D_NAMESPACE_END_DECL
+
+// FIXME: This will cause bugs! I don't know how any
+// of this wizardry works! I just want my std::format to
+// workie.
+template<typename T>
+struct fmt::formatter<cog2d::Vector_t<T>, char>
+{
+	constexpr auto parse(auto& ctx)
+	{
+		auto it = ctx.begin();
+		if (it == ctx.end())
+			return it;
+
+		if (it != ctx.end() && *it != '}')
+			throw fmt::format_error("Invalid format args for Vector.");
+
+		return it;
+	}
+
+	auto format(cog2d::Vector_t<T> vec, auto& ctx) const
+	{
+		return fmt::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
+	}
+};
 
 #endif  // TYPES_H

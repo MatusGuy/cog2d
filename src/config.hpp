@@ -9,6 +9,8 @@
 
 #include "types.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 struct ProgramSettings;
 
 using ConfigValue = std::variant<int*, float*, std::string*, bool*>;
@@ -80,5 +82,7 @@ public:
 private:
 	std::map<std::string, ConfigValue> m_settings;
 };
+
+COG2D_NAMESPACE_END_DECL
 
 #endif  // CONFIG_HPP

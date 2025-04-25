@@ -6,6 +6,8 @@
 #include "collisionsystem.hpp"
 #include "types.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 class CollisionBody
 {
 public:
@@ -33,5 +35,7 @@ public:
 		return CollisionSystem::COLRESP_ACCEPT;
 	}
 };
+
+COG2D_NAMESPACE_END_DECL
 
 #endif  // COLLISIONBODY_HPP

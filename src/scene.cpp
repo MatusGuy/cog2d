@@ -1,5 +1,7 @@
 #include "scene.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 Scene::Scene()
     : m_actormanager(),
       m_collisionsystem()
@@ -31,3 +33,5 @@ bool Scene::event(SDL_Event* ev)
 {
 	return true;
 }
+
+COG2D_NAMESPACE_END_IMPL

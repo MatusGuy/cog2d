@@ -5,6 +5,8 @@
 
 #include "actor.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 /*!
  * \class ActorManager
  * \brief Controls all actors
@@ -48,5 +50,7 @@ public:
 private:
 	Actors m_actors;
 };
+
+COG2D_NAMESPACE_END_DECL
 
 #endif  // ACTORMANAGER_HPP

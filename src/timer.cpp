@@ -1,5 +1,7 @@
 #include "timer.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 Timer::Timer()
     : m_start(0),
       m_period(0)
@@ -26,3 +28,5 @@ bool Timer::check()
 
 	return false;
 }
+
+COG2D_NAMESPACE_END_IMPL

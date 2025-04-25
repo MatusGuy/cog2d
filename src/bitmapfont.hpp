@@ -7,6 +7,8 @@
 #include "types.hpp"
 #include "texture.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 class BitmapFont
 {
 public:
@@ -40,5 +42,7 @@ private:
 private:
 	static Color get_pixel(SDLSurfacePtr& surface, Vector_t<int> pos);
 };
+
+COG2D_NAMESPACE_END_DECL
 
 #endif  // BITMAPFONT_HPP

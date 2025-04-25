@@ -7,6 +7,8 @@
 #include "inputmanager.hpp"
 #include "screen.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 #define COG2D_MAIN(prgclass)         \
 	int main(int argc, char* argv[]) \
 	{                                \
@@ -95,5 +97,7 @@ private:
 	void init_sdl();
 	void poll_sdl_events();
 };
+
+COG2D_NAMESPACE_END_DECL
 
 #endif  // PROGRAM_HPP

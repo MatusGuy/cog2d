@@ -9,6 +9,8 @@
 #include "assetmanager.hpp"
 #include "config.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 Program::Program()
     : m_keep_running(true),
       m_paused(false),
@@ -147,3 +149,5 @@ void Program::poll_sdl_events()
 		inputmanager.event(&ev);
 	}
 }
+
+COG2D_NAMESPACE_END_IMPL

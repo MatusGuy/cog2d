@@ -6,6 +6,8 @@
 #include "logger.hpp"
 #include "types.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 static constexpr std::string_view s_chars = " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
 BitmapFont::BitmapFont(std::filesystem::path path)
@@ -177,3 +179,5 @@ Color BitmapFont::get_pixel(SDLSurfacePtr& surface, Vector_t<int> pos)
 	SDL_GetRGBA(data, surface->format, &rgba.r, &rgba.g, &rgba.b, &rgba.a);
 	return rgba;
 }
+
+COG2D_NAMESPACE_END_IMPL

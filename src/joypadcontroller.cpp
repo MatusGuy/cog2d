@@ -39,3 +39,5 @@ void JoypadController::event(SDL_Event* ev)
 	}
 	};
 }
+
+COG2D_NAMESPACE_END_IMPL

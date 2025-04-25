@@ -2,6 +2,8 @@
 
 #include "logger.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 ActorManager::ActorManager()
     : m_actors()
 {
@@ -22,3 +24,5 @@ void ActorManager::update()
 		actor->update();
 	}
 }
+
+COG2D_NAMESPACE_END_IMPL

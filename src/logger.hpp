@@ -9,6 +9,8 @@
 
 #include "types.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 #define COG2D_LOGGING_LEVEL(lv, name, func)                                \
 	static constexpr uint8_t name = lv;                                    \
 	inline void log_##func(const std::string& msg)                         \
@@ -70,5 +72,7 @@ public:
 		std::exit(exitcode);
 	}
 };
+
+COG2D_NAMESPACE_END_DECL
 
 #endif  // LOGGER_HPP

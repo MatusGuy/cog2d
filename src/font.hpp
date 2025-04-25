@@ -5,6 +5,10 @@
 
 #include <SDL2/SDL_ttf.h>
 
+#include "types.hpp"
+
+COG2D_NAMESPACE_BEGIN_DECL
+
 class Font
 {
 public:
@@ -17,5 +21,7 @@ public:
 private:
 	TTF_Font* m_font;
 };
+
+COG2D_NAMESPACE_END_DECL
 
 #endif  // FONT_H

@@ -3,6 +3,8 @@
 #include "actormanager.hpp"
 #include "logger.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 CollisionSystem::CollisionSystem()
 {
 }
@@ -84,3 +86,5 @@ void CollisionSystem::rect_rect(CollisionBody* a, CollisionBody* b)
 		b->m_mov += avg;
 	}
 }
+
+COG2D_NAMESPACE_END_IMPL

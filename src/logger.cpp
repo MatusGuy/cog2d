@@ -1,5 +1,7 @@
 #include "logger.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 Logger::Logger()
 {
 }
@@ -44,3 +46,5 @@ std::string Logger::get_color_code(Level lv)
 		return "";
 	}
 }
+
+COG2D_NAMESPACE_END_IMPL

@@ -4,6 +4,8 @@
 
 #include "program.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 Config::Config()
 {
 }
@@ -67,3 +69,5 @@ void Config::save(std::ofstream& cfgfile)
 
 	cfgfile << std::setw(4) << jsonobj << std::endl;
 }
+
+COG2D_NAMESPACE_END_IMPL

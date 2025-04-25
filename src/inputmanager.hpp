@@ -10,6 +10,8 @@
 #include "types.hpp"
 #include "controller.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 struct InputAction
 {
 	uint8_t id;
@@ -59,5 +61,7 @@ private:
 	std::vector<InputAction> m_actions;
 	std::vector<Controller*> m_controllers;
 };
+
+COG2D_NAMESPACE_END_DECL
 
 #endif  // INPUTMANAGER_HPP

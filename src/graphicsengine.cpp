@@ -2,6 +2,8 @@
 
 #include "program.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 void GraphicsEngine::init(ProgramSettings* settings)
 {
 	m_window = SDL_CreateWindow(settings->title.data(), SDL_WINDOWPOS_CENTERED,
@@ -242,3 +244,5 @@ Color GraphicsEngine::get_current_color()
 	SDL_GetRenderDrawColor(m_renderer, &resp.r, &resp.g, &resp.b, &resp.a);
 	return resp;
 }
+
+COG2D_NAMESPACE_END_IMPL

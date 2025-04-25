@@ -2,6 +2,8 @@
 
 #include "program.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 Actor::Actor()
     : CollisionBody(),
       m_vel(0, 0),
@@ -22,3 +24,5 @@ void Actor::gravity()
 	m_vel.x += m_accel.x * Program::get().m_delta_time;
 	m_vel.y += (m_accel.y + m_grav) * Program::get().m_delta_time;
 }
+
+COG2D_NAMESPACE_END_IMPL

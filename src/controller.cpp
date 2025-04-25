@@ -5,6 +5,8 @@
 #include "inputmanager.hpp"
 #include "logger.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 Controller::Controller()
     : m_id(0),
       m_actions(),
@@ -47,3 +49,5 @@ bool Controller::held(uint8_t id) const
 
 	return m_held.at(id);
 }
+
+COG2D_NAMESPACE_END_IMPL

@@ -6,6 +6,8 @@
 
 #include "types.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 class Texture
 {
 public:
@@ -21,5 +23,7 @@ public:
 	inline Vector get_size() { return m_size; }
 	Vector query_size();
 };
+
+COG2D_NAMESPACE_END_DECL
 
 #endif  // TEXTURE_H

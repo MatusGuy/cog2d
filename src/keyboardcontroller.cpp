@@ -39,3 +39,5 @@ void KeyboardController::event(SDL_Event* ev)
 		break;
 	}
 }
+
+COG2D_NAMESPACE_END_IMPL

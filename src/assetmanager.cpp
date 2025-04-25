@@ -6,6 +6,8 @@
 #include "texture.hpp"
 #include "logger.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 AssetManager::AssetManager()
     : m_textures(),
       m_fonts(),
@@ -157,3 +159,5 @@ void AssetManager::wipe_assets()
 		asset = nullptr;
 	}
 }
+
+COG2D_NAMESPACE_END_IMPL
