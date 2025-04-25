@@ -7,6 +7,8 @@
 
 #include <iterator>
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 TileLayer::TileLayer()
 {
 }
@@ -47,3 +49,5 @@ void TileLayer::draw()
 		//COG2D_LOG_DEBUG("TileLayer", fmt::format("draw {} at {} - {}", src, dest, id));
 	}
 }
+
+COG2D_NAMESPACE_END_IMPL

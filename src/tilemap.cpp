@@ -4,6 +4,8 @@
 
 #include <nlohmann/json.hpp>
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 TileMap::TileMap()
 {
 
@@ -71,3 +73,5 @@ TileSet& TileMap::get_tileset(uint32_t tileid)
 
 	return m_sets.at(0);
 }
+
+COG2D_NAMESPACE_END_IMPL

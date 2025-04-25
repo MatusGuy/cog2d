@@ -5,6 +5,8 @@
 
 #include "types.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 class TileSet;
 class TileMap;
 
@@ -24,5 +26,7 @@ public:
 
 	void draw();
 };
+
+COG2D_NAMESPACE_END_DECL
 
 #endif // TILELAYER_HPP

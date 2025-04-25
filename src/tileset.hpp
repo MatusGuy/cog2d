@@ -7,6 +7,8 @@
 
 #include "types.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 class Texture;
 
 class TileSet
@@ -26,5 +28,7 @@ public:
 	void load_texture();
 	void unload_texture();
 };
+
+COG2D_NAMESPACE_END_DECL
 
 #endif // TILESET_HPP

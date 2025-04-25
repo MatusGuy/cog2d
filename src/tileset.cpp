@@ -3,6 +3,8 @@
 #include "assetmanager.hpp"
 #include "logger.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 TileSet::TileSet()
 {
 
@@ -38,3 +40,5 @@ void TileSet::unload_texture()
 	COG2D_USE_ASSETMANAGER;
 	assetmanager.destroy_texture(m_texture);
 }
+
+COG2D_NAMESPACE_END_IMPL
