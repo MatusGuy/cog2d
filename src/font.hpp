@@ -13,8 +13,9 @@ public:
 	~Font();
 
 	inline TTF_Font* get_font() { return m_font; }
+
 private:
 	TTF_Font* m_font;
 };
 
-#endif // FONT_H
+#endif  // FONT_H

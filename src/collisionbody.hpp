@@ -28,7 +28,10 @@ public:
 	Rect get_dest();
 	void apply_movement();
 
-	virtual CollisionSystem::Response collision(CollisionBody* other) { return CollisionSystem::COLRESP_ACCEPT; }
+	virtual CollisionSystem::Response collision(CollisionBody* other)
+	{
+		return CollisionSystem::COLRESP_ACCEPT;
+	}
 };
 
-#endif // COLLISIONBODY_HPP
+#endif  // COLLISIONBODY_HPP

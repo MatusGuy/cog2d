@@ -26,4 +26,4 @@ public:
 	std::uint32_t m_period;
 };
 
-#endif // TIMER_HPP
+#endif  // TIMER_HPP

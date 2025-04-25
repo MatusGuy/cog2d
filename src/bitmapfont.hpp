@@ -15,7 +15,7 @@ public:
 	void load();
 
 	int get_text_width(std::string_view text);
-	void write_text(Texture* texture, std::string_view text, const Vector& pos = {0,0});
+	void write_text(Texture* texture, std::string_view text, const Vector& pos = {0, 0});
 	Texture* create_text(std::string_view text);
 
 	inline void set_horizontal_spacing(int spacing) { m_horizontal_spacing = spacing; }
@@ -27,7 +27,8 @@ public:
 
 private:
 	//using Glyph = Rect_t<int>;
-	struct Glyph {
+	struct Glyph
+	{
 		Vector_t<int> pos;
 		int width = -1;
 	};
@@ -40,4 +41,4 @@ private:
 	static Color get_pixel(SDLSurfacePtr& surface, Vector_t<int> pos);
 };
 
-#endif // BITMAPFONT_HPP
+#endif  // BITMAPFONT_HPP

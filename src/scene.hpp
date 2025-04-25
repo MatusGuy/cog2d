@@ -12,7 +12,7 @@ public:
 	void init() override;
 	void update() override;
 	void draw() override;
-	bool event(SDL_Event *ev) override;
+	bool event(SDL_Event* ev) override;
 
 protected:
 	// TODO: do these even need to be currentons lol?
@@ -20,4 +20,4 @@ protected:
 	CollisionSystem m_collisionsystem;
 };
 
-#endif // SCENE_HPP
+#endif  // SCENE_HPP

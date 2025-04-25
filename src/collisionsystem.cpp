@@ -5,17 +5,16 @@
 
 CollisionSystem::CollisionSystem()
 {
-
 }
 
-void CollisionSystem::update(ActorManager &actormanager)
+void CollisionSystem::update(ActorManager& actormanager)
 {
-    ActorManager::Actors &actors = actormanager.get_actors();
+	ActorManager::Actors& actors = actormanager.get_actors();
 
-    // iterator for inner for loop
-    ActorManager::Actors::iterator iter;
+	// iterator for inner for loop
+	ActorManager::Actors::iterator iter;
 
-    for (Actor* a : actors) {
+	for (Actor* a : actors) {
 		for (iter = actors.begin() + 1; iter != actors.end(); iter++) {
 			Actor* b = *iter;
 			if (!a->is_active() || !b->is_active() || a == b)
@@ -36,7 +35,6 @@ void CollisionSystem::rect_rect(CollisionBody* a, CollisionBody* b)
 	// trigger if both are accepted or only one is.
 	if (!m_groups[a->m_group][b->m_group] && !m_groups[b->m_group][a->m_group])
 		return;
-
 
 	CollisionBody* target = a->m_static ? b : a;
 	CollisionBody* other = target == a ? b : a;
@@ -77,14 +75,12 @@ void CollisionSystem::rect_rect(CollisionBody* a, CollisionBody* b)
 		}
 	}
 
-
-	if (!a->m_static && !b->m_static)
-	{
+	if (!a->m_static && !b->m_static) {
 		Vector avg = oldmov1.avg(oldmov2);
-		//if (!a->m_static)
-			a->m_mov += avg;
+		// if (!a->m_static)
+		a->m_mov += avg;
 
-		//if (!b->m_static)
-			b->m_mov += avg;
+		// if (!b->m_static)
+		b->m_mov += avg;
 	}
 }

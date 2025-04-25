@@ -9,11 +9,11 @@
 #include "assetmanager.hpp"
 #include "config.hpp"
 
-Program::Program():
-	m_keep_running(true),
-	m_paused(false),
-	m_settings(new ProgramSettings),
-	m_screen_stack()
+Program::Program()
+    : m_keep_running(true),
+      m_paused(false),
+      m_settings(new ProgramSettings),
+      m_screen_stack()
 {
 }
 
@@ -21,7 +21,7 @@ int Program::run(int argc, char* argv[])
 {
 	Logger::s_current = new Logger;
 
-	//std::atexit(&Program::quit);
+	// std::atexit(&Program::quit);
 	init_sdl();
 
 	GraphicsEngine::s_current = new GraphicsEngine;
@@ -108,7 +108,8 @@ void Program::push_screen(Screen* screen)
 	screen->init();
 }
 
-void Program::init_sdl() {
+void Program::init_sdl()
+{
 	int errcode = SDL_Init(SDL_INIT_EVERYTHING);
 	if (errcode != 0) {
 		std::stringstream stream;

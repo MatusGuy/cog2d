@@ -19,4 +19,4 @@ public:
 	virtual void event(SDL_Event* ev) override;
 };
 
-#endif // JOYPADCONTROLLER_H
+#endif  // JOYPADCONTROLLER_H

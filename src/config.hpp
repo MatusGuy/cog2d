@@ -13,7 +13,8 @@ struct ProgramSettings;
 
 using ConfigValue = std::variant<int*, float*, std::string*, bool*>;
 
-struct ConfigSetting {
+struct ConfigSetting
+{
 	std::string name;
 	ConfigValue ptr;
 };
@@ -28,7 +29,8 @@ public:
 
 	/// WARNING: your pointers are mine now
 	template<typename T>
-	void register_setting(const std::string &name, T default_value, T *ptr = nullptr) {
+	void register_setting(const std::string& name, T default_value, T* ptr = nullptr)
+	{
 		if (ptr == nullptr) {
 			ptr = new T;
 		}
@@ -39,7 +41,8 @@ public:
 	}
 
 	template<typename T>
-	void set(const std::string &name, T value) {
+	void set(const std::string& name, T value)
+	{
 		if (m_settings.count(name) == -1) {
 			return;
 		}
@@ -54,9 +57,8 @@ public:
 		(*ptr) = value;
 	}
 
-
 	template<typename T>
-	const T* at(const std::string &name)
+	const T* at(const std::string& name)
 	{
 		if (m_settings.count(name) == -1) {
 			return nullptr;
@@ -79,4 +81,4 @@ private:
 	std::map<std::string, ConfigValue> m_settings;
 };
 
-#endif // CONFIG_HPP
+#endif  // CONFIG_HPP

@@ -1,20 +1,20 @@
 #include "scene.hpp"
 
-
-Scene::Scene():
-	m_actormanager(),
-	m_collisionsystem()
+Scene::Scene()
+    : m_actormanager(),
+      m_collisionsystem()
 {
-
 }
 
-void Scene::init() {}
+void Scene::init()
+{
+}
 
 void Scene::update()
 {
 	m_actormanager.update();
-    // FIXME: Is this a good way to handle this?
-    m_collisionsystem.update(m_actormanager);
+	// FIXME: Is this a good way to handle this?
+	m_collisionsystem.update(m_actormanager);
 }
 
 void Scene::draw()

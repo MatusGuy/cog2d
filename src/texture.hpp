@@ -6,7 +6,8 @@
 
 #include "types.hpp"
 
-class Texture {
+class Texture
+{
 public:
 	SDL_Texture* m_texture;
 	Vector m_size;
@@ -21,4 +22,4 @@ public:
 	Vector query_size();
 };
 
-#endif // TEXTURE_H
+#endif  // TEXTURE_H

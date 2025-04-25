@@ -1,0 +1,38 @@
+---
+Language: Cpp
+BasedOnStyle: Google
+AccessModifierOffset: -4 # This is the negative of IndentWidth. This tool is very cool.
+AlignAfterOpenBracket: Align
+AlignTrailingComments: 'true'
+AllowAllArgumentsOnNextLine: 'true'
+AllowAllParametersOfDeclarationOnNextLine: 'true'
+AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: Inline
+AllowShortLoopsOnASingleLine: 'false'
+BinPackArguments: 'true'
+BinPackParameters: 'true'
+BreakBeforeBraces: Mozilla
+BreakInheritanceList: AfterColon
+ColumnLimit: '100'
+DerivePointerAlignment: 'false'
+EmptyLineBeforeAccessModifier: LogicalBlock
+IndentAccessModifiers: 'false'
+IndentCaseLabels: 'false'
+IndentPPDirectives: None
+IndentWidth: '4'
+PackConstructorInitializers: Never
+PenaltyBreakAssignment: '1000'
+PenaltyBreakOpenParenthesis: '1000'
+PenaltyBreakBeforeFirstCallParameter: '0'
+PointerAlignment: Left
+QualifierAlignment: Leave
+ReferenceAlignment: Left
+SortIncludes: 'false'
+SpaceAfterCStyleCast: 'true'
+SpaceAfterTemplateKeyword: 'false'
+SpacesInLineCommentPrefix:
+    Minimum: 0
+    Maximum: 1
+TabWidth: '4'
+UseTab: ForIndentation

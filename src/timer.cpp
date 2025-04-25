@@ -1,10 +1,9 @@
 #include "timer.hpp"
 
-Timer::Timer():
-	m_start(0),
-	m_period(0)
+Timer::Timer()
+    : m_start(0),
+      m_period(0)
 {
-
 }
 
 void Timer::start(uint32_t period)

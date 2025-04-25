@@ -41,9 +41,7 @@ public:
 	/*!
 	 * \return All actors in the manager.
 	 */
-	inline Actors& get_actors() {
-		return m_actors;
-	}
+	inline Actors& get_actors() { return m_actors; }
 
 	void update();
 
@@ -51,4 +49,4 @@ private:
 	Actors m_actors;
 };
 
-#endif // ACTORMANAGER_HPP
+#endif  // ACTORMANAGER_HPP

@@ -2,10 +2,9 @@
 
 #include "logger.hpp"
 
-AudioEngine::AudioEngine():
-	m_error()
+AudioEngine::AudioEngine()
+    : m_error()
 {
-
 }
 
 void AudioEngine::init()

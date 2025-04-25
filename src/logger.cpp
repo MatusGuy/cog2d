@@ -2,10 +2,10 @@
 
 Logger::Logger()
 {
-
 }
 
-void Logger::log(Level lv, const std::string &lvname, const std::string &cat, const std::string &msg)
+void Logger::log(Level lv, const std::string& lvname, const std::string& cat,
+                 const std::string& msg)
 {
 	std::ostream* stream = nullptr;
 	if (lv == ERROR)
@@ -13,10 +13,11 @@ void Logger::log(Level lv, const std::string &lvname, const std::string &cat, co
 	else
 		stream = &std::cout;
 
-	*stream << "[" << get_color_code(lv) << lvname << "\033[0m] [" << cat << "] " << msg << std::endl;
+	*stream << "[" << get_color_code(lv) << lvname << "\033[0m] [" << cat << "] " << msg
+	        << std::endl;
 }
 
-void Logger::log(Level lv, const std::string &lvname, const std::string &msg)
+void Logger::log(Level lv, const std::string& lvname, const std::string& msg)
 {
 	std::ostream* stream = nullptr;
 	if (lv == ERROR)
@@ -29,8 +30,7 @@ void Logger::log(Level lv, const std::string &lvname, const std::string &msg)
 
 std::string Logger::get_color_code(Level lv)
 {
-	switch (lv)
-	{
+	switch (lv) {
 	case INFO:
 		return "\033[0;36m";
 

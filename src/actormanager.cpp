@@ -2,10 +2,9 @@
 
 #include "logger.hpp"
 
-ActorManager::ActorManager():
-	m_actors()
+ActorManager::ActorManager()
+    : m_actors()
 {
-
 }
 
 void ActorManager::add(Actor* actor)

@@ -38,7 +38,6 @@ public:
 	Font* load_font(const std::string& path, int ptsz);
 
 	void wipe_assets();
-
 };
 
-#endif // ASSETMANAGER_H
+#endif  // ASSETMANAGER_H

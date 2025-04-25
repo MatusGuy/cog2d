@@ -13,4 +13,4 @@ public:
 	void event(SDL_Event* ev) override;
 };
 
-#endif // KEYBOARDCONTROLLER_HPP
+#endif  // KEYBOARDCONTROLLER_HPP

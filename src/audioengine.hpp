@@ -25,4 +25,4 @@ private:
 	std::string m_error;
 };
 
-#endif // AUDIOENGINE_H
+#endif  // AUDIOENGINE_H

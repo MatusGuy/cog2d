@@ -1,14 +1,15 @@
 #include "texture.hpp"
 
-Texture::Texture(SDL_Texture* tex):
-	m_texture(tex),
-	m_size()
+Texture::Texture(SDL_Texture* tex)
+    : m_texture(tex),
+      m_size()
 {
 	if (m_texture)
 		query_size();
 }
 
-Texture::~Texture() {
+Texture::~Texture()
+{
 	if (m_texture) {
 		SDL_DestroyTexture(m_texture);
 		m_texture = nullptr;

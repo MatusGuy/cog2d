@@ -15,4 +15,4 @@ public:
 	virtual bool event(SDL_Event* ev) = 0;
 };
 
-#endif // SCREEN_HPP
+#endif  // SCREEN_HPP

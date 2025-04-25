@@ -6,9 +6,15 @@
 #include <SDL2/SDL.h>
 
 #define COG2D_CONTROLLER_TYPE(t) \
-public: \
-	static uint8_t type() { return t; } \
-	uint8_t get_type() override { return t; }
+public:                          \
+	static uint8_t type()        \
+	{                            \
+		return t;                \
+	}                            \
+	uint8_t get_type() override  \
+	{                            \
+		return t;                \
+	}
 
 struct InputAction;
 
@@ -37,4 +43,4 @@ protected:
 	std::map<uint8_t, bool> m_held;
 };
 
-#endif // CONTROLLER_HPP
+#endif  // CONTROLLER_HPP

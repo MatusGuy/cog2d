@@ -1,11 +1,9 @@
 #include "collisionbody.hpp"
 
-
-CollisionBody::CollisionBody():
-	m_bbox(0, 0, 0, 0),
-	m_mov(0, 0)
+CollisionBody::CollisionBody()
+    : m_bbox(0, 0, 0, 0),
+      m_mov(0, 0)
 {
-
 }
 
 Rect CollisionBody::get_dest()
