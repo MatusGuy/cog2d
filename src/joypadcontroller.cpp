@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 JoypadController::JoypadController(SDL_JoystickID id)
     : m_device_id(id)
 {
