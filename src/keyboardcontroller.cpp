@@ -3,19 +3,15 @@
 #include <iostream>
 #include <logger.hpp>
 
-KeyboardController::KeyboardController():
-	Controller()
+KeyboardController::KeyboardController()
+    : Controller()
 {
-
 }
 
 void KeyboardController::event(SDL_Event* ev)
 {
-	switch (ev->type)
-	{
-
-	case SDL_KEYDOWN:
-	{
+	switch (ev->type) {
+	case SDL_KEYDOWN: {
 		SDL_KeyboardEvent kev = ev->key;
 
 		auto actionid = m_actions.find(kev.keysym.scancode);
@@ -27,8 +23,7 @@ void KeyboardController::event(SDL_Event* ev)
 		break;
 	}
 
-	case SDL_KEYUP:
-	{
+	case SDL_KEYUP: {
 		SDL_KeyboardEvent kev = ev->key;
 
 		auto actionid = m_actions.find(kev.keysym.scancode);
@@ -42,6 +37,7 @@ void KeyboardController::event(SDL_Event* ev)
 
 	default:
 		break;
-
 	}
 }
+
+COG2D_NAMESPACE_END_IMPL

@@ -19,4 +19,6 @@ public:
 	virtual void event(SDL_Event* ev) override;
 };
 
-#endif // JOYPADCONTROLLER_H
+COG2D_NAMESPACE_END_DECL
+
+#endif  // JOYPADCONTROLLER_H

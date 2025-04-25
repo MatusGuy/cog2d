@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-JoypadController::JoypadController(SDL_JoystickID id):
-	m_device_id(id)
+JoypadController::JoypadController(SDL_JoystickID id)
+    : m_device_id(id)
 {
 	SDL_JoystickOpen(id);
 }
@@ -15,8 +15,7 @@ JoypadController::~JoypadController()
 
 void JoypadController::event(SDL_Event* ev)
 {
-	switch (ev->type)
-	{
+	switch (ev->type) {
 	case SDL_JOYBUTTONDOWN: {
 		SDL_JoyButtonEvent jev = ev->jbutton;
 
@@ -40,3 +39,5 @@ void JoypadController::event(SDL_Event* ev)
 	}
 	};
 }
+
+COG2D_NAMESPACE_END_IMPL

@@ -6,7 +6,10 @@
 
 #include "types.hpp"
 
-class Texture {
+COG2D_NAMESPACE_BEGIN_DECL
+
+class Texture
+{
 public:
 	SDL_Texture* m_texture;
 	Vector m_size;
@@ -21,4 +24,6 @@ public:
 	Vector query_size();
 };
 
-#endif // TEXTURE_H
+COG2D_NAMESPACE_END_DECL
+
+#endif  // TEXTURE_H

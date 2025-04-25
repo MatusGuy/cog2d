@@ -9,13 +9,16 @@
 #include "assetmanager.hpp"
 #include "font.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 struct ProgramSettings;
 
 using SDLSurfacePtr = std::unique_ptr<SDL_Surface, decltype(&SDL_FreeSurface)>;
 #define COG2D_UNIQUE_SDLSURFACE(name, surface) SDLSurfacePtr name(surface, SDL_FreeSurface)
 
 #define COG2D_USE_GRAPHICSENGINE COG2D_USING(GraphicsEngine, graphicsengine)
-class GraphicsEngine : public Currenton<GraphicsEngine> {
+class GraphicsEngine : public Currenton<GraphicsEngine>
+{
 private:
 	SDL_Window* m_window = nullptr;
 	SDL_Renderer* m_renderer = nullptr;
@@ -51,4 +54,6 @@ public:
 	inline const Vector_t<int>& get_logical_size() { return m_logical_size; }
 };
 
-#endif // GRAPHICSENGINE_H
+COG2D_NAMESPACE_END_DECL
+
+#endif  // GRAPHICSENGINE_H

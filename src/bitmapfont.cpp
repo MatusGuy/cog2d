@@ -6,16 +6,17 @@
 #include "logger.hpp"
 #include "types.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 static constexpr std::string_view s_chars = " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
-BitmapFont::BitmapFont(std::filesystem::path path):
-	m_path(path),
-	m_texture(),
-	m_glyph_height(-1),
-	m_horizontal_spacing(0),
-	m_glyphs()
+BitmapFont::BitmapFont(std::filesystem::path path)
+    : m_path(path),
+      m_texture(),
+      m_glyph_height(-1),
+      m_horizontal_spacing(0),
+      m_glyphs()
 {
-
 }
 
 void BitmapFont::load()
@@ -36,7 +37,7 @@ void BitmapFont::load()
 	}
 
 	Vector_t<int> size = {surface->w, surface->h};
-	Vector_t<int> cursor = {0,0};
+	Vector_t<int> cursor = {0, 0};
 
 	for (cursor.y = 1; cursor.y < size.y; ++cursor.y) {
 		Color color = get_pixel(surface, cursor);
@@ -82,7 +83,8 @@ void BitmapFont::load()
 		m_glyphs[c] = g;
 	}
 
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(graphicsengine.get_renderer(), surface.get());
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(graphicsengine.get_renderer(),
+	                                                    surface.get());
 	m_texture = new Texture(texture);
 	assetmanager.add_texture(m_texture);
 	assetmanager.m_images[m_path.string()] = m_texture;
@@ -110,13 +112,13 @@ void BitmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 	int x = pos.x;
 	for (char c : text) {
 		Glyph g = m_glyphs[c];
-		if (c != ' ')
-		{
+		if (c != ' ') {
 			SDL_Rect src = {g.pos.x, g.pos.y, g.width, m_glyph_height};
 			SDL_Rect dest = {x, static_cast<int>(pos.y), g.width, m_glyph_height};
 
 			// TODO: Support RenderCopyF (lazy)
-			SDL_RenderCopy(graphicsengine.get_renderer(), m_texture->get_sdl_texture(), &src, &dest);
+			SDL_RenderCopy(graphicsengine.get_renderer(), m_texture->get_sdl_texture(), &src,
+			               &dest);
 		}
 
 		x += g.width + m_horizontal_spacing;
@@ -133,10 +135,10 @@ Texture* BitmapFont::create_text(std::string_view text)
 
 	int width = get_text_width(text);
 	SDL_Texture* stexture = SDL_CreateTexture(graphicsengine.get_renderer(),
-											  SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
-											  width, m_glyph_height);
+	                                          SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
+	                                          width, m_glyph_height);
 	auto texture = new Texture(stexture);
-	write_text(texture, text, {0,0});
+	write_text(texture, text, {0, 0});
 	assetmanager.add_texture(texture);
 	return texture;
 }
@@ -145,11 +147,10 @@ Color BitmapFont::get_pixel(SDLSurfacePtr& surface, Vector_t<int> pos)
 {
 	uint8_t bpp = surface->format->BytesPerPixel;
 	/* Here p is the address to the pixel we want to retrieve */
-	uint8_t *p = (uint8_t*) surface->pixels + pos.y * surface->pitch + pos.x * bpp;
+	uint8_t* p = (uint8_t*) surface->pixels + pos.y * surface->pitch + pos.x * bpp;
 	uint32_t data = 0x0;
 
-	switch (bpp)
-	{
+	switch (bpp) {
 	case 1:
 		return data = *p;
 		break;
@@ -178,3 +179,5 @@ Color BitmapFont::get_pixel(SDLSurfacePtr& surface, Vector_t<int> pos)
 	SDL_GetRGBA(data, surface->format, &rgba.r, &rgba.g, &rgba.b, &rgba.a);
 	return rgba;
 }
+
+COG2D_NAMESPACE_END_IMPL

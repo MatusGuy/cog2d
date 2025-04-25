@@ -10,12 +10,16 @@
 #include "types.hpp"
 #include "controller.hpp"
 
-struct InputAction {
+COG2D_NAMESPACE_BEGIN_DECL
+
+struct InputAction
+{
 	uint8_t id;
 	std::string name;
 	std::string display_name;
 
-	struct Config {
+	struct Config
+	{
 		uint8_t controller_type;
 
 		/*!
@@ -46,8 +50,9 @@ public:
 
 	void add_controller(Controller* controller);
 	inline size_t get_controller_count() { return m_controllers.size(); }
-	inline Controller* get_controller(uint8_t id) {
-		return static_cast<size_t>(id+1) > get_controller_count() ? nullptr : m_controllers[id];
+	inline Controller* get_controller(uint8_t id)
+	{
+		return static_cast<size_t>(id + 1) > get_controller_count() ? nullptr : m_controllers[id];
 	}
 
 	void event(SDL_Event* ev);
@@ -57,4 +62,6 @@ private:
 	std::vector<Controller*> m_controllers;
 };
 
-#endif // INPUTMANAGER_HPP
+COG2D_NAMESPACE_END_DECL
+
+#endif  // INPUTMANAGER_HPP

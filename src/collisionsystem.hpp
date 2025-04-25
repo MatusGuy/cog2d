@@ -5,6 +5,8 @@
 
 #include "types.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 class CollisionBody;
 class ActorManager;
 
@@ -18,7 +20,8 @@ public:
 	// FIXME: does this really need to be dynamic?
 	using Group = std::vector<bool>;
 
-	enum Response : std::uint8_t {
+	enum Response : std::uint8_t
+	{
 		COLRESP_ACCEPT,
 		COLRESP_REJECT
 	};
@@ -29,9 +32,11 @@ public:
 public:
 	CollisionSystem();
 
-    void update(ActorManager &actormanager);
+	void update(ActorManager& actormanager);
 
-    void rect_rect(CollisionBody *a, CollisionBody *b);
+	void rect_rect(CollisionBody* a, CollisionBody* b);
 };
 
-#endif // COLLISIONSYSTEM_HPP
+COG2D_NAMESPACE_END_DECL
+
+#endif  // COLLISIONSYSTEM_HPP

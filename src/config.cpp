@@ -4,9 +4,10 @@
 
 #include "program.hpp"
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 Config::Config()
 {
-
 }
 
 void Config::init(const ProgramSettings* prgsettings)
@@ -20,15 +21,19 @@ void Config::init(const ProgramSettings* prgsettings)
 		nlohmann::json jsonobj;
 		cfgfile >> jsonobj;
 
-#define COG2D_READ_SETTING_CASE(e, t) case e: (*std::get<t*>(setting)) = jsonval; break;
+#define COG2D_READ_SETTING_CASE(e, t)       \
+	case e:                                 \
+		(*std::get<t*>(setting)) = jsonval; \
+		break;
 		for (auto& [name, setting] : m_settings) {
 			auto jsonval = jsonobj[name];
 			switch (jsonval.type()) {
-			COG2D_READ_SETTING_CASE(JsonType::number_integer, int)
-			COG2D_READ_SETTING_CASE(JsonType::number_float, float)
-			COG2D_READ_SETTING_CASE(JsonType::string, std::string)
-			COG2D_READ_SETTING_CASE(JsonType::boolean, bool)
-			default: break;
+				COG2D_READ_SETTING_CASE(JsonType::number_integer, int)
+				COG2D_READ_SETTING_CASE(JsonType::number_float, float)
+				COG2D_READ_SETTING_CASE(JsonType::string, std::string)
+				COG2D_READ_SETTING_CASE(JsonType::boolean, bool)
+			default:
+				break;
 			}
 		}
 	} else {
@@ -41,22 +46,28 @@ void Config::init(const ProgramSettings* prgsettings)
 
 std::filesystem::path Config::get_config_path(const ProgramSettings* prgsettings)
 {
-	std::filesystem::path prefpath = SDL_GetPrefPath(prgsettings->org_name.c_str(), prgsettings->app_name.c_str());
-	return prefpath/"config.json";
+	std::filesystem::path prefpath = SDL_GetPrefPath(prgsettings->org_name.c_str(),
+	                                                 prgsettings->app_name.c_str());
+	return prefpath / "config.json";
 }
 
-void Config::save(std::ofstream &cfgfile)
+void Config::save(std::ofstream& cfgfile)
 {
-#define COG2D_WRITE_SETTING_CASE(i, t) case i: jsonobj[name] = *std::get<t*>(setting); break
+#define COG2D_WRITE_SETTING_CASE(i, t)          \
+	case i:                                     \
+		jsonobj[name] = *std::get<t*>(setting); \
+		break
 	nlohmann::json jsonobj;
 	for (auto& [name, setting] : m_settings) {
 		switch (setting.index()) {
-		COG2D_WRITE_SETTING_CASE(0, int);
-		COG2D_WRITE_SETTING_CASE(1, float);
-		COG2D_WRITE_SETTING_CASE(2, std::string);
-		COG2D_WRITE_SETTING_CASE(3, bool);
+			COG2D_WRITE_SETTING_CASE(0, int);
+			COG2D_WRITE_SETTING_CASE(1, float);
+			COG2D_WRITE_SETTING_CASE(2, std::string);
+			COG2D_WRITE_SETTING_CASE(3, bool);
 		}
 	}
 
 	cfgfile << std::setw(4) << jsonobj << std::endl;
 }
+
+COG2D_NAMESPACE_END_IMPL

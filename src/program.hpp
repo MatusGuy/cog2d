@@ -7,14 +7,18 @@
 #include "inputmanager.hpp"
 #include "screen.hpp"
 
-#define COG2D_MAIN(prgclass) \
-	int main(int argc, char* argv[]) { \
-		prgclass prg; \
-		prgclass::s_current = &prg; \
-		return prg.run(argc, argv); \
+COG2D_NAMESPACE_BEGIN_DECL
+
+#define COG2D_MAIN(prgclass)         \
+	int main(int argc, char* argv[]) \
+	{                                \
+		prgclass prg;                \
+		prgclass::s_current = &prg;  \
+		return prg.run(argc, argv);  \
 	}
 
-enum System : std::uint8_t {
+enum System : std::uint8_t
+{
 	SYSTEM_VIDEO = 0x1,
 	SYSTEM_INPUT = 0x2,
 	SYSTEM_ASSET = 0x4,
@@ -24,21 +28,24 @@ enum System : std::uint8_t {
 	SYSTEM_EVERYTHING = 0xFF
 };
 
-struct ProgramSettings {
+struct ProgramSettings
+{
 	std::string_view title = "cog2d";
 
 	// TODO: Maybe move these graphics related settings to a struct?
 	int lwidth = 800, lheight = 600;
 	int wwidth = lwidth, wheight = lheight;
-	inline void set_size(int w, int h) {
-		lwidth = w; lheight = h;
-		wwidth = w; wheight = h;
+	inline void set_size(int w, int h)
+	{
+		lwidth = w;
+		lheight = h;
+		wwidth = w;
+		wheight = h;
 	}
 
 	uint32_t window_flags = SDL_WINDOW_RESIZABLE;
-	uint32_t render_flags = SDL_RENDERER_ACCELERATED |
-							SDL_RENDERER_PRESENTVSYNC |
-							SDL_RENDERER_TARGETTEXTURE;
+	uint32_t render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC |
+	                        SDL_RENDERER_TARGETTEXTURE;
 	SDL_BlendMode blend_mode = SDL_BLENDMODE_BLEND;
 	std::string_view scale_quality = "best";
 	bool vsync = true;
@@ -81,7 +88,7 @@ public:
 
 protected:
 	bool m_keep_running;
-	bool m_paused; // FIXME: Remove me!
+	bool m_paused;  // FIXME: Remove me!
 
 private:
 	std::stack<std::unique_ptr<Screen>> m_screen_stack;
@@ -91,4 +98,6 @@ private:
 	void poll_sdl_events();
 };
 
-#endif // PROGRAM_HPP
+COG2D_NAMESPACE_END_DECL
+
+#endif  // PROGRAM_HPP

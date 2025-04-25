@@ -5,6 +5,8 @@
 
 #include "actor.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 /*!
  * \class ActorManager
  * \brief Controls all actors
@@ -41,9 +43,7 @@ public:
 	/*!
 	 * \return All actors in the manager.
 	 */
-	inline Actors& get_actors() {
-		return m_actors;
-	}
+	inline Actors& get_actors() { return m_actors; }
 
 	void update();
 
@@ -51,4 +51,6 @@ private:
 	Actors m_actors;
 };
 
-#endif // ACTORMANAGER_HPP
+COG2D_NAMESPACE_END_DECL
+
+#endif  // ACTORMANAGER_HPP

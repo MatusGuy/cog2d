@@ -1,14 +1,17 @@
 #include "texture.hpp"
 
-Texture::Texture(SDL_Texture* tex):
-	m_texture(tex),
-	m_size()
+COG2D_NAMESPACE_BEGIN_IMPL
+
+Texture::Texture(SDL_Texture* tex)
+    : m_texture(tex),
+      m_size()
 {
 	if (m_texture)
 		query_size();
 }
 
-Texture::~Texture() {
+Texture::~Texture()
+{
 	if (m_texture) {
 		SDL_DestroyTexture(m_texture);
 		m_texture = nullptr;
@@ -23,3 +26,5 @@ Vector Texture::query_size()
 	m_size.y = static_cast<float>(h);
 	return m_size;
 }
+
+COG2D_NAMESPACE_END_IMPL

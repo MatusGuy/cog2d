@@ -13,4 +13,6 @@ public:
 	void event(SDL_Event* ev) override;
 };
 
-#endif // KEYBOARDCONTROLLER_HPP
+COG2D_NAMESPACE_END_DECL
+
+#endif  // KEYBOARDCONTROLLER_HPP

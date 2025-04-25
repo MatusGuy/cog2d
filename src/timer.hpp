@@ -5,6 +5,8 @@
 
 #include "program.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 class Timer
 {
 public:
@@ -26,4 +28,6 @@ public:
 	std::uint32_t m_period;
 };
 
-#endif // TIMER_HPP
+COG2D_NAMESPACE_END_DECL
+
+#endif  // TIMER_HPP

@@ -3,6 +3,8 @@
 
 #include "collisionbody.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 /*!
  * \brief A moving object on a scene
  *
@@ -16,8 +18,8 @@ class Actor : public CollisionBody
 {
 public:
 	Vector m_vel;
-    Vector m_accel;
-    float m_grav;
+	Vector m_accel;
+	float m_grav;
 
 public:
 	Actor();
@@ -36,7 +38,9 @@ public:
 
 	virtual bool is_active() { return true; }
 
-    void gravity();
+	void gravity();
 };
 
-#endif // ACTOR_HPP
+COG2D_NAMESPACE_END_DECL
+
+#endif  // ACTOR_HPP

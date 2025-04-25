@@ -7,13 +7,14 @@
 #include "texture.hpp"
 #include "logger.hpp"
 
-AssetManager::AssetManager():
-	m_textures(),
-	m_fonts(),
-	m_music(),
-	m_sfx()
-{
+COG2D_NAMESPACE_BEGIN_IMPL
 
+AssetManager::AssetManager()
+    : m_textures(),
+      m_fonts(),
+      m_music(),
+      m_sfx()
+{
 }
 
 AssetManager::~AssetManager()
@@ -139,27 +140,25 @@ Font* AssetManager::load_font(const std::string& path, int ptsz)
 
 void AssetManager::wipe_assets()
 {
-	for (auto& [key, asset] : m_music)
-	{
+	for (auto& [key, asset] : m_music) {
 		Mix_FreeMusic(asset);
 		asset = nullptr;
 	}
 
-	for (auto& [key, asset] : m_sfx)
-	{
+	for (auto& [key, asset] : m_sfx) {
 		Mix_FreeChunk(asset);
 		asset = nullptr;
 	}
 
-	for (auto& [key, asset] : m_fonts)
-	{
+	for (auto& [key, asset] : m_fonts) {
 		delete asset;
 		asset = nullptr;
 	}
 
-	for (auto& asset : m_textures)
-	{
+	for (auto& asset : m_textures) {
 		delete asset;
 		asset = nullptr;
 	}
 }
+
+COG2D_NAMESPACE_END_IMPL

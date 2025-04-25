@@ -4,6 +4,8 @@
 #include "screen.hpp"
 #include "actormanager.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 class Scene : public Screen
 {
 public:
@@ -12,11 +14,13 @@ public:
 	void init() override;
 	void update() override;
 	void draw() override;
-	bool event(SDL_Event *ev) override;
+	bool event(SDL_Event* ev) override;
 
 protected:
 	ActorManager m_actormanager;
 	CollisionSystem m_collisionsystem;
 };
 
-#endif // SCENE_HPP
+COG2D_NAMESPACE_END_DECL
+
+#endif  // SCENE_HPP

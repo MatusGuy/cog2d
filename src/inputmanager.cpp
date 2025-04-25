@@ -3,11 +3,12 @@
 #include "keyboardcontroller.hpp"
 #include "joypadcontroller.hpp"
 
-InputManager::InputManager():
-	m_actions(),
-	m_controllers()
-{
+COG2D_NAMESPACE_BEGIN_IMPL
 
+InputManager::InputManager()
+    : m_actions(),
+      m_controllers()
+{
 }
 
 InputAction* InputManager::register_action(InputAction& action)
@@ -35,8 +36,7 @@ void InputManager::add_controller(Controller* controller)
 {
 	m_controllers.push_back(controller);
 
-	for (auto& action : m_actions)
-	{
+	for (auto& action : m_actions) {
 		controller->apply_action(&action);
 	}
 
@@ -46,15 +46,12 @@ void InputManager::add_controller(Controller* controller)
 void InputManager::event(SDL_Event* ev)
 {
 	switch (ev->type) {
-
 	case SDL_JOYDEVICEADDED: {
 		SDL_JoyDeviceEvent jev = ev->jdevice;
 
-		for (int i = 0; i < m_controllers.size(); i++)
-		{
+		for (int i = 0; i < m_controllers.size(); i++) {
 			auto jcontroller = dynamic_cast<JoypadController*>(m_controllers[i]);
-			if (jcontroller && jcontroller->m_device_id == jev.which)
-			{
+			if (jcontroller && jcontroller->m_device_id == jev.which) {
 				// joypad already exists
 				break;
 			}
@@ -69,22 +66,19 @@ void InputManager::event(SDL_Event* ev)
 	case SDL_JOYDEVICEREMOVED: {
 		SDL_JoyDeviceEvent jev = ev->jdevice;
 
-		for (int i = 0; i < m_controllers.size(); i++)
-		{
+		for (int i = 0; i < m_controllers.size(); i++) {
 			auto jcontroller = dynamic_cast<JoypadController*>(m_controllers[i]);
-			if (jcontroller && jcontroller->m_device_id == jev.which)
-			{
-				m_controllers.erase(m_controllers.begin()+i);
+			if (jcontroller && jcontroller->m_device_id == jev.which) {
+				m_controllers.erase(m_controllers.begin() + i);
 			}
 		}
 		return;
 	}
-
 	}
 
-	for (Controller* controller : m_controllers)
-	{
+	for (Controller* controller : m_controllers) {
 		controller->event(ev);
 	}
 }
 
+COG2D_NAMESPACE_END_IMPL

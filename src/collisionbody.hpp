@@ -6,6 +6,8 @@
 #include "collisionsystem.hpp"
 #include "types.hpp"
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 class CollisionBody
 {
 public:
@@ -28,7 +30,12 @@ public:
 	Rect get_dest();
 	void apply_movement();
 
-	virtual CollisionSystem::Response collision(CollisionBody* other) { return CollisionSystem::COLRESP_ACCEPT; }
+	virtual CollisionSystem::Response collision(CollisionBody* other)
+	{
+		return CollisionSystem::COLRESP_ACCEPT;
+	}
 };
 
-#endif // COLLISIONBODY_HPP
+COG2D_NAMESPACE_END_DECL
+
+#endif  // COLLISIONBODY_HPP

@@ -2,10 +2,11 @@
 
 #include "logger.hpp"
 
-AudioEngine::AudioEngine():
-	m_error()
-{
+COG2D_NAMESPACE_BEGIN_IMPL
 
+AudioEngine::AudioEngine()
+    : m_error()
+{
 }
 
 void AudioEngine::init()
@@ -38,3 +39,5 @@ void AudioEngine::play_music(Mix_Music* music, int loops)
 		Mix_FreeMusic(music);
 	}
 }
+
+COG2D_NAMESPACE_END_IMPL

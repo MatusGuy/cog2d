@@ -1,10 +1,11 @@
 #include "timer.hpp"
 
-Timer::Timer():
-	m_start(0),
-	m_period(0)
-{
+COG2D_NAMESPACE_BEGIN_IMPL
 
+Timer::Timer()
+    : m_start(0),
+      m_period(0)
+{
 }
 
 void Timer::start(uint32_t period)
@@ -27,3 +28,5 @@ bool Timer::check()
 
 	return false;
 }
+
+COG2D_NAMESPACE_END_IMPL
