@@ -5,6 +5,8 @@
 
 #include <controller.hpp>
 
+COG2D_NAMESPACE_BEGIN_DECL
+
 class JoypadController : public Controller
 {
 	COG2D_CONTROLLER_TYPE(2)

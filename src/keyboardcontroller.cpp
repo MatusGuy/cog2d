@@ -3,6 +3,8 @@
 #include <iostream>
 #include <logger.hpp>
 
+COG2D_NAMESPACE_BEGIN_IMPL
+
 KeyboardController::KeyboardController()
     : Controller()
 {
