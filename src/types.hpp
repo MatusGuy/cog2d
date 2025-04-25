@@ -13,8 +13,6 @@
 #define COG2D_NAMESPACE_BEGIN_IMPL COG2D_NAMESPACE_BEGIN_DECL
 #define COG2D_NAMESPACE_END_IMPL COG2D_NAMESPACE_END_DECL
 
-COG2D_NAMESPACE_BEGIN_DECL
-
 #if __has_include(<SDL2/SDL.h>)
 #include <SDL2/SDL.h>
 #else
@@ -39,6 +37,8 @@ struct SDL_FRect
 	float x, y, w, h;
 };
 #endif
+
+COG2D_NAMESPACE_BEGIN_DECL
 
 class Color : public SDL_Color
 {
