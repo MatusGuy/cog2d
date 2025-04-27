@@ -3,11 +3,11 @@
 #include <iostream>
 #include <fstream>
 
-#include "logger.hpp"
-#include "graphicsengine.hpp"
-#include "audioengine.hpp"
-#include "assetmanager.hpp"
-#include "config.hpp"
+#include "cog2d/util/logger.hpp"
+#include "cog2d/video/graphicsengine.hpp"
+#include "cog2d/audio/audioengine.hpp"
+#include "cog2d/assets/assetmanager.hpp"
+#include "cog2d/config/config.hpp"
 
 COG2D_NAMESPACE_BEGIN_IMPL
 

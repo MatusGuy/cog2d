@@ -3,7 +3,7 @@
 
 #include <SDL_events.h>
 
-#include "types.hpp"
+#include "cog2d/util/types.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 

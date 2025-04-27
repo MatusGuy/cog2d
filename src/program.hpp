@@ -3,8 +3,8 @@
 
 #include <stack>
 
-#include "types.hpp"
-#include "inputmanager.hpp"
+#include "cog2d/util/types.hpp"
+#include "cog2d/input/inputmanager.hpp"
 #include "screen.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL

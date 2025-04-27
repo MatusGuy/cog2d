@@ -12,7 +12,7 @@ add_library(cog2d STATIC ${COG2D_SRC})
 
 target_compile_features(cog2d PUBLIC cxx_std_20)
 
-target_include_directories(cog2d PUBLIC ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(cog2d SYSTEM PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 # Dependencies #
 
