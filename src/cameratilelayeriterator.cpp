@@ -32,6 +32,11 @@ CameraTileLayerIterator CameraTileLayerIterator::advance(difference_type n)
 	Vector_t<int> pos = TileLayer::get_tile_pos(layer_index(), m_layer.m_size);
 	Vector_t<int> result = TileLayer::get_tile_pos(pos.x + n - campos.x, camsz);
 
+	if (result.y + pos.y >= camsz.y) {
+		m_it = m_layer.m_tiles.end();
+		return *this;
+	}
+
 	if (result.y != 0) {
 		n += result.y * (m_layer.m_size.x - camsz.x);
 	}
