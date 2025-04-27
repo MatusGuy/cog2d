@@ -49,8 +49,7 @@ void TileMap::parse(std::filesystem::path path)
 		layer.m_size.y = jsonlayer["height"].get<int>();
 
 		layer.m_tiles.reserve(layer.m_size.x * layer.m_size.y);
-
-		layer.m_tiles = data.get<TileLayer::Tiles>(); // hahahaha
+		layer.m_tiles = data.get<TileIds>();
 
 		m_layers.push_back(layer);
 	}
@@ -63,7 +62,7 @@ void TileMap::draw()
 	}
 }
 
-TileSet& TileMap::get_tileset(uint32_t tileid)
+TileSet& TileMap::get_tileset(TileId tileid)
 {
 	for (TileSets::reverse_iterator it = m_sets.rbegin(); it != m_sets.rend(); ++it) {
 		TileSet& set = *it;

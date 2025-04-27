@@ -8,13 +8,17 @@
 
 COG2D_NAMESPACE_BEGIN_DECL
 
-// TODO: Superclass that contains this and objects.
+// TODO: Class that contains this and objects.
 // Call it "World" or something idk
 class TileMap
 {
 public:
-	COG2D_CONTAINER_PLURAL(std::vector, TileSet) m_sets;
-	COG2D_CONTAINER_PLURAL(std::vector, TileLayer) m_layers;
+	using TileSets = std::vector<TileSet>;
+	using TileLayers = std::vector<TileLayer>;
+
+public:
+	TileSets m_sets;
+	TileLayers m_layers;
 
 public:
 	TileMap();
@@ -23,7 +27,7 @@ public:
 
 	void draw();
 
-	TileSet& get_tileset(std::uint32_t tileid);
+	TileSet& get_tileset(TileId tileid);
 };
 
 COG2D_NAMESPACE_END_DECL

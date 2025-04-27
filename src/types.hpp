@@ -1,3 +1,5 @@
+// FIXME: Seperation of this file and origanization in general
+
 #ifndef TYPES_H
 #define TYPES_H
 
@@ -5,6 +7,7 @@
 #include <type_traits>
 #include <fmt/format.h>
 #include <memory>
+#include <vector>
 
 #define COG2D_NAMESPACE_BEGIN_DECL namespace cog2d {
 #define COG2D_NAMESPACE_END_DECL \
@@ -12,14 +15,6 @@
 	;
 #define COG2D_NAMESPACE_BEGIN_IMPL COG2D_NAMESPACE_BEGIN_DECL
 #define COG2D_NAMESPACE_END_IMPL COG2D_NAMESPACE_END_DECL
-
-#define COG2D_CONTAINER(container, t, tname) \
-	using tname = container<t>; \
-	container<t>
-
-#define COG2D_CONTAINER_PLURAL(container, t) COG2D_CONTAINER(container, t, t##s)
-
-COG2D_NAMESPACE_BEGIN_DECL
 
 #if __has_include(<SDL2/SDL.h>)
 #include <SDL2/SDL.h>
@@ -46,6 +41,11 @@ struct SDL_FRect
 };
 #endif
 
+COG2D_NAMESPACE_BEGIN_DECL
+
+using TileId = std::uint32_t;
+using TileIds = std::vector<TileId>;
+
 class Color : public SDL_Color
 {
 public:
@@ -65,16 +65,13 @@ public:
 	    : SDL_Color{}
 	{
 		// wow
-        // TODO: Big endian
 		*(uint32_t*) this = abgr;
 	}
 
 	inline bool operator==(const Color& other)
 	{
-		return r == other.r &&
-		       g == other.g &&
-		       b == other.b &&
-		       a == other.a;
+		// TODO: Big endian
+		return r == other.r && g == other.g && b == other.b && a == other.a;
 	}
 };
 
@@ -142,11 +139,11 @@ protected:
 };
 */
 
-#define COG2D_NUMERIC_TEMPLATE   \
-	template<typename T = float, \
+#define COG2D_NUMERIC_TEMPLATE(T) \
+	template<typename T = float,  \
 	         typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
 
-COG2D_NUMERIC_TEMPLATE
+COG2D_NUMERIC_TEMPLATE(T)
 class Vector_t
 {
 public:
@@ -159,17 +156,30 @@ public:
 		y = _y;
 	}
 
+	COG2D_NUMERIC_TEMPLATE(U)
+	explicit Vector_t(Vector_t<U> v)
+	{
+		x = static_cast<T>(v.x);
+		y = static_cast<T>(v.y);
+	}
+
 	Vector_t() {}
 
 	inline Vector_t<T> abs() { return {std::abs(x), std::abs(y)}; }
+	inline Vector_t<T> floor()
+	{
+		return {std::floor(static_cast<float>(x)), std::floor(static_cast<float>(y))};
+	}
 
 	/// Average between two vectors
-	inline Vector_t<T> avg(const Vector_t<T>& other)
+	COG2D_NUMERIC_TEMPLATE(U)
+	inline Vector_t<T> avg(const Vector_t<U>& other)
 	{
 		return {(x + other.x) / 2, (y + other.y) / 2};
 	}
 
-	void operator=(const Vector_t<T>& other)
+	COG2D_NUMERIC_TEMPLATE(U)
+	void operator=(const Vector_t<U>& other)
 	{
 		x = other.x;
 		y = other.y;
@@ -178,65 +188,75 @@ public:
 	inline SDL_Point to_sdl_point() { return {static_cast<int>(x), static_cast<int>(y)}; }
 	inline SDL_FPoint to_sdl_fpoint() { return {static_cast<float>(x), static_cast<float>(y)}; }
 
-	explicit operator Vector_t<float>() const
-	{
-		return {static_cast<float>(x), static_cast<float>(y)};
-	}
+	COG2D_NUMERIC_TEMPLATE(U)
+	operator Vector_t<U>() const { return {static_cast<U>(x), static_cast<U>(y)}; }
 
-	Vector_t<T> operator+(Vector_t<T>& other) { return Vector_t<T>(x + other.x, y + other.y); }
+	COG2D_NUMERIC_TEMPLATE(U)
+	Vector_t<T> operator+(Vector_t<U> other) { return Vector_t<T>(x + other.x, y + other.y); }
 
-	void operator+=(Vector_t<T>& other)
+	COG2D_NUMERIC_TEMPLATE(U)
+	void operator+=(Vector_t<U> other)
 	{
 		x += other.x;
 		y += other.y;
 	}
 
-	Vector_t operator-(Vector_t<T>& other) { return Vector_t<T>(x - other.x, y - other.y); }
+	COG2D_NUMERIC_TEMPLATE(U)
+	Vector_t<T> operator-(Vector_t<U> other) { return Vector_t<T>(x - other.x, y - other.y); }
 
-	void operator-=(Vector_t<T>& other)
+	COG2D_NUMERIC_TEMPLATE(U)
+	void operator-=(Vector_t<U> other)
 	{
 		x -= other.x;
 		y -= other.y;
 	}
 
-	Vector_t<T> operator*(Vector_t<T>& other) { return Vector_t(x * other.x, y * other.y); }
+	COG2D_NUMERIC_TEMPLATE(U)
+	Vector_t<T> operator*(Vector_t<U> other) { return Vector_t<T>(x * other.x, y * other.y); }
 
-	Vector_t<T> operator*(T& other) { return Vector_t(x * other, y * other); }
+	COG2D_NUMERIC_TEMPLATE(U)
+	Vector_t<T> operator*(U& other) { return Vector_t<T>(x * other, y * other); }
 
-	void operator*=(Vector_t<T>& other)
+	COG2D_NUMERIC_TEMPLATE(U)
+	void operator*=(Vector_t<U> other)
 	{
 		x *= other.x;
 		y *= other.y;
 	}
 
-	void operator*=(T& other)
+	COG2D_NUMERIC_TEMPLATE(U)
+	void operator*=(U& other)
 	{
 		x *= other;
 		y *= other;
 	}
 
-	Vector_t<T> operator/(Vector_t<T>& other) { return Vector_t(x / other.x, y / other.y); }
+	COG2D_NUMERIC_TEMPLATE(U)
+	Vector_t<T> operator/(Vector_t<U> other) { return Vector_t<T>(x / other.x, y / other.y); }
 
-	Vector_t<T> operator/(T& other) { return Vector_t(x / other, y / other); }
+	COG2D_NUMERIC_TEMPLATE(U)
+	Vector_t<T> operator/(U& other) { return Vector_t<T>(x / other, y / other); }
 
-	void operator/=(Vector_t<T>& other)
+	COG2D_NUMERIC_TEMPLATE(U)
+	void operator/=(Vector_t<U> other)
 	{
 		x /= other.x;
 		y /= other.y;
 	}
 
-	void operator/=(T& other)
+	COG2D_NUMERIC_TEMPLATE(U)
+	void operator/=(U& other)
 	{
 		x /= other;
 		y /= other;
 	}
 
 	// It makes sense, trust me
-	bool operator<(Vector_t<T>& other) { return x < other.x && y < other.y; }
+	bool operator<(Vector_t<T> other) { return x < other.x && y < other.y; }
 };
 using Vector = Vector_t<>;
 
-COG2D_NUMERIC_TEMPLATE
+COG2D_NUMERIC_TEMPLATE(T)
 class Rect_t
 {
 public:
@@ -350,10 +370,15 @@ public:
 };
 using Rect = Rect_t<>;
 
+// TODO: Support for C++20 formatter
+namespace fmt {
+using namespace ::fmt;
+}
+
 COG2D_NAMESPACE_END_DECL
 
 template<typename T>
-struct fmt::formatter<cog2d::Vector_t<T>, char>
+struct cog2d::fmt::formatter<cog2d::Vector_t<T>, char>
 {
 	constexpr auto parse(auto& ctx)
 	{
@@ -362,19 +387,19 @@ struct fmt::formatter<cog2d::Vector_t<T>, char>
 			return it;
 
 		if (it != ctx.end() && *it != '}')
-			throw fmt::format_error("Invalid format args for Vector.");
+			throw cog2d::fmt::format_error("Invalid format args for Vector.");
 
 		return it;
 	}
 
 	auto format(cog2d::Vector_t<T> vec, auto& ctx) const
 	{
-		return fmt::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
+		return cog2d::fmt::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
 	}
 };
 
 template<typename T>
-struct fmt::formatter<cog2d::Rect_t<T>, char>
+struct cog2d::fmt::formatter<cog2d::Rect_t<T>, char>
 {
 	constexpr auto parse(auto& ctx)
 	{
@@ -383,14 +408,14 @@ struct fmt::formatter<cog2d::Rect_t<T>, char>
 			return it;
 
 		if (it != ctx.end() && *it != '}')
-			throw fmt::format_error("Invalid format args for Rect.");
+			throw cog2d::fmt::format_error("Invalid format args for Rect.");
 
 		return it;
 	}
 
-	auto format(cog2d::Rect_t<T> rec, auto& ctx) const
+	auto format(cog2d::Rect_t<T> vec, auto& ctx) const
 	{
-		return fmt::format_to(ctx.out(), "({}, {})", rec.pos, rec.size);
+		return cog2d::fmt::format_to(ctx.out(), "[{}, {}]", vec.pos, vec.size);
 	}
 };
 

@@ -17,8 +17,8 @@ void TileLayer::draw()
 {
 	COG2D_USE_GRAPHICSENGINE;
 
-	for (Tiles::iterator it = m_tiles.begin(); it != m_tiles.end(); ++it) {
-		std::uint32_t id = *it;
+	for (auto it = cambegin(); it != camend(); ++it) {
+		TileId id = *it;
 
 		if (id == 0)
 			continue;
@@ -26,28 +26,48 @@ void TileLayer::draw()
 		TileSet& set = m_map->get_tileset(id);
 		id -= set.m_first_gid;
 
-		int yi = id / set.m_set_sz.x;
-		int xi = id - (yi * set.m_set_sz.x);
+		Vector_t<int> srcpos = get_tile_pos(id, set.m_set_sz);
 		Rect_t<int> src;
 
 		src.size = Vector_t<int>(16, 16);
-		src.pos = Vector_t<int>(xi, yi) * src.size;
+		src.pos = srcpos * src.size;
 
-		int i = std::distance(m_tiles.begin(), it);
-
-		int y = i / m_size.x;
-		int x = i - (y * m_size.x);
+		int i = it.layer_index();
+		Vector_t<int> destpos = get_tile_pos(i, m_size);
 
 		Rect_t<int> dest;
 		dest.size = Vector_t<int>(16, 16);
-		dest.pos = Vector_t<int>(x, y) * dest.size;
+		dest.pos = destpos * dest.size;
 
 		const SDL_Rect ssrc = src.to_sdl_rect();
 		const SDL_FRect sdest = dest.to_sdl_frect();
-		SDL_RenderCopyF(graphicsengine.get_renderer(), set.m_texture->get_sdl_texture(), &ssrc, &sdest);
+		SDL_RenderCopyF(graphicsengine.get_renderer(), set.m_texture->get_sdl_texture(), &ssrc,
+		                &sdest);
 
 		//COG2D_LOG_DEBUG("TileLayer", fmt::format("draw {} at {} - {}", src, dest, id));
 	}
+}
+
+CameraTileLayerIterator TileLayer::cambegin()
+{
+	Vector_t<int> campos(0, 0);
+	return CameraTileLayerIterator(*this, m_tiles.begin() + get_tile_index(campos, m_size));
+}
+
+CameraTileLayerIterator TileLayer::camend()
+{
+	return CameraTileLayerIterator(*this, m_tiles.end());
+}
+
+int TileLayer::get_tile_index(const Vector_t<int>& pos, const Vector_t<int>& size)
+{
+	return pos.x + (size.y * pos.y);
+}
+
+Vector_t<int> TileLayer::get_tile_pos(int i, const Vector_t<int>& size)
+{
+	const int y = i / size.x;
+	return {i - (y * size.x), y};
 }
 
 COG2D_NAMESPACE_END_IMPL

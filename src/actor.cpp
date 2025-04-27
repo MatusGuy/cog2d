@@ -7,7 +7,8 @@ COG2D_NAMESPACE_BEGIN_IMPL
 Actor::Actor()
     : CollisionBody(),
       m_vel(0, 0),
-      m_accel(0, 0)
+      m_accel(0, 0),
+      m_grav(0)
 {
 }
 

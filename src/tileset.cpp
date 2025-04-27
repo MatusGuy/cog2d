@@ -13,8 +13,10 @@ TileSet::TileSet()
 void TileSet::parse(const nlohmann::json& json)
 {
 	if (!json.contains("columns")) {
-		COG2D_LOG_ERROR("TileSet", "Tilemap was not exported with embedded tilesets!\n"
-		                           "In Tiled, go to Edit > Preferences > General, tick 'Embed tilesets' and export again.");
+		COG2D_LOG_ERROR("TileSet",
+		                "Tilemap was not exported with embedded tilesets!\n"
+		                "In Tiled, go to Edit > Preferences > General, "
+		                "tick 'Embed tilesets' and export again.");
 		return;
 	}
 
