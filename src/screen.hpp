@@ -10,7 +10,6 @@ COG2D_NAMESPACE_BEGIN_DECL
 class Screen
 {
 public:
-	Screen();
 	virtual ~Screen() {}
 
 	virtual void init() = 0;

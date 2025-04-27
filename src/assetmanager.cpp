@@ -1,6 +1,7 @@
 #include "assetmanager.hpp"
 
 #include <iostream>
+#include <algorithm>
 
 #include "graphicsengine.hpp"
 #include "texture.hpp"
@@ -40,8 +41,8 @@ void AssetManager::destroy_texture(Texture* texture)
 
 Texture* AssetManager::load_image(const std::string& path)
 {
-	if (m_images.count(path) > 0)
-		return m_images[path];
+	//if (m_images.count(path) > 0)
+	//	return m_images[path];
 
 	std::string realpath = path;
 #ifdef COG2D_ASSET_PATH
@@ -60,7 +61,7 @@ Texture* AssetManager::load_image(const std::string& path)
 
 	Texture* asset = new Texture(tex);
 	add_texture(asset);
-	m_images[path] = asset;
+	//m_images[path] = asset;
 	return asset;
 }
 
