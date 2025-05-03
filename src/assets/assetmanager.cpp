@@ -113,7 +113,7 @@ Mix_Music* AssetManager::load_music(const std::string& path)
 	return asset;
 }
 
-Font* AssetManager::load_font(const std::string& path, int ptsz)
+TtfFont* AssetManager::load_font(const std::string& path, int ptsz)
 {
 	if (m_fonts.count(path) > 0)
 		return m_fonts[path];
@@ -124,7 +124,7 @@ Font* AssetManager::load_font(const std::string& path, int ptsz)
 #endif
 
 	TTF_Font* font = TTF_OpenFont(realpath.c_str(), ptsz);
-	Font* asset = new Font(font);
+	TtfFont* asset = new TtfFont(font);
 
 	if (asset == nullptr) {
 		std::stringstream errstream;

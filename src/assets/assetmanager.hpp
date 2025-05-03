@@ -6,14 +6,13 @@
 #include <list>
 
 #include "cog2d/video/texture.hpp"
+#include "cog2d/video/font/ttffont.hpp"
 
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
 COG2D_NAMESPACE_BEGIN_DECL
-
-class Font;
 
 #define COG2D_USE_ASSETMANAGER COG2D_USING(AssetManager, assetmanager)
 class AssetManager : public Currenton<AssetManager>
@@ -25,7 +24,7 @@ public:
 	// TODO: Seperate these somehow?
 	std::unordered_map<std::string, Mix_Chunk*> m_sfx;
 	std::unordered_map<std::string, Mix_Music*> m_music;
-	std::unordered_map<std::string, Font*> m_fonts;
+	std::unordered_map<std::string, TtfFont*> m_fonts;
 
 public:
 	AssetManager();
@@ -37,7 +36,7 @@ public:
 	Texture* load_image(const std::string& path);
 	Mix_Chunk* load_sfx(const std::string& path);
 	Mix_Music* load_music(const std::string& path);
-	Font* load_font(const std::string& path, int ptsz);
+	TtfFont* load_font(const std::string& path, int ptsz);
 
 	void wipe_assets();
 };

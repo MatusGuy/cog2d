@@ -15,7 +15,7 @@ public:
 	Vector m_size;
 
 public:
-	explicit Texture(SDL_Texture* tex);
+	Texture(SDL_Texture* tex);
 	~Texture();
 
 	inline SDL_Texture* get_sdl_texture() { return m_texture; }

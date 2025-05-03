@@ -42,9 +42,6 @@ public:
 	void draw_texture(Rect dest, Texture* tex);
 	void draw_texture(Rect dest, Texture* tex, float angle, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
-	// TODO: Move this to another class?
-	Texture* create_text(Font* font, const std::string& text, Color color = 0xFFFFFFFF);
-
 	inline SDL_Window* get_window() { return m_window; }
 	inline SDL_Renderer* get_renderer() { return m_renderer; }
 
