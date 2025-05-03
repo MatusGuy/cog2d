@@ -3,22 +3,23 @@
 
 #include <filesystem>
 
-#include "cog2d/video/graphicsengine.hpp"
 #include "cog2d/util/types.hpp"
+#include "cog2d/video/graphicsengine.hpp"
+#include "cog2d/video/font/font.hpp"
 #include "cog2d/video/texture.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 
-class BitmapFont
+class BitmapFont : public Font
 {
 public:
 	BitmapFont(std::filesystem::path path);
 
 	void load();
 
-	int get_text_width(std::string_view text);
-	void write_text(Texture* texture, std::string_view text, const Vector& pos = {0, 0});
-	Texture* create_text(std::string_view text);
+	int get_text_width(std::string_view text) override;
+	void write_text(Texture* texture, std::string_view text, const Vector& pos = {0, 0}) override;
+	Texture* create_text(std::string_view text) override;
 
 	inline void set_horizontal_spacing(int spacing) { m_horizontal_spacing = spacing; }
 	inline int get_horizontal_spacing() { return m_horizontal_spacing; }

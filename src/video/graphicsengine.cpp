@@ -226,18 +226,6 @@ void GraphicsEngine::draw_texture(Rect dest, Texture* tex, float angle, SDL_Rend
 #endif
 }
 
-Texture* GraphicsEngine::create_text(Font* font, const std::string& text, Color color)
-{
-	SDL_Surface* sur = TTF_RenderUTF8_Solid(font->get_font(), text.c_str(), color);
-	SDL_Texture* t = SDL_CreateTextureFromSurface(m_renderer, sur);
-	SDL_FreeSurface(sur);
-
-	Texture* tex = new Texture(t);
-	AssetManager::get().add_texture(tex);
-
-	return tex;
-}
-
 Color GraphicsEngine::get_current_color()
 {
 	Color resp;
