@@ -5,6 +5,7 @@
 #include "cog2d/assets/assetmanager.hpp"
 #include "cog2d/util/logger.hpp"
 #include "cog2d/util/types.hpp"
+#include "cog2d/video/surface.hpp"
 
 COG2D_NAMESPACE_BEGIN_IMPL
 
@@ -29,7 +30,7 @@ void BitmapFont::load()
 	path = COG2D_ASSET_PATH / m_path;
 #endif
 
-	COG2D_UNIQUE_SDLSURFACE(surface, IMG_Load(path.string().data()));
+	Surface surface = IMG_Load(path.string().data());
 
 	if (!surface) {
 		COG2D_LOG_ERROR("BitmapFont", fmt::format("Couldn't open '{}'.", m_path.string()));

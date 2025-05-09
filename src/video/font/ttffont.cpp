@@ -1,6 +1,7 @@
 #include "ttffont.hpp"
 
 #include "cog2d/video/graphicsengine.hpp"
+#include "cog2d/video/surface.hpp"
 #include "cog2d/assets/assetmanager.hpp"
 
 COG2D_NAMESPACE_BEGIN_IMPL
@@ -33,8 +34,7 @@ void TtfFont::write_text(Texture* texture, std::string_view text, const Vector& 
 {
 	COG2D_USE_GRAPHICSENGINE;
 
-	COG2D_UNIQUE_SDLSURFACE(textsurface,
-	                        TTF_RenderUTF8_Solid(m_font, text.data(), Color(0xFFFFFFFF)));
+	Surface textsurface = TTF_RenderUTF8_Solid(m_font, text.data(), Color(0xFFFFFFFF));
 	Texture texttexture = SDL_CreateTextureFromSurface(graphicsengine.get_renderer(),
 	                                                   textsurface.get());
 
@@ -48,8 +48,7 @@ Texture* TtfFont::create_text(std::string_view text)
 	COG2D_USE_GRAPHICSENGINE;
 	COG2D_USE_ASSETMANAGER;
 
-	COG2D_UNIQUE_SDLSURFACE(textsurface,
-	                        TTF_RenderUTF8_Solid(get_font(), text.data(), Color(0xFFFFFFFF)));
+	Surface textsurface = TTF_RenderUTF8_Solid(get_font(), text.data(), Color(0xFFFFFFFF));
 	auto texttexture = new Texture(SDL_CreateTextureFromSurface(graphicsengine.get_renderer(),
 	                                                            textsurface.get()));
 	assetmanager.add_texture(texttexture);

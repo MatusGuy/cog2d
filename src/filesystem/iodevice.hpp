@@ -2,6 +2,7 @@
 #define IODEVICE_H
 
 #include <cstdio>
+#include <ios>
 
 #include <SDL2/SDL_rwops.h>
 
@@ -12,8 +13,18 @@ COG2D_NAMESPACE_BEGIN_DECL
 class IoDevice
 {
 public:
-	using SeekPos = std::ios_base::seekdir;
-	using OpenMode = std::ios_base::openmode;
+	enum SeekPos
+	{
+		SEEKPOS_BEGIN = std::ios::beg,
+		SEEKPOS_CURSOR = std::ios::cur,
+		SEEKPOS_END = std::ios::end
+	};
+
+	enum OpenMode
+	{
+		OPENMODE_READ = std::ios::in,
+		OPENMODE_WRITE = std::ios::out
+	};
 
 public:
 	~IoDevice();
@@ -21,7 +32,7 @@ public:
 	virtual int open(OpenMode mode) = 0;
 	virtual bool is_open() = 0;
 	virtual std::int64_t size() = 0;
-	virtual std::int64_t seek(std::int64_t offset, SeekPos seekpos) = 0;	
+	virtual std::int64_t seek(std::int64_t offset, SeekPos seekpos) = 0;
 	virtual std::int64_t tell() = 0;
 	virtual std::size_t read(void* ptr, std::size_t size, std::size_t maxnum) = 0;
 	virtual std::size_t write(const void* ptr, std::size_t size, std::size_t num) = 0;
@@ -59,4 +70,4 @@ public:
 
 COG2D_NAMESPACE_END_DECL
 
-#endif // IODEVICE_H
+#endif  // IODEVICE_H

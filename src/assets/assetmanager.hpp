@@ -1,6 +1,7 @@
 #ifndef ASSETMANAGER_H
 #define ASSETMANAGER_H
 
+#include <filesystem>
 #include <string>
 #include <unordered_map>
 #include <list>
@@ -14,17 +15,22 @@
 
 COG2D_NAMESPACE_BEGIN_DECL
 
+enum AssetType
+{
+	ASSET_IMAGE,
+	ASSET_SFX,
+	ASSET_MUSIC,
+	ASSET_FONT,
+
+	ASSET_COUNT
+};
+
 #define COG2D_USE_ASSETMANAGER COG2D_USING(AssetManager, assetmanager)
 class AssetManager : public Currenton<AssetManager>
 {
 public:
 	std::list<Texture*> m_textures;
 	std::unordered_map<std::string, Texture*> m_images;
-
-	// TODO: Seperate these somehow?
-	std::unordered_map<std::string, Mix_Chunk*> m_sfx;
-	std::unordered_map<std::string, Mix_Music*> m_music;
-	std::unordered_map<std::string, TtfFont*> m_fonts;
 
 public:
 	AssetManager();

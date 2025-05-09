@@ -13,7 +13,7 @@ File::File(const std::filesystem::path& path)
 
 int File::open(OpenMode mode)
 {
-	m_stream.open(m_path, mode);
+	m_stream.open(m_path, static_cast<std::ios::openmode>(mode));
 
 	return m_stream.good() ? 0 : -1;
 }
@@ -27,19 +27,19 @@ std::int64_t File::size()
 {
 	std::streampos original = tell();
 
-	seek(0, std::ios_base::beg);
+	seek(0, SEEKPOS_BEGIN);
 	m_stream.ignore(std::numeric_limits<std::streamsize>::max());
 	std::streamsize length = m_stream.gcount();
 
 	m_stream.clear();
-	seek(original, std::ios_base::beg);
+	seek(original, SEEKPOS_BEGIN);
 
 	return length;
 }
 
 std::int64_t File::seek(int64_t offset, SeekPos seekpos)
 {
-	m_stream.seekg(static_cast<std::streamoff>(offset), seekpos);
+	m_stream.seekg(static_cast<std::streamoff>(offset), static_cast<std::ios::seekdir>(seekpos));
 	return tell();  // ...right?
 }
 

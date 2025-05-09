@@ -1,12 +1,14 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include <functional>
+#include <filesystem>
 #include <SDL2/SDL.h>
 
 #include "cog2d/util/types.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
+
+class IoDevice;
 
 class Texture
 {

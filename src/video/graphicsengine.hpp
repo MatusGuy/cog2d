@@ -13,9 +13,6 @@ COG2D_NAMESPACE_BEGIN_DECL
 
 struct ProgramSettings;
 
-using SDLSurfacePtr = std::unique_ptr<SDL_Surface, decltype(&SDL_FreeSurface)>;
-#define COG2D_UNIQUE_SDLSURFACE(name, surface) SDLSurfacePtr name(surface, SDL_FreeSurface)
-
 #define COG2D_USE_GRAPHICSENGINE COG2D_USING(GraphicsEngine, graphicsengine)
 class GraphicsEngine : public Currenton<GraphicsEngine>
 {

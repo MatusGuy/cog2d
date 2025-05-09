@@ -4,6 +4,8 @@ COG2D_NAMESPACE_BEGIN_IMPL
 
 IoDevice::~IoDevice()
 {
+	if (is_open())
+		close();
 }
 
 SDL_RWops* IoDevice::to_sdl()
