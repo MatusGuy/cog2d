@@ -10,23 +10,24 @@
 
 COG2D_NAMESPACE_BEGIN_DECL
 
+class Surface;
+
 class BitmapFont : public Font
 {
 public:
-	BitmapFont(std::filesystem::path path);
+	BitmapFont();
 
-	void load();
+	void load(IoDevice& device);
 
 	int get_text_width(std::string_view text) override;
 	void write_text(Texture* texture, std::string_view text, const Vector& pos = {0, 0}) override;
-	Texture* create_text(std::string_view text) override;
+	std::unique_ptr<Texture> create_text(std::string_view text) override;
 
 	inline void set_horizontal_spacing(int spacing) { m_horizontal_spacing = spacing; }
 	inline int get_horizontal_spacing() { return m_horizontal_spacing; }
 
 public:
-	std::filesystem::path m_path;
-	Texture* m_texture;
+	AssetKey<Texture> m_texture;
 
 private:
 	//using Glyph = Rect_t<int>;
@@ -41,7 +42,7 @@ private:
 	int m_horizontal_spacing;
 
 private:
-	static Color get_pixel(SDLSurfacePtr& surface, Vector_t<int> pos);
+	static Color get_pixel(Surface& surface, Vector_t<int> pos);
 };
 
 COG2D_NAMESPACE_END_DECL

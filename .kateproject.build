@@ -1,0 +1,12 @@
+{
+    "Auto_generated": "This file is auto-generated. Any extra tags or formatting will be lost",
+    "target_sets": [
+        {
+            "cmake_config": "NONE",
+            "directory": "/mnt/data/Programming/CPP/cog2d/build/kate",
+            "loaded_via_cmake": true,
+            "name": "cog2d@/mnt/data/Programming/CPP/cog2d/build/kate - [NONE]",
+            "targets": null
+        }
+    ]
+}

@@ -13,7 +13,7 @@ public:
 	virtual int get_text_width(std::string_view text) = 0;
 	virtual void write_text(Texture* texture, std::string_view text,
 	                        const Vector& pos = {0, 0}) = 0;
-	virtual Texture* create_text(std::string_view text) = 0;
+	virtual std::unique_ptr<Texture> create_text(std::string_view text) = 0;
 };
 
 COG2D_NAMESPACE_END_DECL

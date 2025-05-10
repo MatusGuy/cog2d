@@ -13,12 +13,17 @@ int AssetFile::open(OpenMode mode)
 	std::filesystem::path assetpath = COG2D_ASSET_PATH;
 
 	m_path = std::filesystem::absolute(assetpath / m_path);
+	auto pathit = m_path.begin();
 
-	for (auto it = assetpath.begin(); it < assetpath.end(); ++it) {
+	for (auto it = assetpath.begin(); it != assetpath.end(); ++it) {
 		int i = std::distance(assetpath.begin(), it);
-		if (*it != *(m_path.begin() + i))
+
+		std::advance(pathit, i);
+		if (*it != *pathit)
 			// This asset is outside of the asset path.
 			return -1;
+
+		pathit = m_path.begin();
 	}
 
 	return File::open(mode);

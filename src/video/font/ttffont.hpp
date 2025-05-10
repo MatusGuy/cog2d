@@ -19,7 +19,7 @@ public:
 
 	int get_text_width(std::string_view text) override;
 	void write_text(Texture* texture, std::string_view text, const Vector& pos) override;
-	Texture* create_text(std::string_view text) override;
+	std::unique_ptr<Texture> create_text(std::string_view text) override;
 
 	inline TTF_Font* get_font() { return m_font; }
 

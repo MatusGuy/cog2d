@@ -1,6 +1,6 @@
 #include "bitmapfont.hpp"
 
-#include <fmt/format.h>
+#include <SDL2/SDL_image.h>
 
 #include "cog2d/assets/assetmanager.hpp"
 #include "cog2d/util/logger.hpp"
@@ -11,29 +11,27 @@ COG2D_NAMESPACE_BEGIN_IMPL
 
 static constexpr std::string_view s_chars = " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
-BitmapFont::BitmapFont(std::filesystem::path path)
-    : m_path(path),
-      m_texture(),
+BitmapFont::BitmapFont()
+    : m_texture(),
       m_glyph_height(-1),
       m_horizontal_spacing(0),
       m_glyphs()
 {
 }
 
-void BitmapFont::load()
+void BitmapFont::load(IoDevice& device)
 {
 	COG2D_USE_ASSETMANAGER;
 	COG2D_USE_GRAPHICSENGINE;
 
-	std::filesystem::path path;
-#ifdef COG2D_ASSET_PATH
-	path = COG2D_ASSET_PATH / m_path;
-#endif
+	if (!device.is_open())
+		device.open(IoDevice::OPENMODE_READ);
 
-	Surface surface = IMG_Load(path.string().data());
+	Surface surface = IMG_Load_RW(device.to_sdl(), 1);
 
-	if (!surface) {
-		COG2D_LOG_ERROR("BitmapFont", fmt::format("Couldn't open '{}'.", m_path.string()));
+	if (!surface.to_sdl()) {
+		// FIXME: This is not where this message goes. It goes outside of this function.
+		COG2D_LOG_ERROR("BitmapFont", "Couldn't open BitmapFont.");
 		return;
 	}
 
@@ -85,10 +83,9 @@ void BitmapFont::load()
 	}
 
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(graphicsengine.get_renderer(),
-	                                                    surface.get());
-	m_texture = new Texture(texture);
-	assetmanager.add_texture(m_texture);
-	assetmanager.m_images[m_path.string()] = m_texture;
+	                                                    surface.to_sdl());
+
+	m_texture = assetmanager.pixmaps.add(std::make_unique<Texture>(texture));
 }
 
 int BitmapFont::get_text_width(std::string_view text)
@@ -108,7 +105,11 @@ int BitmapFont::get_text_width(std::string_view text)
 void BitmapFont::write_text(Texture* texture, std::string_view text, const Vector& pos)
 {
 	COG2D_USE_GRAPHICSENGINE;
-	SDL_SetRenderTarget(graphicsengine.get_renderer(), texture->get_sdl_texture());
+	COG2D_USE_ASSETMANAGER;
+
+	SDL_SetRenderTarget(graphicsengine.get_renderer(), texture->to_sdl());
+
+	Texture* font = assetmanager.pixmaps.get(m_texture);
 
 	int x = pos.x;
 	for (char c : text) {
@@ -118,8 +119,7 @@ void BitmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 			SDL_Rect dest = {x, static_cast<int>(pos.y), g.width, m_glyph_height};
 
 			// TODO: Support RenderCopyF (lazy)
-			SDL_RenderCopy(graphicsengine.get_renderer(), m_texture->get_sdl_texture(), &src,
-			               &dest);
+			SDL_RenderCopy(graphicsengine.get_renderer(), font->to_sdl(), &src, &dest);
 		}
 
 		x += g.width + m_horizontal_spacing;
@@ -129,7 +129,7 @@ void BitmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 	SDL_SetRenderTarget(graphicsengine.get_renderer(), nullptr);
 }
 
-Texture* BitmapFont::create_text(std::string_view text)
+std::unique_ptr<Texture> BitmapFont::create_text(std::string_view text)
 {
 	COG2D_USE_ASSETMANAGER;
 	COG2D_USE_GRAPHICSENGINE;
@@ -138,17 +138,18 @@ Texture* BitmapFont::create_text(std::string_view text)
 	SDL_Texture* stexture = SDL_CreateTexture(graphicsengine.get_renderer(),
 	                                          SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
 	                                          width, m_glyph_height);
-	auto texture = new Texture(stexture);
-	write_text(texture, text, {0, 0});
-	assetmanager.add_texture(texture);
-	return texture;
+
+	auto texture = std::make_unique<Texture>(stexture);
+	write_text(texture.get(), text);
+	return std::move(texture);
 }
 
-Color BitmapFont::get_pixel(SDLSurfacePtr& surface, Vector_t<int> pos)
+Color BitmapFont::get_pixel(Surface& surface, Vector_t<int> pos)
 {
-	uint8_t bpp = surface->format->BytesPerPixel;
+	SDL_Surface* s = surface.to_sdl();
+	uint8_t bpp = s->format->BytesPerPixel;
 	/* Here p is the address to the pixel we want to retrieve */
-	uint8_t* p = (uint8_t*) surface->pixels + pos.y * surface->pitch + pos.x * bpp;
+	uint8_t* p = (uint8_t*) s->pixels + pos.y * s->pitch + pos.x * bpp;
 	uint32_t data = 0x0;
 
 	switch (bpp) {
@@ -177,7 +178,7 @@ Color BitmapFont::get_pixel(SDLSurfacePtr& surface, Vector_t<int> pos)
 	}
 
 	Color rgba;
-	SDL_GetRGBA(data, surface->format, &rgba.r, &rgba.g, &rgba.b, &rgba.a);
+	SDL_GetRGBA(data, s->format, &rgba.r, &rgba.g, &rgba.b, &rgba.a);
 	return rgba;
 }
 

@@ -20,7 +20,7 @@ public:
 	Texture(SDL_Texture* tex);
 	~Texture();
 
-	inline SDL_Texture* get_sdl_texture() { return m_texture; }
+	inline SDL_Texture* to_sdl() { return m_texture; }
 
 	inline Vector get_size() { return m_size; }
 	Vector query_size();

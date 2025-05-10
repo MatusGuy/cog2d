@@ -3,6 +3,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <SDL2/SDL_ttf.h>
+
 #include "cog2d/util/logger.hpp"
 #include "cog2d/video/graphicsengine.hpp"
 #include "cog2d/audio/audioengine.hpp"
@@ -92,8 +94,6 @@ void Program::quit()
 		config.save(cfgfile);
 		cfgfile.close();
 	}
-
-	assetmanager.wipe_assets();
 
 	audioengine.deinit();
 

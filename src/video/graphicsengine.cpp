@@ -204,7 +204,7 @@ void GraphicsEngine::draw_texture(Rect dest, Texture* tex)
 	SDL_RenderCopy(m_renderer, tex->get_sdl_texture(), NULL, &dest2);
 #else
 	SDL_FRect dest2 = dest.to_sdl_frect();
-	SDL_RenderCopyF(m_renderer, tex->get_sdl_texture(), NULL, &dest2);
+	SDL_RenderCopyF(m_renderer, tex->to_sdl(), NULL, &dest2);
 #endif
 }
 
@@ -221,7 +221,7 @@ void GraphicsEngine::draw_texture(Rect dest, Texture* tex, float angle, SDL_Rend
 	SDL_FRect dest2 = {
 	    dest.pos.x - (dest.size.x / 2), dest.pos.y - (dest.size.y / 2), dest.size.x, dest.size.y};
 	SDL_FPoint fpoint = dest.pos.to_sdl_fpoint();
-	SDL_RenderCopyExF(m_renderer, tex->get_sdl_texture(), NULL, &dest2, (double) angle, &fpoint,
+	SDL_RenderCopyExF(m_renderer, tex->to_sdl(), NULL, &dest2, (double) angle, &fpoint,
 	                  flip);
 #endif
 }

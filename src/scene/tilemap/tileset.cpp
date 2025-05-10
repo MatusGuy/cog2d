@@ -28,19 +28,8 @@ void TileSet::parse(const nlohmann::json& json)
 	m_set_sz.x = json["columns"].get<int>();
 	m_set_sz.y = json["imageheight"].get<int>() / m_tile_sz.y;
 
-	m_tex_path = std::filesystem::path(json["image"].get<std::string>());
-}
-
-void TileSet::load_texture()
-{
-	COG2D_USE_ASSETMANAGER;
-	m_texture = assetmanager.load_image(m_tex_path);
-}
-
-void TileSet::unload_texture()
-{
-	COG2D_USE_ASSETMANAGER;
-	assetmanager.destroy_texture(m_texture);
+	std::filesystem::path path = json["image"].get<std::string>();
+	m_texture = AssetManager::get().pixmaps.load_file(path);
 }
 
 COG2D_NAMESPACE_END_IMPL

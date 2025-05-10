@@ -12,6 +12,8 @@ public:
 	Surface(SDL_Surface* surface) : m_surface(surface) {}
 	~Surface() { SDL_FreeSurface(m_surface); }
 
+	SDL_Surface* operator->() { return to_sdl(); }
+
 	inline SDL_Surface* to_sdl() { return m_surface; }
 
 private:
