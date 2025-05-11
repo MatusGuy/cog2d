@@ -10,7 +10,7 @@
   },
   "keywords": [],
   "author": "Tulpenkiste",
-  "license": "IDGAF",
+  "license": "GPL-3.0-only",
   "packageManager": "pnpm@10.10.0",
   "devDependencies": {
     "@mapeditor/tiled-api": "^1.11.0",
