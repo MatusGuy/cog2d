@@ -84,8 +84,6 @@ var tomlMap: ScriptedMapFormat = {
 			tiled.log(`Processed tileset '${layeri}'`)
 		}
 
-		tiled.log(TOML.stringify(fileDat));
-
 		var file = new TextFile(fileName, TextFile.WriteOnly);
 		file.write(TOML.stringify(fileDat));
 		file.commit();

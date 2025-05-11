@@ -1,5 +1,5 @@
 {
-  "name": "leveltest",
+  "name": "cog2d_tiled_toml_extension",
   "version": "0.0.0",
   "description": "are you stupid?",
   "main": "src/index.ts",
