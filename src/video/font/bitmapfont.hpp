@@ -17,7 +17,7 @@ class BitmapFont : public Font
 public:
 	BitmapFont();
 
-	void load(IoDevice& device);
+	void load(IoDevice&& device, std::string_view name);
 
 	int get_text_width(std::string_view text) override;
 	void write_text(Texture* texture, std::string_view text, const Vector& pos = {0, 0}) override;
@@ -27,7 +27,7 @@ public:
 	inline int get_horizontal_spacing() { return m_horizontal_spacing; }
 
 public:
-	AssetKey<Texture> m_texture;
+	Asset<Texture> m_texture;
 
 private:
 	//using Glyph = Rect_t<int>;

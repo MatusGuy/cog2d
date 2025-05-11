@@ -27,7 +27,6 @@ void TileMap::parse(std::filesystem::path path)
 		TileSet set;
 		nlohmann::json& jsonset = *it;
 		set.parse(jsonset);
-		set.load_texture();
 		m_sets.push_back(set);
 	}
 

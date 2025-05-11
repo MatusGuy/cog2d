@@ -1,73 +1,83 @@
 #include "assetcollection.hpp"
 
+#include <algorithm>
+#include <functional>
+
 #include <SDL2/SDL_image.h>
 
 #include "cog2d/video/graphicsengine.hpp"
+#include "cog2d/util/logger.hpp"
 
 COG2D_NAMESPACE_BEGIN_IMPL
 
-template<class Asset>
-AssetKey<Asset>::~AssetKey()
-{
-	collection->remove(id);
-}
-
-template<class Asset>
-AssetCollection<Asset>::AssetCollection()
-    : m_assets(),
-      m_nextkey()
+template<class T>
+Asset<T>::Asset(std::shared_ptr<T> ptr, AssetCollection<T>* col)
+    : std::shared_ptr<T>(std::move(ptr)),
+      collection(col)
 {
 }
 
-template<class Asset>
-AssetKey<Asset> AssetCollection<Asset>::add(std::unique_ptr<Asset> asset, AssetId key)
+template<class T>
+Asset<T>::~Asset()
 {
-	AssetId newkey = key == 0 ? m_nextkey : key;
+	this->reset();
+	collection->try_remove_asset(*this);
+}
 
-	if (key == m_nextkey && m_nextkey != 0) {
-		// Uhhhh... No! Don't do that! Try this key instead.
-		do {
-			key++;
-		} while (m_assets.find(key) != m_assets.end());
+template<class A>
+Asset<A> AssetCollection<A>::add(std::string_view name, std::unique_ptr<A> asset)
+{
+	Asset<A> ptr(std::shared_ptr<A>(asset.release()), this);
+	m_assets.insert({std::string(name), AssetRef<A>(ptr)});
+	return ptr;
+}
+
+template<class A>
+void AssetCollection<A>::try_remove_key(std::string_view name, bool check)
+{
+	std::string key(name);
+
+	if (check) {
+		auto it = m_assets.find(key);
+		if (it == m_assets.end())
+			return;
 	}
 
-	m_assets.insert({newkey, std::move(asset)});
+	const AssetRef<A> ref = m_assets.at(key);
+	if (!ref.expired())
+		return;
 
-	if (key == 0) {
-		do {
-			m_nextkey++;
-		} while (m_assets.find(m_nextkey) != m_assets.end());
-	}
-
-	return {newkey, this};
-}
-
-template<class Asset>
-void AssetCollection<Asset>::remove(AssetId key)
-{
 	m_assets.erase(key);
-	m_nextkey = key;
 }
 
-template<class Asset>
-Asset* AssetCollection<Asset>::get(AssetId key)
+template<class A>
+void AssetCollection<A>::try_remove_asset(AssetRef<A> asset)
 {
-	auto it = m_assets.find(key);
-	if (it == m_assets.end())
-		return nullptr;
+	std::shared_ptr<A> ptr = asset.lock();
+	auto it = std::find_if(m_assets.begin(), m_assets.end(),
+	                       [&asset, &ptr](auto&& p) { return p.second.lock() == ptr; });
+	ptr.reset();
 
-	return (*it)->get();
+	if (it != m_assets.end())
+		try_remove_key((*it).first, false);
 }
 
-AssetKey<Texture> PixmapCollection::load(IoDevice& device, AssetId key)
+Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
 {
 	COG2D_USE_GRAPHICSENGINE;
 
 	if (!device.is_open())
-		device.open(IoDevice::OPENMODE_READ);
+		device.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
 
 	SDL_Texture* texture = IMG_LoadTexture_RW(graphicsengine.get_renderer(), device.to_sdl(), 1);
-	return add(std::make_unique<Texture>(texture), key);
+
+	if (!texture) {
+		COG2D_LOG_ERROR("PixmapCollection",
+		                fmt::format("Could not load pixmap \"{}\": {}", name, SDL_GetError()));
+		return {};
+	}
+
+	return add(name, std::make_unique<Texture>(texture));
 }
 
 COG2D_NAMESPACE_END_IMPL

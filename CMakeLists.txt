@@ -6,12 +6,30 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
 
+# Utilities #
+
+function(mklink link target)
+	file(TO_NATIVE_PATH "${link}" nlink)
+	file(TO_NATIVE_PATH "${target}" ntarget)
+	if(WIN32)
+		execute_process(COMMAND cmd /C "mklink /D /J ${nlink} ${ntarget}"
+			            WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+						ERROR_VARIABLE result)
+		message(DEBUG "mklink result: ${result}")
+	else()
+		file(CREATE_LINK "${ntarget}" "${nlink}" SYMBOLIC)
+	endif()
+endfunction()
+
 # Sources #
+
 file(GLOB_RECURSE COG2D_SRC CONFIGURE_DEPENDS src/*.cpp src/*.hpp)
 add_library(cog2d STATIC ${COG2D_SRC})
 
 target_compile_features(cog2d PUBLIC cxx_std_20)
 
+file(MAKE_DIRECTORY ${PROJECT_SOURCE_DIR}/include)
+mklink(${PROJECT_SOURCE_DIR}/include/cog2d ${PROJECT_SOURCE_DIR}/src)
 target_include_directories(cog2d SYSTEM PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 # Dependencies #

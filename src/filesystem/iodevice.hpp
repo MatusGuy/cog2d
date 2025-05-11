@@ -20,11 +20,13 @@ public:
 		SEEKPOS_END = std::ios::end
 	};
 
-	enum OpenMode
+	enum
 	{
 		OPENMODE_READ = std::ios::in,
-		OPENMODE_WRITE = std::ios::out
+		OPENMODE_WRITE = std::ios::out,
+		OPENMODE_BINARY = std::ios::binary
 	};
+	using OpenMode = std::uint16_t;
 
 public:
 	~IoDevice();
@@ -48,7 +50,8 @@ public:
 	static std::int64_t sdl_seek(SDL_RWops* context, std::int64_t offset, int seekpos)
 	{
 		auto dev = static_cast<IoDevice*>(context->hidden.unknown.data1);
-		return dev->seek(offset, static_cast<SeekPos>(seekpos));
+		std::int64_t r = dev->seek(offset, static_cast<SeekPos>(seekpos));
+		return r;
 	}
 	static std::size_t sdl_read(SDL_RWops* context, void* ptr, std::size_t size, std::size_t maxnum)
 	{

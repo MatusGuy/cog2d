@@ -1,7 +1,9 @@
 #ifndef ASSETMANAGER_HPP
 #define ASSETMANAGER_HPP
 
+#include <memory>
 #include <unordered_map>
+#include <functional>
 
 #include "cog2d/filesystem/assetfile.hpp"
 #include "cog2d/video/texture.hpp"
@@ -18,69 +20,64 @@ enum AssetType
 	ASSET_COUNT
 };
 
-using AssetId = std::uint32_t;
-
-template<class>
+template<class A>
 class AssetCollection;
 
-/**
- * @brief An AssetId that removes itself from the AssetCollection when destroyed.
- */
-template<class Asset>
-struct AssetKey
+template<class T>
+using AssetRef = std::weak_ptr<T>;
+
+template<class T>
+class Asset : public std::shared_ptr<T>
 {
-	~AssetKey();
+public:
+	AssetCollection<T>* collection = nullptr;
 
-	AssetId id;
-	AssetCollection<Asset>* collection;
+public:
+	Asset() {}
+	Asset(std::shared_ptr<T> ptr, AssetCollection<T>* col);
+	~Asset();
 
-	operator AssetId() { return id; }
+	inline bool valid() { return collection != nullptr && this->get() != nullptr; }
 };
 
-/*
-template<class Asset>
-using AssetKeyPtr = std::unique_ptr<AssetKey<Asset>>;
-*/
-
-template<class Asset>
+template<class A>
 class AssetCollection
 {
 public:
-	AssetCollection();
-
-	COG2D_FILE_TEMPLATE(AssetFile)
-	AssetKey<Asset> load_file(const std::filesystem::path& path, std::string_view name = "",
-	                          AssetId key = 0)
+	AssetCollection()
+	    : m_assets()
 	{
-		std::string assetname = name.empty() ? path.stem() : name;
-		if (m_ids.find(assetname) != m_ids.end())
-			return {m_ids[assetname], this};
-
-		F file(path);
-		AssetKey<Asset> asset = load(file, key);
-
-		m_ids.insert({assetname, asset.id});
-
-		return asset;
 	}
 
-	virtual AssetKey<Asset> load(IoDevice& device, AssetId key = 0) = 0;
+	COG2D_FILE_TEMPLATE(AssetFile)
+	Asset<A> load_file(const std::filesystem::path& path, std::string_view name = "")
+	{
+		std::string assetname = name.empty() ? path.stem() : name;
+		auto it = m_assets.find(assetname);
+		if (it != m_assets.end())
+			return Asset<A>((*it).second.lock(), this);
 
-	AssetKey<Asset> add(std::unique_ptr<Asset> asset, AssetId key = 0);
-	void remove(AssetId key);
+		F file(path);
+		return load(assetname, file);
+	}
 
-	Asset* get(AssetId key);
+	virtual Asset<A> load(std::string_view name, IoDevice& device) = 0;
+
+	Asset<A> add(std::string_view name, std::unique_ptr<A> asset);
+	void try_remove_key(std::string_view name, bool check = true);
+	void try_remove_asset(AssetRef<A> asset);
 
 protected:
-	std::unordered_map<AssetId, std::unique_ptr<Asset>> m_assets;
-	std::unordered_map<std::string, AssetId> m_ids;
-	AssetId m_nextkey;
+	std::unordered_map<std::string, AssetRef<A>> m_assets;
+
+private:
+	static void reap_cache_entry();
 };
 
 class PixmapCollection : public AssetCollection<Texture>
 {
 public:
-	AssetKey<Texture> load(IoDevice& device, AssetId key = 0) override;
+	Asset<Texture> load(std::string_view name, IoDevice& device) override;
 };
 
 COG2D_NAMESPACE_END_DECL

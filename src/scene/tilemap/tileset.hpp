@@ -18,7 +18,7 @@ public:
 	int m_first_gid;
 	Vector_t<int> m_tile_sz;
 	Vector_t<int> m_set_sz;
-	AssetKey<Texture> m_texture;
+	Asset<Texture> m_texture;
 
 public:
 	TileSet();

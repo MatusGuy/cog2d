@@ -4,6 +4,9 @@ build.*/
 **/CMakeFiles/
 **/CMakeCache.txt
 
+# Generated include directory
+include/cog2d
+
 # Windows build files
 Debug/
 Release/
@@ -13,7 +16,7 @@ tools/innosetup/Output
 docs/doxygen/
 
 # Qt Creator project file
-CMakeLists.txt.user*
+*.user*
 
 # Clangd
 .cache/
@@ -29,8 +32,14 @@ language.settings.xml
 # JetBrains IDE project files
 .idea/
 
+# Kate project files
+.kateproject.build
+
+# KDevelop project files
+.kdev4/
+*.kdev4
+
 # Useful Customization Files
-data/levels/more/
 *.patch
 *.zip
 *.diff

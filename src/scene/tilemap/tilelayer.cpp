@@ -25,7 +25,6 @@ void TileLayer::draw()
 			continue;
 
 		TileSet& set = m_map->get_tileset(id);
-		Texture* texture = assetmanager.pixmaps.get(set.m_texture);
 		id -= set.m_first_gid;
 
 		Vector_t<int> srcpos = get_tile_pos(id, set.m_set_sz);
@@ -43,7 +42,8 @@ void TileLayer::draw()
 
 		const SDL_Rect ssrc = src.to_sdl_rect();
 		const SDL_FRect sdest = dest.to_sdl_frect();
-		SDL_RenderCopyF(graphicsengine.get_renderer(), texture->to_sdl(), &ssrc, &sdest);
+		SDL_RenderCopyF(graphicsengine.get_renderer(), set.m_texture.get()->to_sdl(), &ssrc,
+		                &sdest);
 
 		//COG2D_LOG_DEBUG("TileLayer", fmt::format("draw {} at {} - {}", src, dest, id));
 	}

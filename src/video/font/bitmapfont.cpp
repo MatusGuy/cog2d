@@ -19,7 +19,7 @@ BitmapFont::BitmapFont()
 {
 }
 
-void BitmapFont::load(IoDevice& device)
+void BitmapFont::load(IoDevice&& device, std::string_view name)
 {
 	COG2D_USE_ASSETMANAGER;
 	COG2D_USE_GRAPHICSENGINE;
@@ -85,7 +85,7 @@ void BitmapFont::load(IoDevice& device)
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(graphicsengine.get_renderer(),
 	                                                    surface.to_sdl());
 
-	m_texture = assetmanager.pixmaps.add(std::make_unique<Texture>(texture));
+	m_texture = assetmanager.pixmaps.add(name, std::make_unique<Texture>(texture));
 }
 
 int BitmapFont::get_text_width(std::string_view text)
@@ -109,8 +109,6 @@ void BitmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 
 	SDL_SetRenderTarget(graphicsengine.get_renderer(), texture->to_sdl());
 
-	Texture* font = assetmanager.pixmaps.get(m_texture);
-
 	int x = pos.x;
 	for (char c : text) {
 		Glyph g = m_glyphs[c];
@@ -119,7 +117,7 @@ void BitmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 			SDL_Rect dest = {x, static_cast<int>(pos.y), g.width, m_glyph_height};
 
 			// TODO: Support RenderCopyF (lazy)
-			SDL_RenderCopy(graphicsengine.get_renderer(), font->to_sdl(), &src, &dest);
+			SDL_RenderCopy(graphicsengine.get_renderer(), m_texture.get()->to_sdl(), &src, &dest);
 		}
 
 		x += g.width + m_horizontal_spacing;
