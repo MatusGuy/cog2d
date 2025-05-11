@@ -1,0 +1,119 @@
+--- build/index.js	2025-05-11 14:15:35.955882595 +0200
++++ ~/.config/tiled/extensions/leveltest.js	2025-05-11 14:14:01.446635278 +0200
+@@ -63,9 +63,6 @@
+   return codeblock;
+ }
+ var TomlError = class extends Error {
+-  line;
+-  column;
+-  codeblock;
+   constructor(message, options) {
+     const [line, column] = getLineColFromPtr(options.toml, options.ptr);
+     const codeblock = makeCodeBlock(options.toml, line, column);
+@@ -149,9 +146,6 @@
+ // dist/date.js
+ var DATE_TIME_RE = /^(\d{4}-\d{2}-\d{2})?[T ]?(?:(\d{2}):\d{2}:\d{2}(?:\.\d+)?)?(Z|[-+]\d{2}:\d{2})?$/i;
+ var TomlDate = class _TomlDate extends Date {
+-  #hasDate = false;
+-  #hasTime = false;
+-  #offset = null;
+   constructor(date) {
+     let hasDate = true;
+     let hasTime = true;
+@@ -179,25 +173,25 @@
+     }
+     super(date);
+     if (!isNaN(this.getTime())) {
+-      this.#hasDate = hasDate;
+-      this.#hasTime = hasTime;
+-      this.#offset = offset;
++      this.hasDate = hasDate;
++      this.hasTime = hasTime;
++      this.offset = offset;
+     }
+   }
+   isDateTime() {
+-    return this.#hasDate && this.#hasTime;
++    return this.hasDate && this.hasTime;
+   }
+   isLocal() {
+-    return !this.#hasDate || !this.#hasTime || !this.#offset;
++    return !this.hasDate || !this.hasTime || !this.offset;
+   }
+   isDate() {
+-    return this.#hasDate && !this.#hasTime;
++    return this.hasDate && !this.hasTime;
+   }
+   isTime() {
+-    return this.#hasTime && !this.#hasDate;
++    return this.hasTime && !this.hasDate;
+   }
+   isValid() {
+-    return this.#hasDate || this.#hasTime;
++    return this.hasDate || this.hasTime;
+   }
+   toISOString() {
+     let iso = super.toISOString();
+@@ -205,35 +199,35 @@
+       return iso.slice(0, 10);
+     if (this.isTime())
+       return iso.slice(11, 23);
+-    if (this.#offset === null)
++    if (this.offset === null)
+       return iso.slice(0, -1);
+-    if (this.#offset === "Z")
++    if (this.offset === "Z")
+       return iso;
+-    let offset = +this.#offset.slice(1, 3) * 60 + +this.#offset.slice(4, 6);
+-    offset = this.#offset[0] === "-" ? offset : -offset;
++    let offset = +this.offset.slice(1, 3) * 60 + +this.offset.slice(4, 6);
++    offset = this.offset[0] === "-" ? offset : -offset;
+     let offsetDate = new Date(this.getTime() - offset * 6e4);
+-    return offsetDate.toISOString().slice(0, -1) + this.#offset;
++    return offsetDate.toISOString().slice(0, -1) + this.offset;
+   }
+   static wrapAsOffsetDateTime(jsDate, offset = "Z") {
+     let date = new _TomlDate(jsDate);
+-    date.#offset = offset;
++    date.offset = offset;
+     return date;
+   }
+   static wrapAsLocalDateTime(jsDate) {
+     let date = new _TomlDate(jsDate);
+-    date.#offset = null;
++    date.offset = null;
+     return date;
+   }
+   static wrapAsLocalDate(jsDate) {
+     let date = new _TomlDate(jsDate);
+-    date.#hasTime = false;
+-    date.#offset = null;
++    date.hasTime = false;
++    date.offset = null;
+     return date;
+   }
+   static wrapAsLocalTime(jsDate) {
+     let date = new _TomlDate(jsDate);
+-    date.#hasDate = false;
+-    date.#offset = null;
++    date.hasDate = false;
++    date.offset = null;
+     return date;
+   }
+ };
+@@ -293,7 +287,7 @@
+         }
+         try {
+           parsed += String.fromCodePoint(parseInt(code, 16));
+-        } catch {
++        } catch(err) {
+           throw new TomlError("invalid unicode escape", {
+             toml: str,
+             ptr: tmp
+@@ -995,4 +989,4 @@
+ })();
+ 
+ /******/ })()
+-;
+\ No newline at end of file
++;
