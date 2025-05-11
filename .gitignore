@@ -46,7 +46,7 @@ Thumbs.db
 .directory
 *~
 
-# Shit from tiled extension
+# Stuff from tiled extension
 node_modules/
 dist/
 pnpm-lock.yaml
