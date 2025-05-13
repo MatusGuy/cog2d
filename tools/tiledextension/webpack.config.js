@@ -1,27 +1,27 @@
 const path = require('path');
 
 module.exports = {
-	entry: './src/index.ts', // Your entry point
+	entry: './src/index.ts',
 	output: {
-		filename: 'index.js', // Output file name
-		path: path.resolve(__dirname, 'build'), // Output directory
-		clean: true, // Clean the output directory before emit
+		filename: 'index.js',
+		path: path.resolve(__dirname, 'build'),
+		clean: true,
 	},
 	resolve: {
-		extensions: ['.ts', '.js'], // Resolve these extensions
+		extensions: ['.ts', '.js'],
 	},
 	module: {
 		rules: [
 			{
-				test: /\.ts$/, // Apply this rule to .ts files
-				use: 'ts-loader', // Use ts-loader to transpile TypeScript
-				exclude: /node_modules/, // Exclude node_modules
+				test: /\.ts$/,
+				use: 'ts-loader',
+				exclude: /node_modules/,
 			},
 		],
 	},
 	optimization: {
-		minimize: false, // Disable minimization
+		minimize: false,
 	},
 	devtool: false,
-	mode: 'development', // Set to 'development' for development mode
+	mode: 'production', // Set to 'development' for development mode
 };

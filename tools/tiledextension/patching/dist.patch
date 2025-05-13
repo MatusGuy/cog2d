@@ -1,6 +1,6 @@
---- build/index.js	2025-05-11 14:15:35.955882595 +0200
-+++ ~/.config/tiled/extensions/leveltest.js	2025-05-11 14:14:01.446635278 +0200
-@@ -63,9 +63,6 @@
+--- build/index.js	2025-05-13 11:31:26.406066018 +0200
++++ /home/tulpenkiste/.config/tiled/extensions/leveltest.js	2025-05-13 11:31:26.507198588 +0200
+@@ -60,9 +60,6 @@
    return codeblock;
  }
  var TomlError = class extends Error {
@@ -10,7 +10,7 @@
    constructor(message, options) {
      const [line, column] = getLineColFromPtr(options.toml, options.ptr);
      const codeblock = makeCodeBlock(options.toml, line, column);
-@@ -149,9 +146,6 @@
+@@ -146,9 +143,6 @@
  // dist/date.js
  var DATE_TIME_RE = /^(\d{4}-\d{2}-\d{2})?[T ]?(?:(\d{2}):\d{2}:\d{2}(?:\.\d+)?)?(Z|[-+]\d{2}:\d{2})?$/i;
  var TomlDate = class _TomlDate extends Date {
@@ -20,7 +20,7 @@
    constructor(date) {
      let hasDate = true;
      let hasTime = true;
-@@ -179,25 +173,25 @@
+@@ -176,25 +170,25 @@
      }
      super(date);
      if (!isNaN(this.getTime())) {
@@ -54,7 +54,7 @@
    }
    toISOString() {
      let iso = super.toISOString();
-@@ -205,35 +199,35 @@
+@@ -202,35 +196,35 @@
        return iso.slice(0, 10);
      if (this.isTime())
        return iso.slice(11, 23);
@@ -101,7 +101,7 @@
      return date;
    }
  };
-@@ -293,7 +287,7 @@
+@@ -290,7 +284,7 @@
          }
          try {
            parsed += String.fromCodePoint(parseInt(code, 16));
@@ -110,7 +110,7 @@
            throw new TomlError("invalid unicode escape", {
              toml: str,
              ptr: tmp
-@@ -995,4 +989,4 @@
+@@ -1030,4 +1024,4 @@
  })();
  
  /******/ })()
