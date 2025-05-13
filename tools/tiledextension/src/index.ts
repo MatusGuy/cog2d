@@ -1,6 +1,18 @@
 /// <reference types="@mapeditor/tiled-api" />
 import TOML from "smol-toml";
 
+const paths = {
+	windows: {
+		mapExport: "~/AppData/Local/Temp/test.toml"
+	},
+	unix: {
+		mapExport: "~/.cache/test.toml"
+	}
+};
+
+// @ts-ignore WRONG FILE CLASS DUMB STUPID THING I WANNA SWEAR AT
+const platformKey = File.exists("C:/Windows/System32/KERNELBASE.dll") ? "windows" : "unix";
+
 type TomlTileset = Object & {
 	firstgid: number;
 	tilewidth: number;
@@ -112,15 +124,23 @@ var actionsToUpdate: {
 function tryTest(action: Action) {
 	tiled.log(`Stub: action '${action.text}' has triggered!`);
 
-	if (process != null) return;
+	if (process != null || !tiled.activeAsset || !tiled.activeAsset.isTileMap || !tomlMap.write) return;
+
+	//tiled.activeAsset.save();
+
+	var tempPath = paths[platformKey]["mapExport"];
 
 	process = new Process();
+
+	tempPath = tempPath.replace('~', process.getEnv("HOME"));
+
+	tiled.log(tempPath);
+
+	tomlMap.write(tiled.activeAsset as TileMap, tempPath);
 
 	tiled.log(
 		"Test Process: " + process.start("/usr/bin/konsole", []).toString()
 	);
-
-	tiled.log("Test Process Exit Code Check: " + process.exitCode);
 
 	/*
 	for (var actin in actionsToUpdate) {
@@ -174,7 +194,7 @@ const reloadAction: Action = tiled.registerAction(
 reloadAction.text = "Test level";
 reloadAction.checkable = false;
 reloadAction.shortcut = "F9";
-reloadAction.enabled = true;
+reloadAction.enabled = false;
 
 /*
 actionsToUpdate = [
@@ -190,3 +210,10 @@ tiled.extendMenu("Map", [
 	{ action: "ReloadLevelTest", before: "MapProperties" },
 	{ separator: true, before: "MapProperties" },
 ]);
+
+// Reload enable swapping
+function onActiveAssetChangedCog2D(asset: Asset) {
+	reloadAction.enabled = asset.isTileMap;
+}
+
+tiled.activeAssetChanged.connect(onActiveAssetChangedCog2D);
