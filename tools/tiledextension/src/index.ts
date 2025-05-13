@@ -128,11 +128,9 @@ function tryTest(action: Action) {
 
 	//tiled.activeAsset.save();
 
-	var tempPath = paths[platformKey]["mapExport"];
-
 	process = new Process();
 
-	tempPath = tempPath.replace('~', process.getEnv("HOME"));
+	const tempPath = paths[platformKey]["mapExport"].replace('~', process.getEnv("HOME"));
 
 	tiled.log(tempPath);
 
