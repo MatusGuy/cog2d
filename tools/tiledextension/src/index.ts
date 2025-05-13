@@ -37,7 +37,7 @@ var tomlMap: ScriptedMapFormat = {
 
 		var nextGid = 1;
 
-		for (var seti in map.tilesets) {
+		for (var seti = 0; seti < map.tilesets.length; seti++) {
 			var activeSet = map.tilesets[seti];
 
 			fileDat.tilesets.push({
@@ -72,10 +72,14 @@ var tomlMap: ScriptedMapFormat = {
 				data: []
 			};
 
-
 			for (var y = 0; y < layer.height; ++y) {
 				for (var x = 0; x < layer.width; ++x) {
-					data.data.push(layer.cellAt(x, y).tileId);
+					var id = layer.cellAt(x, y).tileId;
+
+					if (id == -1)
+						id = 0;
+
+					data.data.push(id);
 				}
 			}
 
