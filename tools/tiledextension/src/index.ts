@@ -37,8 +37,10 @@ var tomlMap: ScriptedMapFormat = {
 
 		var nextGid = 1;
 
-		for (var seti = 0; seti < map.tilesets.length; seti++) {
-			var activeSet = map.tilesets[seti];
+		var usedTilesets = map.usedTilesets();
+
+		for (var setIndex = 0; setIndex < usedTilesets.length; setIndex++) {
+			var activeSet = usedTilesets[setIndex];
 
 			fileDat.tilesets.push({
 				firstgid: nextGid,
@@ -51,14 +53,14 @@ var tomlMap: ScriptedMapFormat = {
 
 			nextGid += activeSet.tileCount;
 
-			tiled.log(`Processed tileset '${seti}'`)
+			tiled.log(`Processed tileset '${setIndex}'`)
 		}
 
-		for (var layeri = 0; layeri < map.layerCount; layeri++) {
-			var fakelayer: Layer = map.layerAt(layeri);
+		for (var layerIndex = 0; layerIndex < map.layerCount; layerIndex++) {
+			var fakelayer: Layer = map.layerAt(layerIndex);
 
 			if (!fakelayer.isTileLayer) {
-				tiled.log(`Processed tileset '${layeri}' with early return`)
+				tiled.log(`Processed tilemap layer '${layerIndex}' with early return`)
 				continue;
 			}
 
@@ -85,7 +87,7 @@ var tomlMap: ScriptedMapFormat = {
 
 			fileDat.layers.push(data);
 
-			tiled.log(`Processed tileset '${layeri}'`)
+			tiled.log(`Processed tilemap layer '${layerIndex}'`)
 		}
 
 		var file = new TextFile(fileName, TextFile.WriteOnly);
