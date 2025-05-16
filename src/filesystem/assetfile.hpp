@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 
-// SPDX-License-Identifier: LGPL-3.0-only
-
 #pragma once
 
 #include "cog2d/filesystem/file.hpp"
