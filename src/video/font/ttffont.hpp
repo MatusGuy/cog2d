@@ -5,7 +5,6 @@
 
 #include <SDL2/SDL_ttf.h>
 
-#include "cog2d/util/types.hpp"
 #include "cog2d/video/font/font.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL

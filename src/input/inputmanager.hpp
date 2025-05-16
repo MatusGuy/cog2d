@@ -7,7 +7,7 @@
 
 #include <SDL2/SDL.h>
 
-#include "cog2d/util/types.hpp"
+#include "cog2d/util/currenton.hpp"
 #include "cog2d/input/controller.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL

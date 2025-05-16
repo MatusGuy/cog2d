@@ -1,12 +1,12 @@
 #ifndef IODEVICE_H
 #define IODEVICE_H
 
-#include <cstdio>
+#include <cstdint>
 #include <ios>
 
 #include <SDL2/SDL_rwops.h>
 
-#include "cog2d/util/types.hpp"
+#include "cog2d/util/namespacedef.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 

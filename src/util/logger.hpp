@@ -7,7 +7,7 @@
 #include <sstream>
 #include <fmt/format.h>
 
-#include "cog2d/util/types.hpp"
+#include "cog2d/util/currenton.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 

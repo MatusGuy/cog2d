@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <SDL2/SDL.h>
 
-#include "cog2d/util/types.hpp"
+#include "cog2d/util/math/vector.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 

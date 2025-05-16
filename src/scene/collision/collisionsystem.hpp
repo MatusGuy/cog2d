@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "cog2d/util/types.hpp"
+#include "cog2d/util/math/rect.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 

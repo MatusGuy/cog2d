@@ -7,6 +7,7 @@
 #include <list>
 
 #include "cog2d/assets/assetcollection.hpp"
+#include "cog2d/util/currenton.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 

@@ -4,7 +4,7 @@
 
 #include "cog2d/assets/assetmanager.hpp"
 #include "cog2d/util/logger.hpp"
-#include "cog2d/util/types.hpp"
+#include "cog2d/util/math/vector.hpp"
 #include "cog2d/video/surface.hpp"
 
 COG2D_NAMESPACE_BEGIN_IMPL

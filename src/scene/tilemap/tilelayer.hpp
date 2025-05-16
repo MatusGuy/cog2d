@@ -1,13 +1,13 @@
 #ifndef TILELAYER_HPP
 #define TILELAYER_HPP
 
+#include <cstdint>
 #include <vector>
 
 #include "cog2d/scene/tilemap/cameratilelayeriterator.hpp"
-#include "cog2d/util/types.hpp"
+#include "cog2d/util/math/vector.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
-
 class TileSet;
 class TileMap;
 

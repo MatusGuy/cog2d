@@ -1,9 +1,10 @@
 #ifndef PROGRAM_HPP
 #define PROGRAM_HPP
 
+#include <memory>
 #include <stack>
 
-#include "cog2d/util/types.hpp"
+#include "cog2d/util/namespacedef.hpp"
 #include "cog2d/input/inputmanager.hpp"
 #include "screen.hpp"
 

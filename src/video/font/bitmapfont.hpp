@@ -3,7 +3,7 @@
 
 #include <filesystem>
 
-#include "cog2d/util/types.hpp"
+#include "cog2d/video/color.hpp"
 #include "cog2d/video/graphicsengine.hpp"
 #include "cog2d/video/font/font.hpp"
 #include "cog2d/video/texture.hpp"

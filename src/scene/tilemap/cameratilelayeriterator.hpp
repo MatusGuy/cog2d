@@ -1,7 +1,7 @@
 #ifndef CAMERATILELAYERITERATOR_HPP
 #define CAMERATILELAYERITERATOR_HPP
 
-#include "cog2d/util/types.hpp"
+#include "cog2d/scene/tilemap/tile.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 

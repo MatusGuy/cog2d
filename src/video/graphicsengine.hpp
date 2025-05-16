@@ -8,6 +8,8 @@
 
 #include "cog2d/assets/assetmanager.hpp"
 #include "cog2d/video/font/font.hpp"
+#include "cog2d/video/color.hpp"
+#include "cog2d/util/math/rect.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 

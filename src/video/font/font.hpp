@@ -1,7 +1,10 @@
 #ifndef FONT_HPP
 #define FONT_HPP
 
-#include "cog2d/util/types.hpp"
+#include <memory>
+#include <string_view>
+
+#include "cog2d/util/math/vector.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 
