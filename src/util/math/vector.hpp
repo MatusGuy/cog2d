@@ -1,5 +1,4 @@
-#ifndef VECTOR_HPP
-#define VECTOR_HPP
+#pragma once
 
 #include "cog2d/util/fmt.hpp"
 #include "cog2d/util/math/util.hpp"
@@ -154,5 +153,3 @@ struct cog2d::fmt::formatter<cog2d::Vector_t<T>, char>
 		return cog2d::fmt::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
 	}
 };
-
-#endif // VECTOR_HPP

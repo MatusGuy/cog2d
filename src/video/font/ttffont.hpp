@@ -1,5 +1,4 @@
-#ifndef TTFFONT_H
-#define TTFFONT_H
+#pragma once
 
 #include <string>
 
@@ -27,5 +26,3 @@ private:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // TTFFONT_H

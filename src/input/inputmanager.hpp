@@ -1,5 +1,4 @@
-#ifndef INPUTMANAGER_HPP
-#define INPUTMANAGER_HPP
+#pragma once
 
 #include <string>
 #include <map>
@@ -63,5 +62,3 @@ private:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // INPUTMANAGER_HPP

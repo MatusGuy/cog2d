@@ -1,5 +1,4 @@
-#ifndef FMT_HPP
-#define FMT_HPP
+#pragma once
 
 #include <fmt/format.h>
 
@@ -13,5 +12,3 @@ using namespace ::fmt;
 }
 
 COG2D_NAMESPACE_END_DECL
-
-#endif // FMT_HPP

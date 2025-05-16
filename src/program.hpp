@@ -1,5 +1,4 @@
-#ifndef PROGRAM_HPP
-#define PROGRAM_HPP
+#pragma once
 
 #include <memory>
 #include <stack>
@@ -100,5 +99,3 @@ private:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // PROGRAM_HPP

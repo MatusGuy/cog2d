@@ -1,5 +1,4 @@
-#ifndef CURRENTON_HPP
-#define CURRENTON_HPP
+#pragma once
 
 #include "cog2d/util/namespacedef.hpp"
 
@@ -39,13 +38,11 @@ Currenton<C>* Currenton<C>::s_current = nullptr;
 #define COG2D_SINGLETON(CLASS)                \
 public:                                       \
 	static std::unique_ptr<CLASS> s_instance; \
-	                                          \
+                                              \
 public:                                       \
 	static CLASS& get()                       \
-    {                                         \
-	    return *CLASS::s_instance;            \
+	{                                         \
+		return *CLASS::s_instance;            \
 	}
 
 COG2D_NAMESPACE_END_DECL
-
-#endif // CURRENTON_HPP

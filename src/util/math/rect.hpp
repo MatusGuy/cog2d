@@ -1,5 +1,4 @@
-#ifndef RECT_HPP
-#define RECT_HPP
+#pragma once
 
 #include "cog2d/util/math/vector.hpp"
 
@@ -48,13 +47,13 @@ public:
 	inline SDL_Rect to_sdl_rect()
 	{
 		return {static_cast<int>(pos.x), static_cast<int>(pos.y), static_cast<int>(size.x),
-			    static_cast<int>(size.y)};
+		        static_cast<int>(size.y)};
 	}
 
 	inline SDL_FRect to_sdl_frect()
 	{
 		return {static_cast<float>(pos.x), static_cast<float>(pos.y), static_cast<float>(size.x),
-			    static_cast<float>(size.y)};
+		        static_cast<float>(size.y)};
 	}
 
 	Rect_t<T> operator+(Rect_t<T>& other) { return Rect_t<T>(pos + other.pos, size + other.size); }
@@ -154,5 +153,3 @@ struct cog2d::fmt::formatter<cog2d::Rect_t<T>, char>
 		return cog2d::fmt::format_to(ctx.out(), "[{}, {}]", vec.pos, vec.size);
 	}
 };
-
-#endif // RECT_HPP

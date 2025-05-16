@@ -1,5 +1,4 @@
-#ifndef CAMERATILELAYERITERATOR_HPP
-#define CAMERATILELAYERITERATOR_HPP
+#pragma once
 
 #include "cog2d/scene/tilemap/tile.hpp"
 
@@ -111,5 +110,3 @@ private:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // CAMERATILELAYERITERATOR_HPP

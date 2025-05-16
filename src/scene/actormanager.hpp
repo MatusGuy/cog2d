@@ -1,5 +1,4 @@
-#ifndef ACTORMANAGER_HPP
-#define ACTORMANAGER_HPP
+#pragma once
 
 #include <vector>
 
@@ -52,5 +51,3 @@ private:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // ACTORMANAGER_HPP

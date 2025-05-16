@@ -1,5 +1,4 @@
-#ifndef SCREEN_HPP
-#define SCREEN_HPP
+#pragma once
 
 #include <SDL_events.h>
 
@@ -19,5 +18,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // SCREEN_HPP

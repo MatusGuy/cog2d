@@ -1,5 +1,4 @@
-#ifndef TILEMAP_HPP
-#define TILEMAP_HPP
+#pragma once
 
 #include <filesystem>
 
@@ -31,5 +30,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif // TILEMAP_HPP

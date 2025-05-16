@@ -1,5 +1,4 @@
-#ifndef SOUNDEFFECT_H
-#define SOUNDEFFECT_H
+#pragma once
 
 #include <SDL2/SDL_mixer.h>
 
@@ -25,5 +24,3 @@ private:
 */
 
 COG2D_NAMESPACE_END_DECL
-
-#endif // SOUNDEFFECT_H

@@ -1,5 +1,4 @@
-#ifndef ASSETMANAGER_H
-#define ASSETMANAGER_H
+#pragma once
 
 #include <filesystem>
 #include <string>
@@ -22,5 +21,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // ASSETMANAGER_H

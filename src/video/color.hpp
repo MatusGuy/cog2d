@@ -1,5 +1,4 @@
-#ifndef COLOR_HPP
-#define COLOR_HPP
+#pragma once
 
 #include "cog2d/util/fmt.hpp"
 
@@ -44,5 +43,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif // COLOR_HPP

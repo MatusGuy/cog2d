@@ -1,5 +1,4 @@
-#ifndef IODEVICE_H
-#define IODEVICE_H
+#pragma once
 
 #include <cstdint>
 #include <ios>
@@ -72,5 +71,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // IODEVICE_H

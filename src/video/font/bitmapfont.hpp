@@ -1,5 +1,4 @@
-#ifndef BITMAPFONT_HPP
-#define BITMAPFONT_HPP
+#pragma once
 
 #include <filesystem>
 
@@ -46,5 +45,3 @@ private:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // BITMAPFONT_HPP

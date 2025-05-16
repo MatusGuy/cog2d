@@ -8,7 +8,6 @@ COG2D_NAMESPACE_BEGIN_IMPL
 
 TileMap::TileMap()
 {
-
 }
 
 void TileMap::parse(std::filesystem::path path)

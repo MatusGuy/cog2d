@@ -1,5 +1,4 @@
-#ifndef TILE_HPP
-#define TILE_HPP
+#pragma once
 
 #include <cstdint>
 #include <vector>
@@ -12,5 +11,3 @@ using TileId = std::uint32_t;
 using TileIds = std::vector<TileId>;
 
 COG2D_NAMESPACE_END_DECL
-
-#endif // TILE_HPP

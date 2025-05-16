@@ -1,5 +1,4 @@
-#ifndef FILE_HPP
-#define FILE_HPP
+#pragma once
 
 #include <fstream>
 #include <filesystem>
@@ -31,5 +30,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif // FILE_HPP

@@ -7,7 +7,6 @@ COG2D_NAMESPACE_BEGIN_IMPL
 
 TileSet::TileSet()
 {
-
 }
 
 void TileSet::parse(const nlohmann::json& json)

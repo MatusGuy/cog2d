@@ -1,5 +1,4 @@
-#ifndef ASSETFILE_HPP
-#define ASSETFILE_HPP
+#pragma once
 
 #include "cog2d/filesystem/file.hpp"
 
@@ -14,5 +13,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif // ASSETFILE_HPP

@@ -1,5 +1,4 @@
-#ifndef TILELAYER_HPP
-#define TILELAYER_HPP
+#pragma once
 
 #include <cstdint>
 #include <vector>
@@ -33,5 +32,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif // TILELAYER_HPP

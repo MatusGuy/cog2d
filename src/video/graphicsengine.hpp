@@ -1,5 +1,4 @@
-#ifndef GRAPHICSENGINE_H
-#define GRAPHICSENGINE_H
+#pragma once
 
 #include <string>
 #include <cmath>
@@ -51,5 +50,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // GRAPHICSENGINE_H

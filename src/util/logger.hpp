@@ -1,5 +1,4 @@
-#ifndef LOGGER_HPP
-#define LOGGER_HPP
+#pragma once
 
 #include <cstdint>
 #include <string>
@@ -74,5 +73,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // LOGGER_HPP

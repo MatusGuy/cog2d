@@ -1,5 +1,4 @@
-#ifndef JOYPADCONTROLLER_H
-#define JOYPADCONTROLLER_H
+#pragma once
 
 #include <SDL2/SDL.h>
 
@@ -22,5 +21,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // JOYPADCONTROLLER_H

@@ -1,5 +1,4 @@
-#ifndef ASSETMANAGER_HPP
-#define ASSETMANAGER_HPP
+#pragma once
 
 #include <memory>
 #include <unordered_map>
@@ -81,5 +80,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // ASSETMANAGER_HPP

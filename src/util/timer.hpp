@@ -1,5 +1,4 @@
-#ifndef TIMER_HPP
-#define TIMER_HPP
+#pragma once
 
 #include <cstdint>
 
@@ -29,5 +28,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // TIMER_HPP

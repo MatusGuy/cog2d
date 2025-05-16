@@ -1,5 +1,4 @@
-#ifndef TILESET_HPP
-#define TILESET_HPP
+#pragma once
 
 #include <filesystem>
 
@@ -27,5 +26,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif // TILESET_HPP

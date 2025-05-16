@@ -1,5 +1,4 @@
-#ifndef COLLISIONBODY_HPP
-#define COLLISIONBODY_HPP
+#pragma once
 
 #include <vector>
 
@@ -37,5 +36,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // COLLISIONBODY_HPP

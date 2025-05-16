@@ -1,5 +1,4 @@
-#ifndef KEYBOARDCONTROLLER_HPP
-#define KEYBOARDCONTROLLER_HPP
+#pragma once
 
 #include "cog2d/input/controller.hpp"
 
@@ -16,5 +15,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // KEYBOARDCONTROLLER_HPP

@@ -1,5 +1,4 @@
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#pragma once
 
 #include <filesystem>
 #include <vector>
@@ -84,5 +83,3 @@ private:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // CONFIG_HPP

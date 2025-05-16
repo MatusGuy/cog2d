@@ -1,5 +1,4 @@
-#ifndef CONTROLLER_HPP
-#define CONTROLLER_HPP
+#pragma once
 
 #include <map>
 
@@ -48,5 +47,3 @@ protected:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // CONTROLLER_HPP

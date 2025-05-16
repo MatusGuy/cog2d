@@ -1,5 +1,4 @@
-#ifndef AUDIOENGINE_H
-#define AUDIOENGINE_H
+#pragma once
 
 #include <string>
 
@@ -28,5 +27,3 @@ private:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // AUDIOENGINE_H

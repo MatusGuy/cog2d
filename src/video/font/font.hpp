@@ -1,5 +1,4 @@
-#ifndef FONT_HPP
-#define FONT_HPP
+#pragma once
 
 #include <memory>
 #include <string_view>
@@ -20,5 +19,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // FONT_HPP

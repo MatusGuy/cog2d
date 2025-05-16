@@ -1,5 +1,4 @@
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#pragma once
 
 #include <filesystem>
 #include <SDL2/SDL.h>
@@ -27,5 +26,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // TEXTURE_H

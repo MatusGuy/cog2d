@@ -1,5 +1,4 @@
-#ifndef SURFACE_HPP
-#define SURFACE_HPP
+#pragma once
 
 #include <SDL2/SDL_surface.h>
 
@@ -7,9 +6,13 @@
 
 COG2D_NAMESPACE_BEGIN_DECL
 
-class Surface {
+class Surface
+{
 public:
-	Surface(SDL_Surface* surface) : m_surface(surface) {}
+	Surface(SDL_Surface* surface)
+	    : m_surface(surface)
+	{
+	}
 	~Surface() { SDL_FreeSurface(m_surface); }
 
 	SDL_Surface* operator->() { return to_sdl(); }
@@ -21,5 +24,3 @@ private:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif // SURFACE_HPP

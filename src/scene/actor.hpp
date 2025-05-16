@@ -1,5 +1,4 @@
-#ifndef ACTOR_HPP
-#define ACTOR_HPP
+#pragma once
 
 #include "cog2d/scene/collision/collisionbody.hpp"
 
@@ -42,5 +41,3 @@ public:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // ACTOR_HPP

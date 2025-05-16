@@ -1,5 +1,4 @@
-#ifndef SCENE_HPP
-#define SCENE_HPP
+#pragma once
 
 #include "cog2d/screen.hpp"
 #include "cog2d/scene/actormanager.hpp"
@@ -22,5 +21,3 @@ protected:
 };
 
 COG2D_NAMESPACE_END_DECL
-
-#endif  // SCENE_HPP
