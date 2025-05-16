@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 #include "collisionsystem.hpp"
 
 #include "cog2d/scene/actormanager.hpp"

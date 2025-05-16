@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 #include "graphicsengine.hpp"
 
 #include "cog2d/program.hpp"

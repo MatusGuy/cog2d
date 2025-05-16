@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
+// SPDX-License-Identifier: LGPL-3.0-only
+
 #pragma once
 
 #include <SDL2/SDL_mixer.h>

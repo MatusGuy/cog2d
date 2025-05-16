@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 #include "bitmapfont.hpp"
 
 #include <SDL2/SDL_image.h>

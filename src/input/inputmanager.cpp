@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 #include "inputmanager.hpp"
 
 #include "cog2d/input/keyboardcontroller.hpp"
