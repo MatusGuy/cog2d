@@ -12,20 +12,6 @@
 
 COG2D_NAMESPACE_BEGIN_IMPL
 
-template<class T>
-Asset<T>::Asset(std::shared_ptr<T> ptr, AssetCollection<T>* col)
-    : std::shared_ptr<T>(std::move(ptr)),
-      collection(col)
-{
-}
-
-template<class T>
-Asset<T>::~Asset()
-{
-	this->reset();
-	collection->try_remove_asset(*this);
-}
-
 template<class A>
 Asset<A> AssetCollection<A>::add(std::string_view name, std::unique_ptr<A> asset)
 {

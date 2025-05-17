@@ -35,8 +35,17 @@ public:
 
 public:
 	Asset() {}
-	Asset(std::shared_ptr<T> ptr, AssetCollection<T>* col);
-	~Asset();
+	Asset(std::shared_ptr<T> ptr, AssetCollection<T>* col)
+	    : std::shared_ptr<T>(std::move(ptr)),
+	      collection(col)
+	{
+	}
+
+	~Asset()
+	{
+		collection->try_remove_asset(*this);
+		this->reset();
+	}
 
 	inline bool valid() { return collection != nullptr && this->get() != nullptr; }
 };
