@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <stack>
+#include <cstdint>
 
 #include "cog2d/util/namespacedef.hpp"
 #include "cog2d/input/inputmanager.hpp"

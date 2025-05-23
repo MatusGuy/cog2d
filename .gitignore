@@ -4,9 +4,6 @@ build.*/
 **/CMakeFiles/
 **/CMakeCache.txt
 
-# Generated include directory
-include/cog2d
-
 # Windows build files
 Debug/
 Release/

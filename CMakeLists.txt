@@ -23,14 +23,19 @@ endfunction()
 
 # Sources #
 
-file(GLOB_RECURSE COG2D_SRC CONFIGURE_DEPENDS src/*.cpp src/*.hpp)
+file(GLOB_RECURSE COG2D_SRC CONFIGURE_DEPENDS src/*.cpp include/cog2d/*.hpp)
 add_library(cog2d STATIC ${COG2D_SRC})
 
 target_compile_features(cog2d PUBLIC cxx_std_20)
 
-file(MAKE_DIRECTORY ${PROJECT_SOURCE_DIR}/include)
-mklink(${PROJECT_SOURCE_DIR}/include/cog2d ${PROJECT_SOURCE_DIR}/src)
 target_include_directories(cog2d SYSTEM PUBLIC ${PROJECT_SOURCE_DIR}/include)
+
+# Get all include subdirectories so that it becomes possible to just write the name of the header
+# in implementation files.
+set(cog2d_INCLUDE_DIRECTORY ${PROJECT_SOURCE_DIR}/include)
+file(GLOB_RECURSE _cog2d_includes LIST_DIRECTORIES true ${cog2d_INCLUDE_DIRECTORY}/cog2d/*)
+list(FILTER _cog2d_includes EXCLUDE REGEX "[.][A-Za-z0-9]+$")
+target_include_directories(cog2d PRIVATE ${_cog2d_includes} ${cog2d_INCLUDE_DIRECTORY}/cog2d)
 
 # Dependencies #
 
