@@ -62,7 +62,7 @@ public:
 	COG2D_FILE_TEMPLATE(AssetFile)
 	Asset<A> load_file(const std::filesystem::path& path, std::string_view name = "")
 	{
-		std::string assetname = name.empty() ? path.stem() : name;
+		std::string assetname = name.empty() ? path.stem().string() : std::string{name};
 		auto it = m_assets.find(assetname);
 		if (it != m_assets.end())
 			return Asset<A>((*it).second.lock(), this);
