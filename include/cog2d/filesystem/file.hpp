@@ -26,7 +26,7 @@ public:
 	std::int64_t size() override;
 	std::int64_t seek(int64_t offset, SeekPos seekpos) override;
 	std::int64_t tell() override;
-	std::size_t read(void* ptr, std::size_t, std::size_t maxnum) override;
+	std::size_t read(void* ptr, std::size_t size, std::size_t maxnum) override;
 	std::size_t write(const void* ptr, std::size_t size, std::size_t num) override;
 	int close() override;
 };

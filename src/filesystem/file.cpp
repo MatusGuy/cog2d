@@ -2,6 +2,8 @@
 
 #include "file.hpp"
 
+#include "cog2d/util/logger.hpp"
+
 #include <iostream>
 #include <ios>
 
@@ -11,6 +13,7 @@ File::File(const std::filesystem::path& path)
     : m_path(path),
       m_stream()
 {
+	m_stream.exceptions(std::ios::badbit | std::ios::eofbit);
 }
 
 int File::open(OpenMode mode)
@@ -39,10 +42,11 @@ std::int64_t File::size()
 	return length;
 }
 
-std::int64_t File::seek(int64_t offset, SeekPos seekpos)
+std::int64_t File::seek(std::int64_t offset, SeekPos seekpos)
 {
 	m_stream.seekg(static_cast<std::streamoff>(offset), static_cast<std::ios::seekdir>(seekpos));
-	return tell();  // ...right?
+	//m_stream.clear();
+	return tell();
 }
 
 std::int64_t File::tell()
@@ -50,15 +54,29 @@ std::int64_t File::tell()
 	return m_stream.tellg();
 }
 
-std::size_t File::read(void* ptr, std::size_t, std::size_t maxnum)
+std::size_t File::read(void* ptr, std::size_t size, std::size_t maxnum)
 {
-	m_stream.read(reinterpret_cast<char*>(ptr), maxnum);
-	return m_stream.gcount();
+	// FIXME: Damn it! The second parameter really IS important!!
+
+	std::size_t count;
+	std::int64_t cur = tell();
+
+	try {
+		m_stream.read(static_cast<char*>(ptr), size * maxnum);
+		count = m_stream.gcount();
+		seek(cur + (size * maxnum), SEEKPOS_BEGIN);
+	} catch (const std::ios::failure& f) {
+		COG2D_LOG_ERROR("File", f.what());
+	}
+
+	COG2D_LOG_DEBUG("File", fmt::format("{}, {}, {}", cur, size, maxnum));
+
+	return count;
 }
 
 std::size_t File::write(const void* ptr, std::size_t size, std::size_t num)
 {
-	m_stream.write(reinterpret_cast<const char*>(ptr), num);
+	m_stream.write(static_cast<const char*>(ptr), size * num);
 	return num;
 }
 
