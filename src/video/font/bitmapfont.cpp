@@ -27,7 +27,7 @@ void BitmapFont::load(IoDevice&& device, std::string_view name)
 	COG2D_USE_GRAPHICSENGINE;
 
 	if (!device.is_open())
-		device.open(IoDevice::OPENMODE_READ);
+		device.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
 
 	Surface surface = IMG_Load_RW(device.to_sdl(), 1);
 

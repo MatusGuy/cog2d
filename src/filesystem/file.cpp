@@ -56,22 +56,13 @@ std::int64_t File::tell()
 
 std::size_t File::read(void* ptr, std::size_t size, std::size_t maxnum)
 {
-	// FIXME: Damn it! The second parameter really IS important!!
-
-	std::size_t count;
-	std::int64_t cur = tell();
-
 	try {
 		m_stream.read(static_cast<char*>(ptr), size * maxnum);
-		count = m_stream.gcount();
-		seek(cur + (size * maxnum), SEEKPOS_BEGIN);
 	} catch (const std::ios::failure& f) {
 		COG2D_LOG_ERROR("File", f.what());
 	}
 
-	COG2D_LOG_DEBUG("File", fmt::format("{}, {}, {}", cur, size, maxnum));
-
-	return count;
+	return m_stream.gcount();
 }
 
 std::size_t File::write(const void* ptr, std::size_t size, std::size_t num)
