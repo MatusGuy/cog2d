@@ -3,22 +3,23 @@
 #pragma once
 
 #include <filesystem>
+#include <unordered_map>
 
-#include "cog2d/video/color.hpp"
-#include "cog2d/video/graphicsengine.hpp"
-#include "cog2d/video/font/font.hpp"
+#include "cog2d/filesystem/iodevice.hpp"
 #include "cog2d/video/texture.hpp"
+#include "cog2d/video/color.hpp"
+#include "cog2d/video/font/font.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 
 class Surface;
 
-class BitmapFont : public Font
+class PixmapFont : public Font
 {
 public:
-	BitmapFont();
+	PixmapFont();
 
-	void load(IoDevice&& device, std::string_view name);
+	void load(IoDevice&& device);
 
 	int get_text_width(std::string_view text) override;
 	void write_text(Texture* texture, std::string_view text, const Vector& pos = {0, 0}) override;
@@ -28,7 +29,7 @@ public:
 	inline int get_horizontal_spacing() { return m_horizontal_spacing; }
 
 public:
-	Asset<Texture> m_texture;
+	Texture m_texture;
 
 private:
 	//using Glyph = Rect_t<int>;

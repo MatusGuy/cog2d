@@ -43,7 +43,7 @@ void AssetCollection<A>::try_remove_asset(AssetRef<A> asset)
 {
 	std::shared_ptr<A> ptr = asset.lock();
 	auto it = std::find_if(m_assets.begin(), m_assets.end(),
-	                       [&asset, &ptr](auto&& p) { return p.second.lock() == ptr; });
+	                       [&ptr](auto&& p) { return p.second.lock() == ptr; });
 	ptr.reset();
 
 	if (it != m_assets.end())
@@ -66,6 +66,13 @@ Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
 	}
 
 	return add(name, std::make_unique<Texture>(texture));
+}
+
+Asset<PixmapFont> PixmapFontCollection::load(std::string_view name, IoDevice& device)
+{
+	auto font = new PixmapFont();
+	font->load(std::move(device));
+	return add(name, std::unique_ptr<AssetType>(std::move(font)));
 }
 
 COG2D_NAMESPACE_END_IMPL

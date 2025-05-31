@@ -8,6 +8,7 @@
 
 #include "cog2d/filesystem/assetfile.hpp"
 #include "cog2d/video/texture.hpp"
+#include "cog2d/video/font/pixmapfont.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 
@@ -54,6 +55,9 @@ template<class A>
 class AssetCollection
 {
 public:
+	using AssetType = A;
+
+public:
 	AssetCollection()
 	    : m_assets()
 	{
@@ -88,6 +92,12 @@ class PixmapCollection : public AssetCollection<Texture>
 {
 public:
 	Asset<Texture> load(std::string_view name, IoDevice& device) override;
+};
+
+class PixmapFontCollection : public AssetCollection<PixmapFont>
+{
+public:
+	Asset<PixmapFont> load(std::string_view name, IoDevice& device) override;
 };
 
 COG2D_NAMESPACE_END_DECL

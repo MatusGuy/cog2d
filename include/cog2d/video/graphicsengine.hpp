@@ -7,10 +7,11 @@
 #include <memory>
 #include <SDL2/SDL.h>
 
-#include "cog2d/assets/assetmanager.hpp"
+#include "cog2d/video/texture.hpp"
 #include "cog2d/video/font/font.hpp"
 #include "cog2d/video/color.hpp"
 #include "cog2d/util/math/rect.hpp"
+#include "cog2d/util/currenton.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 

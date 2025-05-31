@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 
-#include "bitmapfont.hpp"
+#include "pixmapfont.hpp"
 
 #include <SDL2/SDL_image.h>
 
-#include "cog2d/assets/assetmanager.hpp"
 #include "cog2d/util/logger.hpp"
 #include "cog2d/util/math/vector.hpp"
 #include "cog2d/video/surface.hpp"
+#include "cog2d/video/graphicsengine.hpp"
 
 COG2D_NAMESPACE_BEGIN_IMPL
 
 static constexpr std::string_view s_chars = " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
-BitmapFont::BitmapFont()
+PixmapFont::PixmapFont()
     : m_texture(),
       m_glyph_height(-1),
       m_horizontal_spacing(0),
@@ -21,9 +21,8 @@ BitmapFont::BitmapFont()
 {
 }
 
-void BitmapFont::load(IoDevice&& device, std::string_view name)
+void PixmapFont::load(IoDevice&& device)
 {
-	COG2D_USE_ASSETMANAGER;
 	COG2D_USE_GRAPHICSENGINE;
 
 	if (!device.is_open())
@@ -84,13 +83,10 @@ void BitmapFont::load(IoDevice&& device, std::string_view name)
 		m_glyphs[c] = g;
 	}
 
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(graphicsengine.get_renderer(),
-	                                                    surface.to_sdl());
-
-	m_texture = assetmanager.pixmaps.add(name, std::make_unique<Texture>(texture));
+	m_texture = SDL_CreateTextureFromSurface(graphicsengine.get_renderer(), surface.to_sdl());
 }
 
-int BitmapFont::get_text_width(std::string_view text)
+int PixmapFont::get_text_width(std::string_view text)
 {
 	int w = 0;
 	for (char c : text) {
@@ -104,10 +100,9 @@ int BitmapFont::get_text_width(std::string_view text)
 	return w;
 }
 
-void BitmapFont::write_text(Texture* texture, std::string_view text, const Vector& pos)
+void PixmapFont::write_text(Texture* texture, std::string_view text, const Vector& pos)
 {
 	COG2D_USE_GRAPHICSENGINE;
-	COG2D_USE_ASSETMANAGER;
 
 	SDL_SetRenderTarget(graphicsengine.get_renderer(), texture->to_sdl());
 
@@ -119,7 +114,7 @@ void BitmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 			SDL_Rect dest = {x, static_cast<int>(pos.y), g.width, m_glyph_height};
 
 			// TODO: Support RenderCopyF (lazy)
-			SDL_RenderCopy(graphicsengine.get_renderer(), m_texture.get()->to_sdl(), &src, &dest);
+			SDL_RenderCopy(graphicsengine.get_renderer(), m_texture.to_sdl(), &src, &dest);
 		}
 
 		x += g.width + m_horizontal_spacing;
@@ -129,9 +124,8 @@ void BitmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 	SDL_SetRenderTarget(graphicsengine.get_renderer(), nullptr);
 }
 
-std::unique_ptr<Texture> BitmapFont::create_text(std::string_view text)
+std::unique_ptr<Texture> PixmapFont::create_text(std::string_view text)
 {
-	COG2D_USE_ASSETMANAGER;
 	COG2D_USE_GRAPHICSENGINE;
 
 	int width = get_text_width(text);
@@ -144,7 +138,7 @@ std::unique_ptr<Texture> BitmapFont::create_text(std::string_view text)
 	return std::move(texture);
 }
 
-Color BitmapFont::get_pixel(Surface& surface, Vector_t<int> pos)
+Color PixmapFont::get_pixel(Surface& surface, Vector_t<int> pos)
 {
 	SDL_Surface* s = surface.to_sdl();
 	uint8_t bpp = s->format->BytesPerPixel;

@@ -13,7 +13,7 @@ File::File(const std::filesystem::path& path)
     : m_path(path),
       m_stream()
 {
-	m_stream.exceptions(std::ios::badbit | std::ios::eofbit);
+	m_stream.exceptions(std::ios::badbit);
 }
 
 int File::open(OpenMode mode)
