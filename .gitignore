@@ -51,3 +51,9 @@ ehthumbs.db
 Thumbs.db
 .directory
 *~
+
+# Stuff from tiled extension
+node_modules/
+dist/
+pnpm-lock.yaml
+!dist.patch
