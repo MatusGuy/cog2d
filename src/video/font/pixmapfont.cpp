@@ -83,7 +83,7 @@ void PixmapFont::load(IoDevice&& device)
 		m_glyphs[c] = g;
 	}
 
-	m_texture = SDL_CreateTextureFromSurface(graphicsengine.get_renderer(), surface.to_sdl());
+	m_texture.reset(Texture::from_surface(surface));
 }
 
 int PixmapFont::get_text_width(std::string_view text)
@@ -114,7 +114,7 @@ void PixmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 			SDL_Rect dest = {x, static_cast<int>(pos.y), g.width, m_glyph_height};
 
 			// TODO: Support RenderCopyF (lazy)
-			SDL_RenderCopy(graphicsengine.get_renderer(), m_texture.to_sdl(), &src, &dest);
+			SDL_RenderCopy(graphicsengine.get_renderer(), m_texture->to_sdl(), &src, &dest);
 		}
 
 		x += g.width + m_horizontal_spacing;

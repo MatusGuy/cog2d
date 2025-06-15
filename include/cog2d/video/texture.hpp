@@ -10,12 +10,16 @@
 COG2D_NAMESPACE_BEGIN_DECL
 
 class IoDevice;
+class Surface;
 
 class Texture
 {
 public:
 	SDL_Texture* m_texture;
 	Vector m_size;
+
+public:
+	static Texture* from_surface(Surface& surface);
 
 public:
 	Texture(SDL_Texture* tex = nullptr);

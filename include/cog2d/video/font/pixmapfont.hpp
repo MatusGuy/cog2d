@@ -29,7 +29,7 @@ public:
 	inline int get_horizontal_spacing() { return m_horizontal_spacing; }
 
 public:
-	Texture m_texture;
+	std::unique_ptr<Texture> m_texture;
 
 private:
 	//using Glyph = Rect_t<int>;

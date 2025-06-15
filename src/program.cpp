@@ -91,6 +91,8 @@ void Program::quit()
 	COG2D_USE_AUDIOENGINE;
 	COG2D_USE_CONFIG;
 
+	graphicsengine.deinit();
+
 	if (m_settings->systems & System::SYSTEM_CONFIG) {
 		std::ofstream cfgfile(config.get_config_path(m_settings));
 		config.save(cfgfile);
@@ -98,8 +100,6 @@ void Program::quit()
 	}
 
 	audioengine.deinit();
-
-	graphicsengine.deinit();
 
 	TTF_Quit();
 	SDL_Quit();

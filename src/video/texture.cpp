@@ -2,7 +2,17 @@
 
 #include "texture.hpp"
 
+#include "cog2d/video/graphicsengine.hpp"
+#include "cog2d/video/surface.hpp"
+
 COG2D_NAMESPACE_BEGIN_IMPL
+
+Texture* Texture::from_surface(Surface& surface)
+{
+	COG2D_USE_GRAPHICSENGINE;
+	return new Texture(SDL_CreateTextureFromSurface(graphicsengine.get_renderer(),
+	                                                surface.to_sdl()));
+}
 
 Texture::Texture(SDL_Texture* tex)
     : m_texture(tex),
