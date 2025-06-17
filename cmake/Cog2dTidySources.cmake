@@ -7,5 +7,5 @@ endforeach()
 
 file(GLOB_RECURSE MISSOURCES RELATIVE ${SOURCE_DIR}/src ${SOURCE_DIR}/src/*.hpp)
 foreach(_currfile ${MISSOURCES})
-	file(RENAME ${SOURCE_DIR}/include/cog2d/${_currfile} ${SOURCE_DIR}/src/${_currfile})
+	file(RENAME ${SOURCE_DIR}/src/${_currfile} ${SOURCE_DIR}/include/cog2d/${_currfile})
 endforeach()
