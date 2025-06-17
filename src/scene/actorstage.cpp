@@ -1,27 +1,27 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 
-#include "scene.hpp"
+#include "actorstage.hpp"
 
 COG2D_NAMESPACE_BEGIN_IMPL
 
-Scene::Scene()
+ActorStage::ActorStage()
     : m_actormanager(),
       m_collisionsystem()
 {
 }
 
-void Scene::init()
+void ActorStage::init()
 {
 }
 
-void Scene::update()
+void ActorStage::update()
 {
 	m_actormanager.update();
 	// FIXME: Is this a good way to handle this?
 	m_collisionsystem.update(m_actormanager);
 }
 
-void Scene::draw()
+void ActorStage::draw()
 {
 	for (Actor* actor : m_actormanager.get_actors()) {
 		if (!actor->is_active())
@@ -31,7 +31,7 @@ void Scene::draw()
 	}
 }
 
-bool Scene::event(SDL_Event* ev)
+bool ActorStage::event(SDL_Event* ev)
 {
 	return true;
 }

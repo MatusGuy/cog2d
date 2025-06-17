@@ -7,10 +7,13 @@
 
 COG2D_NAMESPACE_BEGIN_DECL
 
-class Scene : public Screen
+/**
+ * A stage... for the actors... you know... like a theater...
+ */
+class ActorStage : public Screen
 {
 public:
-	Scene();
+	ActorStage();
 
 	void init() override;
 	void update() override;
