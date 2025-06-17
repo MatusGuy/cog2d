@@ -4,11 +4,15 @@
 
 #include "cog2d/screen.hpp"
 #include "cog2d/scene/actormanager.hpp"
+#include "cog2d/scene/viewport.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 
+class Scene;
+
 /**
  * A stage... for the actors... you know... like a theater...
+ * This class should control game state (paused, playing, game over, ...)
  */
 class ActorStage : public Screen
 {
@@ -20,9 +24,13 @@ public:
 	void draw() override;
 	bool event(SDL_Event* ev) override;
 
-protected:
-	ActorManager m_actormanager;
-	CollisionSystem m_collisionsystem;
+public:
+	void set_current_scene(Scene* scene);
+	inline Scene* get_current_scene() { return m_current_scene; }
+
+private:
+	Scene* m_current_scene;
+	Viewport m_viewport;
 };
 
 COG2D_NAMESPACE_END_DECL

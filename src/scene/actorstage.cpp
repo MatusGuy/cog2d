@@ -2,11 +2,13 @@
 
 #include "actorstage.hpp"
 
+#include "cog2d/scene/scene.hpp"
+
 COG2D_NAMESPACE_BEGIN_IMPL
 
 ActorStage::ActorStage()
-    : m_actormanager(),
-      m_collisionsystem()
+    : m_current_scene(nullptr),
+      m_viewport()
 {
 }
 
@@ -16,24 +18,23 @@ void ActorStage::init()
 
 void ActorStage::update()
 {
-	m_actormanager.update();
-	// FIXME: Is this a good way to handle this?
-	m_collisionsystem.update(m_actormanager);
+	m_current_scene->update(m_viewport);
 }
 
 void ActorStage::draw()
 {
-	for (Actor* actor : m_actormanager.get_actors()) {
-		if (!actor->is_active())
-			continue;
-
-		actor->draw();
-	}
+	m_current_scene->draw();
 }
 
 bool ActorStage::event(SDL_Event* ev)
 {
 	return true;
+}
+
+void ActorStage::set_current_scene(Scene* scene)
+{
+	m_current_scene = scene;
+	m_current_scene->init();
 }
 
 COG2D_NAMESPACE_END_IMPL

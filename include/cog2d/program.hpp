@@ -77,7 +77,7 @@ public:
 
 	void quit();
 
-	void push_screen(Screen* screen);
+	void push_screen(std::unique_ptr<Screen> screen);
 	void pop_screen();
 
 	virtual void init() = 0;

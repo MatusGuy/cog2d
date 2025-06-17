@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "cog2d/scene/actor.hpp"
+#include "cog2d/util/currenton.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 
@@ -16,7 +17,7 @@ COG2D_NAMESPACE_BEGIN_DECL
  * They are updated & drawn by the \ref Program.
  */
 
-class ActorManager
+class ActorManager : public Currenton<ActorManager>
 {
 public:
 	using Actors = std::vector<Actor*>;

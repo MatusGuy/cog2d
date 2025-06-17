@@ -5,13 +5,14 @@
 #include <vector>
 
 #include "cog2d/util/math/rect.hpp"
+#include "cog2d/util/currenton.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 
 class CollisionBody;
 class ActorManager;
 
-class CollisionSystem
+class CollisionSystem : public Currenton<CollisionSystem>
 {
 public:
 	/// @brief A collision group.

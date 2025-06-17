@@ -105,11 +105,12 @@ void Program::quit()
 	SDL_Quit();
 }
 
-void Program::push_screen(Screen* screen)
+void Program::push_screen(std::unique_ptr<Screen> screen)
 {
-	m_screen_stack.push(std::unique_ptr<Screen>(screen));
+	Screen* screenptr = screen.get();
+	m_screen_stack.push(std::move(screen));
 
-	screen->init();
+	screenptr->init();
 }
 
 void Program::init_sdl()
