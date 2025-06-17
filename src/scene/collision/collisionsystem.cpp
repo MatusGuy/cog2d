@@ -50,7 +50,7 @@ void CollisionSystem::rect_rect(CollisionBody* a, CollisionBody* b)
 	Vector oldmov1 = target->m_mov;
 	Vector oldmov2 = other->m_mov;
 
-	if (!d1.overlaps(d2))
+	if (!d1.overlaps_exc(d2))
 		return;
 
 	CollisionSystem::Response resp1 = a->collision(b);
@@ -58,34 +58,45 @@ void CollisionSystem::rect_rect(CollisionBody* a, CollisionBody* b)
 	if (resp1 == COLRESP_REJECT || resp2 == COLRESP_REJECT)
 		return;
 
+	Vector& mov = target->m_mov;
+
 	float itop = d1.get_bottom() - d2.get_top();
 	float ibottom = d2.get_bottom() - d1.get_top();
 	float ileft = d1.get_right() - d2.get_left();
 	float iright = d2.get_right() - d1.get_left();
 
+	bool move_horiz;
 	float vert_penetration = std::min(itop, ibottom);
 	float horiz_penetration = std::min(ileft, iright);
 	if (vert_penetration < horiz_penetration) {
 		if (itop > ibottom) {
-			target->m_mov.y += vert_penetration;
+			mov.y += vert_penetration;
 		} else {
-			target->m_mov.y -= vert_penetration;
+			mov.y -= vert_penetration;
 		}
+		move_horiz = false;
 	} else {
 		if (ileft > iright) {
-			target->m_mov.x += horiz_penetration;
+			mov.x += horiz_penetration;
 		} else {
-			target->m_mov.x -= horiz_penetration;
+			mov.x -= horiz_penetration;
 		}
+		move_horiz = true;
 	}
 
 	if (!a->m_static && !b->m_static) {
 		Vector avg = oldmov1.avg(oldmov2);
 		// if (!a->m_static)
-		a->m_mov += avg;
+		//a->m_mov += avg;
 
 		// if (!b->m_static)
-		b->m_mov += avg;
+		if (move_horiz) {
+			a->m_mov.x += avg.x;
+			b->m_mov.x += avg.x;
+		} else {
+			a->m_mov.y += avg.y;
+			b->m_mov.y += avg.y;
+		}
 	}
 }
 
