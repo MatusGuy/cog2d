@@ -151,3 +151,11 @@ if(COG2D_TESTS)
 	add_subdirectory(tests)
 endif()
 
+option(COG2D_UTIL "Add little utilities for cog2d development." NO)
+if(COG2D_UTIL)
+	add_custom_target(tidy_files
+		COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${PROJECT_SOURCE_DIR}
+		                         -P ${PROJECT_SOURCE_DIR}/cmake/Cog2dTidySources.cmake
+		COMMENT "Tidying source files"
+	)
+endif()
