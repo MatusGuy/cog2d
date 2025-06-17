@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(cog2d LANGUAGES CXX)
+project(COG2D LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/)
 
@@ -23,19 +23,29 @@ endfunction()
 
 # Sources #
 
+set(COG2D_CXX_STANDARD 20
+	CACHE STRING "C++ standard version to be used by cog2d and its dependants")
+
+if(COG2D_CXX_STANDARD LESS 17)
+	message(FATAL_ERROR "cog2d only supports C++17 or higher.")
+endif()
+
+set(CMAKE_CXX_STANDARD ${COG2D_CXX_STANDARD})
+set(CMAKE_CXX_STANDARD_REQUIRED YES)
+
 file(GLOB_RECURSE COG2D_SRC CONFIGURE_DEPENDS src/*.cpp include/cog2d/*.hpp)
 add_library(cog2d STATIC ${COG2D_SRC})
 
-target_compile_features(cog2d PUBLIC cxx_std_20)
+target_compile_features(cog2d PUBLIC cxx_std_${COG2D_CXX_STANDARD})
 
 target_include_directories(cog2d SYSTEM PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 # Get all include subdirectories so that it becomes possible to just write the name of the header
 # in implementation files.
-set(cog2d_INCLUDE_DIRECTORY ${PROJECT_SOURCE_DIR}/include)
-file(GLOB_RECURSE _cog2d_includes LIST_DIRECTORIES true ${cog2d_INCLUDE_DIRECTORY}/cog2d/*)
+set(COG2D_INCLUDE_DIRECTORY ${PROJECT_SOURCE_DIR}/include)
+file(GLOB_RECURSE _cog2d_includes LIST_DIRECTORIES true ${COG2D_INCLUDE_DIRECTORY}/cog2d/*)
 list(FILTER _cog2d_includes EXCLUDE REGEX "[.][A-Za-z0-9]+$")
-target_include_directories(cog2d PRIVATE ${_cog2d_includes} ${cog2d_INCLUDE_DIRECTORY}/cog2d)
+target_include_directories(cog2d PRIVATE ${_cog2d_includes} ${COG2D_INCLUDE_DIRECTORY}/cog2d)
 
 # Dependencies #
 
@@ -61,7 +71,8 @@ else()
 	find_package(SDL2_image REQUIRED)
 	target_link_libraries(cog2d
 		PUBLIC
-		$<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
+		$<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,
+		     SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
 	)
 endif()
 
@@ -73,7 +84,8 @@ else()
 	find_package(SDL2_mixer REQUIRED)
 	target_link_libraries(cog2d
 		PUBLIC
-		$<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>
+		$<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,
+		     SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>
 	)
 endif()
 
@@ -90,12 +102,16 @@ else()
 endif()
 
 ## fmt ##
-if(COG2D_USE_PKGCONFIG)
-	pkg_check_modules(fmt REQUIRED IMPORTED_TARGET fmt)
-	target_link_libraries(cog2d PUBLIC PkgConfig::fmt)
-else()
-	find_package(fmt REQUIRED)
-	target_link_libraries(cog2d PUBLIC fmt::fmt)
+option(COG2D_USE_FMT "Use fmt formatting library for cog2d instead of std::format" NO)
+if(COG2D_USE_FMT OR (COG2D_CXX_STANDARD LESS 20))
+	if(COG2D_USE_PKGCONFIG)
+		pkg_check_modules(fmt REQUIRED IMPORTED_TARGET fmt)
+		target_link_libraries(cog2d PUBLIC PkgConfig::fmt)
+	else()
+		find_package(fmt REQUIRED)
+		target_link_libraries(cog2d PUBLIC fmt::fmt)
+	endif()
+	target_compile_definitions(cog2d PUBLIC COG2D_USE_FMT)
 endif()
 
 ## json ##
