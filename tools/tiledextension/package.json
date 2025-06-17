@@ -5,8 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "webpack",
-    "patchtheshit": "webpack && mkdir -p dist && cp build/index.js dist/index.js && patch dist/index.js < patching/dist.patch",
-    "test": "pnpm patchtheshit && cp dist/index.js ~/.config/tiled/extensions/leveltest.js && tiled"
+    "patchjs": "webpack && mkdir -p dist && cp build/index.js dist/index.js && patch dist/index.js < patching/dist.patch",
+    "test": "pnpm patchjs && cp dist/index.js ~/.config/tiled/extensions/leveltest.js && tiled"
   },
   "keywords": [],
   "author": "Tulpenkiste",
