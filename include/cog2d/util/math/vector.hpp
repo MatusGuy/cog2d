@@ -34,7 +34,7 @@ public:
 	}
 
 	COG2D_NUMERIC_TEMPLATE(U)
-	explicit Vector_t(Vector_t<U> v)
+	Vector_t(Vector_t<U> v)
 	{
 		x = static_cast<T>(v.x);
 		y = static_cast<T>(v.y);

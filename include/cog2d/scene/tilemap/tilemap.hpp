@@ -9,8 +9,6 @@
 
 COG2D_NAMESPACE_BEGIN_DECL
 
-// TODO: Class that contains this and objects.
-// Call it "World" or something idk
 class TileMap
 {
 public:

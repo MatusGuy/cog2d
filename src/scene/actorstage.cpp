@@ -18,11 +18,14 @@ void ActorStage::init()
 
 void ActorStage::update()
 {
-	m_current_scene->update(m_viewport);
+	Viewport::s_current = &m_viewport;
+	m_current_scene->update();
+	m_viewport.get_camera()->update();
 }
 
 void ActorStage::draw()
 {
+	Viewport::s_current = &m_viewport;
 	m_current_scene->draw();
 }
 
@@ -33,7 +36,13 @@ bool ActorStage::event(SDL_Event* ev)
 
 void ActorStage::set_current_scene(Scene* scene)
 {
+	if (m_current_scene)
+		m_current_scene->m_stage = nullptr;
+
 	m_current_scene = scene;
+
+	Viewport::s_current = &m_viewport;
+	m_current_scene->m_stage = this;
 	m_current_scene->init();
 }
 

@@ -23,7 +23,7 @@ COG2D_NAMESPACE_BEGIN_DECL
 		log(lv, #name, cat, msg);                                          \
 	}
 
-#define COG2D_LOG(func) Logger::get().log_##func
+#define COG2D_LOG(func) cog2d::Logger::get().log_##func
 #define COG2D_LOG_DEBUG COG2D_LOG(debug)
 #define COG2D_LOG_INFO COG2D_LOG(info)
 #define COG2D_LOG_WARN COG2D_LOG(warn)

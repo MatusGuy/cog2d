@@ -32,14 +32,14 @@ void TileLayer::draw()
 		Vector_t<int> srcpos = get_tile_pos(id, set.m_set_sz);
 		Rect_t<int> src;
 
-		src.size = Vector_t<int>(16, 16);
+		src.size = set.m_tile_sz;
 		src.pos = srcpos * src.size;
 
 		int i = it.layer_index();
 		Vector_t<int> destpos = get_tile_pos(i, m_size);
 
 		Rect_t<int> dest;
-		dest.size = Vector_t<int>(16, 16);
+		dest.size = set.m_tile_sz;
 		dest.pos = destpos * dest.size;
 
 		const SDL_Rect ssrc = src.to_sdl_rect();
