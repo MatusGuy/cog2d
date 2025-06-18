@@ -41,7 +41,7 @@ type TomlData = Object & {
 
 // Map Format
 var tomlMap: ScriptedMapFormat = {
-	name: "Toml",
+	name: "cog2d TOML Map",
 	extension: "toml",
 
 	write: function (map: TileMap, fileName: string): string | undefined {
@@ -118,20 +118,35 @@ tiled.registerMapFormat("toml", tomlMap);
 // Playtest
 var process: Process | null = null;
 
-/*
-var actionsToUpdate: {
-	inverted: boolean;
-	action: Action;
-}[] = [];*/
-
 function tryTest(action: Action) {
-	tiled.log(`Stub: action '${action.text}' has triggered!`);
-
-	if (process != null ||
-		!tiled.activeAsset ||
-		!tiled.activeAsset.isTileMap ||
-		!tomlMap.write)
+	const program = tiled.project.property(SETTING_EXE_PATH) as string;
+	// @ts-ignore
+	if (!File.exists(program)) {
+		tiled.error(`Could not find executable: "${program}"\n` +
+		            `Correct the value of the ${SETTING_EXE_PATH} project setting ` +
+		            "(Project > Project Settings) to the path of " +
+		            "the game or project's executable in order to test levels/maps.",
+		            () => {});
 		return;
+	}
+
+	if (process != null)
+		return;
+
+	if (!tiled.activeAsset) {
+		tiled.error("Nothing to test", () => {});
+		return;
+	}
+
+	if (!tiled.activeAsset.isTileMap) {
+		tiled.error(`Cannot test asset of type "${tiled.activeAsset.assetType}"`, () => {});
+		return;
+	}
+
+	if (!tomlMap.write)
+		return;
+
+	tiled.log(`Running "${program} ${tiled.activeAsset.fileName}" as requested by test action`);
 
 	//tiled.activeAsset.save();
 
@@ -139,22 +154,13 @@ function tryTest(action: Action) {
 
 	const tempPath = TEMP_LEVEL_PATHS[PLATFORM_KEY]["mapExport"].replace('~',
 	                                                                     process.getEnv("HOME"));
-
-	tiled.log(tempPath);
+	tiled.log(`Temporary level path: ${tempPath}`);
 
 	tomlMap.write(tiled.activeAsset as TileMap, tempPath);
 
-	var program = tiled.project.property(SETTING_EXE_PATH) as string;
 	tiled.log(
 		"Test Process: " + process.start(program, [tiled.activeAsset.fileName]).toString()
 	);
-
-	/*
-	for (var actin in actionsToUpdate) {
-		var act = actionsToUpdate[actin];
-
-		act.action.enabled = !act.inverted;
-	}*/
 }
 
 function endTest(_action: Action) {
@@ -164,13 +170,6 @@ function endTest(_action: Action) {
 	process.terminate();
 
 	process = null;
-
-	/*
-	for (var actin in actionsToUpdate) {
-		var act = actionsToUpdate[actin];
-
-		act.action.enabled = act.inverted;
-	}*/
 }
 
 function testMap(action: Action) {
@@ -182,12 +181,9 @@ function testMap(action: Action) {
 
 // Setup Actions
 
-const testAction: Action = tiled.registerAction(
-	"LevelTest",
-	testMap
-);
+const testAction: Action = tiled.registerAction("LevelTest", testMap);
 
-testAction.text = "Test Map";
+testAction.text = "Test Level/Map";
 testAction.checkable = false;
 testAction.shortcut = "F5";
 testAction.enabled = false;
@@ -197,12 +193,10 @@ tiled.extendMenu("Map", [
 	{ separator: true, before: "MapProperties" },
 ]);
 
-function onActiveAssetChanged(asset: Asset) {
+tiled.activeAssetChanged.connect((asset: Asset) => {
 	// Only activate action for tilemaps
 	testAction.enabled = asset.isTileMap;
-}
-
-tiled.activeAssetChanged.connect(onActiveAssetChanged);
+});
 
 // Setup Settings
 
