@@ -1,5 +1,0 @@
-= TOML Tiled Plugin
-insert yapfest here
-:toc:
-
-originally this was gonna have auto subprocess checking and some joke dialogue on crash buuuuuut extensions don't have async soooooooo nah
