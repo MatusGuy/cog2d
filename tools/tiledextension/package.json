@@ -1,5 +1,5 @@
 {
-  "name": "cog2d_tiled_toml_extension",
+  "name": "cog2d_tiled_extension",
   "version": "0.0.0",
   "description": "Tiled plugin meant for use with tilemap-enabled cog2d projects.",
   "main": "src/index.ts",
