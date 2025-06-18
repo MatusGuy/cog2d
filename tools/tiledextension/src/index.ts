@@ -118,7 +118,7 @@ tiled.registerMapFormat("toml", tomlMap);
 // Playtest
 var process: Process | null = null;
 
-function tryTest(action: Action) {
+function tryTest(_action: Action) {
 	const program = tiled.project.property(SETTING_EXE_PATH) as string;
 	// @ts-ignore
 	if (!File.exists(program)) {
