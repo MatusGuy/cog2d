@@ -1,7 +1,7 @@
 /// <reference types="@mapeditor/tiled-api" />
 import TOML from "smol-toml";
 
-const paths = {
+const TEMP_LEVEL_PATHS = {
 	windows: {
 		mapExport: "~/AppData/Local/Temp/test.toml"
 	},
@@ -10,8 +10,11 @@ const paths = {
 	}
 };
 
-// @ts-ignore WRONG FILE CLASS DUMB STUPID THING I WANNA SWEAR AT
-const platformKey = File.exists("C:/Windows/System32/KERNELBASE.dll") ? "windows" : "unix";
+// @ts-ignore
+const PLATFORM_KEY = File.exists("C:/Windows/System32/KERNELBASE.dll") ? "windows" : "unix";
+
+// Settings
+const SETTING_EXE_PATH = "cog2d.executable"
 
 type TomlTileset = Object & {
 	firstgid: number;
@@ -124,20 +127,26 @@ var actionsToUpdate: {
 function tryTest(action: Action) {
 	tiled.log(`Stub: action '${action.text}' has triggered!`);
 
-	if (process != null || !tiled.activeAsset || !tiled.activeAsset.isTileMap || !tomlMap.write) return;
+	if (process != null ||
+		!tiled.activeAsset ||
+		!tiled.activeAsset.isTileMap ||
+		!tomlMap.write)
+		return;
 
 	//tiled.activeAsset.save();
 
 	process = new Process();
 
-	const tempPath = paths[platformKey]["mapExport"].replace('~', process.getEnv("HOME"));
+	const tempPath = TEMP_LEVEL_PATHS[PLATFORM_KEY]["mapExport"].replace('~',
+	                                                                     process.getEnv("HOME"));
 
 	tiled.log(tempPath);
 
 	tomlMap.write(tiled.activeAsset as TileMap, tempPath);
 
+	var program = tiled.project.property(SETTING_EXE_PATH) as string;
 	tiled.log(
-		"Test Process: " + process.start("/usr/bin/konsole", []).toString()
+		"Test Process: " + process.start(program, [tiled.activeAsset.fileName]).toString()
 	);
 
 	/*
@@ -148,8 +157,9 @@ function tryTest(action: Action) {
 	}*/
 }
 
-function endTest(action: Action) {
-	if (process == null) return;
+function endTest(_action: Action) {
+	if (process == null)
+		return;
 
 	process.terminate();
 
@@ -163,55 +173,40 @@ function endTest(action: Action) {
 	}*/
 }
 
-function reloadTest(action: Action) {
-	if (process != null) endTest(action);
+function testMap(action: Action) {
+	if (process != null)
+		endTest(action);
 
 	tryTest(action);
 }
 
-/*
-const testAction: Action = tiled.registerAction("TestLevel", tryTest);
+// Setup Actions
 
-testAction.text = "Test level";
-testAction.checkable = false;
-testAction.shortcut = "F9";
-
-const endAction: Action = tiled.registerAction("EndLevelTest", endTest);
-
-endAction.text = "End Level Test";
-endAction.checkable = false;
-endAction.shortcut = "Ctrl+F9";
-endAction.enabled = false;
-*/
-
-const reloadAction: Action = tiled.registerAction(
-	"ReloadLevelTest",
-	reloadTest
+const testAction: Action = tiled.registerAction(
+	"LevelTest",
+	testMap
 );
 
-reloadAction.text = "Test level";
-reloadAction.checkable = false;
-reloadAction.shortcut = "F9";
-reloadAction.enabled = false;
-
-/*
-actionsToUpdate = [
-	{inverted: true, action: testAction},
-	{inverted: false, action: endAction},
-	{inverted: false, action: reloadAction}
-];
-*/
+testAction.text = "Test Map";
+testAction.checkable = false;
+testAction.shortcut = "F5";
+testAction.enabled = false;
 
 tiled.extendMenu("Map", [
-	/*	{ action: "TestLevel", before: "MapProperties" },
-	{ action: "EndLevelTest", before: "MapProperties" },*/
-	{ action: "ReloadLevelTest", before: "MapProperties" },
+	{ action: "LevelTest", before: "MapProperties" },
 	{ separator: true, before: "MapProperties" },
 ]);
 
-// Reload enable swapping
-function onActiveAssetChangedCog2D(asset: Asset) {
-	reloadAction.enabled = asset.isTileMap;
+function onActiveAssetChanged(asset: Asset) {
+	// Only activate action for tilemaps
+	testAction.enabled = asset.isTileMap;
 }
 
-tiled.activeAssetChanged.connect(onActiveAssetChangedCog2D);
+tiled.activeAssetChanged.connect(onActiveAssetChanged);
+
+// Setup Settings
+
+const EMPTY_PATH = tiled.filePath("");
+
+if (tiled.project.property(SETTING_EXE_PATH) === undefined)
+	tiled.project.setProperty(SETTING_EXE_PATH, EMPTY_PATH);
