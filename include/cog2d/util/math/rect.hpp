@@ -130,6 +130,18 @@ public:
 
 		return true;
 	}
+
+	std::optional<Rect_t<T>> intersection(const Rect_t<T>& other)
+	{
+		if (!overlaps_exc(other))
+			return std::nullopt;
+
+		float left = std::max(get_left(), other.get_left());
+		float right = std::min(get_right(), other.get_right());
+		float top = std::max(get_top(), other.get_top());
+		float bottom = std::max(get_bottom(), other.get_bottom());
+		return Rect_t<T>(left, top, right - left, bottom - top);
+	}
 };
 using Rect = Rect_t<>;
 
