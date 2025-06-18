@@ -1,7 +1,7 @@
 {
   "name": "cog2d_tiled_toml_extension",
   "version": "0.0.0",
-  "description": "are you stupid?",
+  "description": "Tiled plugin meant for use with tilemap-enabled cog2d projects.",
   "main": "src/index.ts",
   "scripts": {
     "build": "webpack",
