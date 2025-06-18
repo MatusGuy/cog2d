@@ -92,7 +92,7 @@ public:
 	Vector_t<T> operator*(Vector_t<U> other) { return Vector_t<T>(x * other.x, y * other.y); }
 
 	COG2D_NUMERIC_TEMPLATE(U)
-	Vector_t<T> operator*(U& other) { return Vector_t<T>(x * other, y * other); }
+	Vector_t<T> operator*(U other) { return Vector_t<T>(x * other, y * other); }
 
 	COG2D_NUMERIC_TEMPLATE(U)
 	void operator*=(Vector_t<U> other)
@@ -111,8 +111,6 @@ public:
 	COG2D_NUMERIC_TEMPLATE(U)
 	Vector_t<T> operator/(Vector_t<U> other) { return Vector_t<T>(x / other.x, y / other.y); }
 
-	COG2D_NUMERIC_TEMPLATE(U)
-	Vector_t<T> operator/(U& other) { return Vector_t<T>(x / other, y / other); }
 	COG2D_NUMERIC_TEMPLATE(U)
 	Vector_t<T> operator/(U other) { return Vector_t<T>(x / other, y / other); }
 

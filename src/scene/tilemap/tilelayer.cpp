@@ -19,17 +19,35 @@ TileLayer::TileLayer()
 void TileLayer::draw()
 {
 	COG2D_USE_GRAPHICSENGINE;
-	COG2D_USE_ASSETMANAGER;
 	COG2D_USE_VIEWPORT;
 
+	Camera* camera = viewport.get_camera();
+
+	// Position of the camera in tiles
+	// TODO: Easy way of getting tile size knowing that two tilesets can't have different tile
+	// dimensions
+	Vector camtilepos = camera->m_pos / 16;
+
 	// Final position of tile on screen
-	Vector_t<int> destpos(0, 0);
+	Vector destpos = (camtilepos.floor() - camtilepos) * 16;
+	float startx = destpos.x;
+
+	const auto next_tile = [&destpos, &startx, &viewport]() {
+		destpos.x += 16;
+
+		if (destpos.x >= viewport.m_region.size.x + 16 - (-startx)) {
+			destpos.y += 16;
+			destpos.x = startx;
+		}
+	};
 
 	for (auto it = cambegin(); it != camend(); ++it) {
 		TileId id = *it;
 
-		if (id == 0)
+		if (id == 0) {
+			next_tile();
 			continue;
+		}
 
 		TileSet& set = m_map->get_tileset(id);
 		id -= set.m_first_gid;
@@ -40,7 +58,7 @@ void TileLayer::draw()
 		src.size = set.m_tile_sz;
 		src.pos = srcpos * src.size;
 
-		Rect_t<int> dest;
+		Rect dest;
 		dest.size = set.m_tile_sz;
 		dest.pos = destpos;
 
@@ -49,14 +67,7 @@ void TileLayer::draw()
 		SDL_RenderCopyF(graphicsengine.get_renderer(), set.m_texture.get()->to_sdl(), &ssrc,
 		                &sdest);
 
-		destpos.x += set.m_tile_sz.x;
-
-		if (destpos.x >= viewport.m_region.size.x) {
-			destpos.y += set.m_tile_sz.y;
-			destpos.x = 0;
-		}
-
-		//COG2D_LOG_DEBUG("TileLayer", fmt::format("draw {} at {} - {}", src, dest, id));
+		next_tile();
 	}
 }
 

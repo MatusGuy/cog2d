@@ -33,16 +33,24 @@ CameraTileLayerIterator CameraTileLayerIterator::advance(difference_type n)
 
 	camsz /= tilesz;
 
+	// Position of current tile
 	Vector_t<int> pos = TileLayer::get_tile_pos(layer_index(), m_layer.m_size);
-	Vector_t<int> result = TileLayer::get_tile_pos(pos.x + n - campos.x, camsz);
 
-	if (result.y + pos.y >= camsz.y) {
+	COG2D_LOG_DEBUG(fmt::format("idx: {}, pos: {}, campos: {}", layer_index(), pos, campos));
+	// Requested position relative to pos
+	Vector_t<int> result = TileLayer::get_tile_pos(pos.x + n - campos.x,
+	                                               camsz + Vector_t<int>(1, 1));
+
+	if (pos.y + result.y >= camsz.y) {
+		// The requested position is out of the viewport.
 		m_it = m_layer.m_tiles.end();
 		return *this;
 	}
 
 	if (result.y != 0) {
-		n += result.y * (m_layer.m_size.x - camsz.x);
+		// The requested tile is on a different row.
+		// Skip a bunch of tiles until the first tile of that new row.
+		n += (result.y * m_layer.m_size.x) - camsz.x - 1;
 	}
 
 	std::advance(m_it, n);
