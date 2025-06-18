@@ -17,13 +17,10 @@ CameraTileLayerIterator::CameraTileLayerIterator(TileLayer& layer, TileIds::iter
 
 CameraTileLayerIterator CameraTileLayerIterator::advance(difference_type n)
 {
-	COG2D_USE_GRAPHICSENGINE;
 	COG2D_USE_VIEWPORT;
 
 	if (n == 0)
 		return *this;
-
-	// TODO: Replace these with the actual camera geometry when the time comes.
 
 	// Whatever... All sets have the same tile size anyway
 	Vector tilesz = m_layer.m_map->m_sets[0].m_tile_sz;

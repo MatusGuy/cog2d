@@ -6,6 +6,7 @@
 #include "cog2d/assets/assetmanager.hpp"
 #include "cog2d/video/graphicsengine.hpp"
 #include "cog2d/scene/tilemap/tilemap.hpp"
+#include "cog2d/scene/viewport.hpp"
 
 #include <iterator>
 
@@ -19,6 +20,10 @@ void TileLayer::draw()
 {
 	COG2D_USE_GRAPHICSENGINE;
 	COG2D_USE_ASSETMANAGER;
+	COG2D_USE_VIEWPORT;
+
+	// Final position of tile on screen
+	Vector_t<int> destpos(0, 0);
 
 	for (auto it = cambegin(); it != camend(); ++it) {
 		TileId id = *it;
@@ -35,17 +40,21 @@ void TileLayer::draw()
 		src.size = set.m_tile_sz;
 		src.pos = srcpos * src.size;
 
-		int i = it.layer_index();
-		Vector_t<int> destpos = get_tile_pos(i, m_size);
-
 		Rect_t<int> dest;
 		dest.size = set.m_tile_sz;
-		dest.pos = destpos * dest.size;
+		dest.pos = destpos;
 
 		const SDL_Rect ssrc = src.to_sdl_rect();
 		const SDL_FRect sdest = dest.to_sdl_frect();
 		SDL_RenderCopyF(graphicsengine.get_renderer(), set.m_texture.get()->to_sdl(), &ssrc,
 		                &sdest);
+
+		destpos.x += set.m_tile_sz.x;
+
+		if (destpos.x >= viewport.m_region.size.x) {
+			destpos.y += set.m_tile_sz.y;
+			destpos.x = 0;
+		}
 
 		//COG2D_LOG_DEBUG("TileLayer", fmt::format("draw {} at {} - {}", src, dest, id));
 	}
@@ -53,7 +62,8 @@ void TileLayer::draw()
 
 CameraTileLayerIterator TileLayer::cambegin()
 {
-	Vector_t<int> campos(0, 0);
+	COG2D_USE_VIEWPORT;
+	Vector campos = viewport.get_camera()->m_pos / 16;
 	return CameraTileLayerIterator(*this, m_tiles.begin() + get_tile_index(campos, m_size));
 }
 
