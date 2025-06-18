@@ -77,6 +77,8 @@ int Program::run(int argc, char* argv[])
 		graphicsengine.pre_draw();
 		screen->draw();
 		graphicsengine.post_draw();
+
+		now = SDL_GetTicks();
 	}
 
 	quit();
