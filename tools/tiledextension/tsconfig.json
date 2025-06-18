@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"outDir": "./build",
+		"target": "ES5",
+		"module": "commonjs",
+		"strict": true,
+		"skipLibCheck": true,
+		"removeComments": true,
+		"declaration": false,
+		"isolatedModules": false,
+		"preserveConstEnums": false,
+	},
+	"include": [
+		"src/**/*.ts"
+	],
+	"exclude": [
+		"node_modules"
+	]
+}

@@ -1,0 +1,14 @@
+# cog2d Tiled Plugin
+
+Tiled plugin for use with tilemap-enabled cog2d projects. Exports to TOML format.
+
+## Development environment setup
+1. Install `pnpm`.
+2. Setup dependencies by running `pnpm i` in the extension root directory.
+3. Build the extension code using `pnpm patchjs`.
+	- You can use `pnpm test` to automatically build & install the extension.
+4. Your extension should be available at the `dist` folder.
+
+## TODO
+- [ ] Check error code of process in order to display error dialog in case of crash or failure.
+      (probably impossible)
