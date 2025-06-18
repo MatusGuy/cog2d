@@ -15,6 +15,7 @@ const PLATFORM_KEY = File.exists("C:/Windows/System32/KERNELBASE.dll") ? "window
 
 // Settings
 const SETTING_EXE_PATH = "cog2d.executable"
+const SETTING_MAP_COMPRESS = "cog2d.mapCompress"
 
 type TomlTileset = Object & {
 	firstgid: number;
@@ -38,6 +39,47 @@ type TomlData = Object & {
 	tilesets: TomlTileset[];
 	layers: TomlLayer[];
 };
+
+function writeTiles(layer: TileLayer, data: number[]) {
+	for (var y = 0; y < layer.height; ++y) {
+		for (var x = 0; x < layer.width; ++x) {
+			var id = layer.cellAt(x, y).tileId;
+
+			if (id == -1)
+				id = 0;
+
+			data.push(id);
+		}
+	}
+}
+
+function writeTilesCompressed(layer: TileLayer, data: number[]) {
+	// Don't trust this function
+	var repeatid = 0;
+	var repeats = 1;
+
+	for (var y = 0; y < layer.height; ++y) {
+		for (var x = 0; x < layer.width; ++x) {
+			var id = layer.cellAt(x, y).tileId;
+
+			if (id == -1)
+				id = 0;
+
+			if (repeatid == id) {
+				repeats++;
+				continue;
+			}
+
+			if (repeats != 1)
+				data.push(-repeats);
+
+			repeats = 1;
+			data.push(id);
+
+			repeatid = id;
+		}
+	}
+}
 
 // Map Format
 var tomlMap: ScriptedMapFormat = {
@@ -89,16 +131,10 @@ var tomlMap: ScriptedMapFormat = {
 				data: []
 			};
 
-			for (var y = 0; y < layer.height; ++y) {
-				for (var x = 0; x < layer.width; ++x) {
-					var id = layer.cellAt(x, y).tileId;
-
-					if (id == -1)
-						id = 0;
-
-					data.data.push(id);
-				}
-			}
+			if (tiled.project.property(SETTING_MAP_COMPRESS))
+				writeTilesCompressed(layer, data.data);
+			else
+				writeTiles(layer, data.data);
 
 			fileDat.layers.push(data);
 
@@ -202,5 +238,8 @@ tiled.activeAssetChanged.connect((asset: Asset) => {
 
 const EMPTY_PATH = tiled.filePath("");
 
-if (tiled.project.property(SETTING_EXE_PATH) === undefined)
+if (tiled.project.property(SETTING_EXE_PATH) == undefined)
 	tiled.project.setProperty(SETTING_EXE_PATH, EMPTY_PATH);
+
+if (tiled.project.property(SETTING_MAP_COMPRESS) == undefined)
+	tiled.project.setProperty(SETTING_MAP_COMPRESS, false);
