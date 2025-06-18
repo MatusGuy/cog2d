@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 #include "collisionbody.hpp"
 
 COG2D_NAMESPACE_BEGIN_IMPL

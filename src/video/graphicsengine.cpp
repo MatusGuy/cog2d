@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 #include "graphicsengine.hpp"
 
 #include "cog2d/program.hpp"
@@ -201,7 +203,7 @@ void GraphicsEngine::draw_texture(Rect dest, Texture* tex)
 
 #ifdef COG2D_GRAPHICS_USE_INT
 	SDL_Rect dest2 = dest.to_sdl_rect();
-	SDL_RenderCopy(m_renderer, tex->get_sdl_texture(), NULL, &dest2);
+	SDL_RenderCopy(m_renderer, tex->to_sdl(), NULL, &dest2);
 #else
 	SDL_FRect dest2 = dest.to_sdl_frect();
 	SDL_RenderCopyF(m_renderer, tex->to_sdl(), NULL, &dest2);
@@ -215,14 +217,13 @@ void GraphicsEngine::draw_texture(Rect dest, Texture* tex, float angle, SDL_Rend
 	                  static_cast<int>(dest.pos.y - (dest.size.y / 2)),
 	                  static_cast<int>(dest.size.x), static_cast<int>(dest.size.y)};
 	SDL_Point fpoint = dest.pos.to_sdl_point();
-	SDL_RenderCopyEx(m_renderer, tex->get_sdl_texture(), NULL, &dest2, (double) angle, &fpoint,
+	SDL_RenderCopyEx(m_renderer, tex->to_sdl(), NULL, &dest2, (double) angle, &fpoint,
 	                 SDL_FLIP_NONE);
 #else
 	SDL_FRect dest2 = {
 	    dest.pos.x - (dest.size.x / 2), dest.pos.y - (dest.size.y / 2), dest.size.x, dest.size.y};
 	SDL_FPoint fpoint = dest.pos.to_sdl_fpoint();
-	SDL_RenderCopyExF(m_renderer, tex->to_sdl(), NULL, &dest2, (double) angle, &fpoint,
-	                  flip);
+	SDL_RenderCopyExF(m_renderer, tex->to_sdl(), NULL, &dest2, (double) angle, &fpoint, flip);
 #endif
 }
 

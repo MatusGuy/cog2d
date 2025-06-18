@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 #include "tileset.hpp"
 
 #include "cog2d/assets/assetmanager.hpp"
@@ -7,7 +9,6 @@ COG2D_NAMESPACE_BEGIN_IMPL
 
 TileSet::TileSet()
 {
-
 }
 
 void TileSet::parse(const nlohmann::json& json)

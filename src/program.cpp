@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 #include "program.hpp"
 
 #include <iostream>
@@ -89,6 +91,8 @@ void Program::quit()
 	COG2D_USE_AUDIOENGINE;
 	COG2D_USE_CONFIG;
 
+	graphicsengine.deinit();
+
 	if (m_settings->systems & System::SYSTEM_CONFIG) {
 		std::ofstream cfgfile(config.get_config_path(m_settings));
 		config.save(cfgfile);
@@ -97,17 +101,16 @@ void Program::quit()
 
 	audioengine.deinit();
 
-	graphicsengine.deinit();
-
 	TTF_Quit();
 	SDL_Quit();
 }
 
-void Program::push_screen(Screen* screen)
+void Program::push_screen(std::unique_ptr<Screen> screen)
 {
-	m_screen_stack.push(std::unique_ptr<Screen>(screen));
+	Screen* screenptr = screen.get();
+	m_screen_stack.push(std::move(screen));
 
-	screen->init();
+	screenptr->init();
 }
 
 void Program::init_sdl()

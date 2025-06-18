@@ -1,8 +1,11 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 #include "ttffont.hpp"
 
 #include "cog2d/video/graphicsengine.hpp"
 #include "cog2d/video/surface.hpp"
 #include "cog2d/assets/assetmanager.hpp"
+#include "cog2d/util/math/rect.hpp"
 
 COG2D_NAMESPACE_BEGIN_IMPL
 

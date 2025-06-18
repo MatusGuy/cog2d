@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 #include "assetfile.hpp"
 
 COG2D_NAMESPACE_BEGIN_IMPL
@@ -5,7 +7,6 @@ COG2D_NAMESPACE_BEGIN_IMPL
 AssetFile::AssetFile(const std::filesystem::path& path)
     : File(path)
 {
-
 }
 
 int AssetFile::open(OpenMode mode)

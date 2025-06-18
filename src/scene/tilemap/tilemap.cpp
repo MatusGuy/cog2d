@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 #include "tilemap.hpp"
 
 #include <fstream>
@@ -8,7 +10,6 @@ COG2D_NAMESPACE_BEGIN_IMPL
 
 TileMap::TileMap()
 {
-
 }
 
 void TileMap::parse(std::filesystem::path path)
@@ -27,7 +28,6 @@ void TileMap::parse(std::filesystem::path path)
 		TileSet set;
 		nlohmann::json& jsonset = *it;
 		set.parse(jsonset);
-		set.load_texture();
 		m_sets.push_back(set);
 	}
 

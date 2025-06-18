@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 #include "tilelayer.hpp"
 
 #include "cog2d/util/logger.hpp"
@@ -25,25 +27,25 @@ void TileLayer::draw()
 			continue;
 
 		TileSet& set = m_map->get_tileset(id);
-		Texture* texture = assetmanager.pixmaps.get(set.m_texture);
 		id -= set.m_first_gid;
 
 		Vector_t<int> srcpos = get_tile_pos(id, set.m_set_sz);
 		Rect_t<int> src;
 
-		src.size = Vector_t<int>(16, 16);
+		src.size = set.m_tile_sz;
 		src.pos = srcpos * src.size;
 
 		int i = it.layer_index();
 		Vector_t<int> destpos = get_tile_pos(i, m_size);
 
 		Rect_t<int> dest;
-		dest.size = Vector_t<int>(16, 16);
+		dest.size = set.m_tile_sz;
 		dest.pos = destpos * dest.size;
 
 		const SDL_Rect ssrc = src.to_sdl_rect();
 		const SDL_FRect sdest = dest.to_sdl_frect();
-		SDL_RenderCopyF(graphicsengine.get_renderer(), texture->to_sdl(), &ssrc, &sdest);
+		SDL_RenderCopyF(graphicsengine.get_renderer(), set.m_texture.get()->to_sdl(), &ssrc,
+		                &sdest);
 
 		//COG2D_LOG_DEBUG("TileLayer", fmt::format("draw {} at {} - {}", src, dest, id));
 	}

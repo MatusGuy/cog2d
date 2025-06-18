@@ -1,6 +1,9 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 #include "cameratilelayeriterator.hpp"
 
-#include "cog2d/scene/tilemap/tilelayer.hpp"
+#include "cog2d/scene/tilemap/tilemap.hpp"
+#include "cog2d/scene/viewport.hpp"
 #include "cog2d/video/graphicsengine.hpp"
 #include "cog2d/util/logger.hpp"
 
@@ -15,14 +18,18 @@ CameraTileLayerIterator::CameraTileLayerIterator(TileLayer& layer, TileIds::iter
 CameraTileLayerIterator CameraTileLayerIterator::advance(difference_type n)
 {
 	COG2D_USE_GRAPHICSENGINE;
+	COG2D_USE_VIEWPORT;
 
 	if (n == 0)
 		return *this;
 
 	// TODO: Replace these with the actual camera geometry when the time comes.
-	Vector tilesz(16, 16);
-	Vector campos(0, 0);
-	Vector_t<int> camsz = graphicsengine.get_logical_size();
+
+	// Whatever... All sets have the same tile size anyway
+	Vector tilesz = m_layer.m_map->m_sets[0].m_tile_sz;
+
+	Vector campos = viewport.get_camera()->m_pos;
+	Vector_t<int> camsz = viewport.m_region.size;
 
 	campos /= tilesz;
 	campos = campos.floor();
