@@ -3,6 +3,7 @@
 #pragma once
 
 #include <vector>
+#include <cstdint>
 
 #include "cog2d/util/math/rect.hpp"
 #include "cog2d/util/currenton.hpp"
