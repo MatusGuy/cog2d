@@ -17,13 +17,16 @@ COG2D_NAMESPACE_BEGIN_DECL
 // "Well, because, the diamond problem."
 class Actor : public CollisionBody
 {
+	friend class ActorManager;
+
 public:
 	Vector m_vel;
 	Vector m_accel;
 	float m_grav;
+	ActorManager* m_manager;
 
 public:
-	Actor();
+	Actor(bool active = true);
 
 	/*!
 	 * Updates the position of the actor for the next frame.
@@ -37,9 +40,13 @@ public:
 	 */
 	virtual void draw() = 0;
 
-	virtual bool is_active() { return true; }
+	void set_active(bool active);
+	inline bool is_active() { return m_active; }
 
 	void gravity();
+
+private:
+	bool m_active;
 };
 
 COG2D_NAMESPACE_END_DECL

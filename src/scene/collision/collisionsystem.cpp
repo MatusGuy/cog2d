@@ -2,7 +2,7 @@
 
 #include "collisionsystem.hpp"
 
-#include "cog2d/scene/actormanager.hpp"
+#include "cog2d/scene/actorrefsiterator.hpp"
 #include "cog2d/util/logger.hpp"
 
 COG2D_NAMESPACE_BEGIN_IMPL
@@ -13,19 +13,27 @@ CollisionSystem::CollisionSystem()
 
 void CollisionSystem::update(ActorManager& actormanager)
 {
-	ActorManager::Actors& actors = actormanager.get_actors();
+	ActorManager::ActorRefs& actors = actormanager.get_active_actors();
 
-	// iterator for inner for loop
-	ActorManager::Actors::iterator iter;
+	ActorRefsIterator it_a(actors.begin(), actors.begin());
+	while (it_a.m_it != actors.end()) {
+		Actor* a = *it_a;
 
-	for (Actor* a : actors) {
-		for (iter = actors.begin() + 1; iter != actors.end(); iter++) {
-			Actor* b = *iter;
-			if (!a->is_active() || !b->is_active() || a == b)
+		ActorRefsIterator it_b(std::next(actors.begin(), 1), actors.begin());
+		while (it_b.m_it != actors.end()) {
+			Actor* b = *it_b;
+
+			if (a == b) {
+				++it_b;
 				continue;
+			}
 
 			rect_rect(a, b);
+
+			++it_b;
 		}
+
+		++it_a;
 	}
 
 	for (Actor* actor : actors) {

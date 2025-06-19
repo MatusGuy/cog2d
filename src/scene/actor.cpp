@@ -2,15 +2,18 @@
 
 #include "actor.hpp"
 
+#include "cog2d/scene/actormanager.hpp"
 #include "cog2d/program.hpp"
 
 COG2D_NAMESPACE_BEGIN_IMPL
 
-Actor::Actor()
+Actor::Actor(bool active)
     : CollisionBody(),
       m_vel(0, 0),
       m_accel(0, 0),
-      m_grav(0)
+      m_grav(0),
+      m_active(active),
+      m_manager(nullptr)
 {
 }
 
@@ -18,7 +21,17 @@ void Actor::update()
 {
 	if (m_grav != 0)
 		gravity();
+
 	m_mov = m_vel;
+}
+
+void Actor::set_active(bool active)
+{
+	if (is_active() == active)
+		return;
+
+	m_active = active;
+	m_manager->notify_activity(this);
 }
 
 void Actor::gravity()

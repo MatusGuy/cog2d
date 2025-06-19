@@ -23,12 +23,7 @@ void Scene::draw()
 {
 	prepare_context();
 
-	for (Actor* actor : m_actormanager.get_actors()) {
-		if (!actor->is_active())
-			continue;
-
-		actor->draw();
-	}
+	m_actormanager.draw();
 }
 
 void Scene::prepare_context()
