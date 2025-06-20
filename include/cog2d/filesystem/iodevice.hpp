@@ -3,6 +3,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <ios>
 
 #include <SDL2/SDL_rwops.h>
@@ -70,6 +71,8 @@ public:
 		auto dev = static_cast<IoDevice*>(context->hidden.unknown.data1);
 		return dev->close();
 	}
+
+	virtual std::iostream* stl_stream() { return nullptr; }
 };
 
 COG2D_NAMESPACE_END_DECL

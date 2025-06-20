@@ -11,26 +11,43 @@ TileSet::TileSet()
 {
 }
 
-void TileSet::parse(const nlohmann::json& json)
+void TileSet::load(const toml::table& data)
 {
-	if (!json.contains("columns")) {
-		COG2D_LOG_ERROR("TileSet",
-		                "Tilemap was not exported with embedded tilesets!\n"
-		                "In Tiled, go to Edit > Preferences > General, "
-		                "tick 'Embed tilesets' and export again.");
+	if (!data.contains("columns")) {
+		// Sorry, but the actual tileset data is in another castle.
+		parse_external(data);
 		return;
 	}
 
-	m_first_gid = json["firstgid"].get<int>();
+	parse(data);
+}
 
-	m_tile_sz.x = json["tilewidth"].get<int>();
-	m_tile_sz.y = json["tileheight"].get<int>();
+void TileSet::parse(const toml::table& data)
+{
+	if (data.contains("firstgid"))
+		m_first_gid = *data["firstgid"].value<int>();
 
-	m_set_sz.x = json["columns"].get<int>();
-	m_set_sz.y = json["imageheight"].get<int>() / m_tile_sz.y;
+	m_tile_sz.x = *data["tilewidth"].value<int>();
+	m_tile_sz.y = *data["tileheight"].value<int>();
 
-	std::filesystem::path path = json["image"].get<std::string>();
+	m_set_sz.x = *data["columns"].value<int>();
+	m_set_sz.y = *data["imageheight"].value<int>() / m_tile_sz.y;
+
+	std::filesystem::path path = *data["image"].value<std::string>();
 	m_texture = AssetManager::get().pixmaps.load_file(path);
+}
+
+void TileSet::parse_external(const toml::table& data)
+{
+	m_first_gid = *data["firstgid"].value<int>();
+
+	std::filesystem::path setpath = *data["source"].value<std::string>();
+	setpath.replace_extension("c2s");
+
+	AssetFile setfile(setpath);
+	setfile.open(AssetFile::OPENMODE_READ);
+	parse(toml::parse(setfile));
+	setfile.close();
 }
 
 COG2D_NAMESPACE_END_IMPL

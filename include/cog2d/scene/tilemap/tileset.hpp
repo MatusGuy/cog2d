@@ -4,10 +4,9 @@
 
 #include <filesystem>
 
-#include <nlohmann/json.hpp>
-
 #include "cog2d/assets/assetmanager.hpp"
 #include "cog2d/util/math/vector.hpp"
+#include "cog2d/util/parsing.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 
@@ -24,7 +23,11 @@ public:
 public:
 	TileSet();
 
-	void parse(const nlohmann::json& json);
+	void load(const toml::table& data);
+
+private:
+	void parse(const toml::table& data);
+	void parse_external(const toml::table& data);
 };
 
 COG2D_NAMESPACE_END_DECL

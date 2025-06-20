@@ -4,7 +4,7 @@
 
 #include <fstream>
 
-#include <nlohmann/json.hpp>
+#include "cog2d/util/parsing.hpp"
 
 COG2D_NAMESPACE_BEGIN_IMPL
 
@@ -14,42 +14,44 @@ TileMap::TileMap()
 
 void TileMap::parse(std::filesystem::path path)
 {
-#ifdef COG2D_ASSET_PATH
-	path = COG2D_ASSET_PATH / path;
-#endif
+	AssetFile file(path);
+	file.open(AssetFile::OPENMODE_READ);
+	toml::table data = toml::parse(file);
+	file.close();
 
-	std::ifstream file(path);
-	nlohmann::json json;
-	file >> json;
+	toml::array& sets = *data["tilesets"].as_array();
 
-	nlohmann::json& sets = json["tilesets"];
-
-	for (nlohmann::json::iterator it = sets.begin(); it != sets.end(); ++it) {
+	for (toml::array::iterator it = sets.begin(); it != sets.end(); ++it) {
+		// TODO: A tileset is an asset. It should not be owned by the tilemap.
 		TileSet set;
-		nlohmann::json& jsonset = *it;
-		set.parse(jsonset);
+		toml::table& jsonset = *(*it).as_table();
+		set.load(jsonset);
 		m_sets.push_back(set);
 	}
 
-	nlohmann::json& layers = json["layers"];
+	toml::array& layers = *data["layers"].as_array();
 
-	for (nlohmann::json::iterator it = layers.begin(); it != layers.end(); ++it) {
+	for (toml::array::iterator it = layers.begin(); it != layers.end(); ++it) {
 		// FIXME: do pointer instead
 		TileLayer layer;
 		layer.m_map = this;
 
-		nlohmann::json& jsonlayer = *it;
+		toml::table& layerdata = *(*it).as_table();
 
-		if (jsonlayer["type"].get<std::string>() != "tilelayer")
+		if (*layerdata["type"].as_string() != "tilelayer")
 			continue;
 
-		nlohmann::json& data = jsonlayer["data"];
+		toml::array& tiles = *layerdata["data"].as_array();
 
-		layer.m_size.x = jsonlayer["width"].get<int>();
-		layer.m_size.y = jsonlayer["height"].get<int>();
+		layer.m_size.x = static_cast<int>(layerdata.get_as<std::int64_t>("width")->value_or(0));
+		layer.m_size.y = static_cast<int>(layerdata.get_as<std::int64_t>("height")->value_or(0));
 
 		layer.m_tiles.reserve(layer.m_size.x * layer.m_size.y);
-		layer.m_tiles = data.get<TileIds>();
+
+		// Terrible, isn't it? Don't worry. The format will be replaced with binary soon anyway.
+		for (toml::array::iterator it = tiles.begin(); it != tiles.end(); ++it) {
+			layer.m_tiles.push_back(static_cast<TileId>((*it).as_integer()->value_or(0)));
+		}
 
 		m_layers.push_back(layer);
 	}

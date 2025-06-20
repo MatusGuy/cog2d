@@ -50,10 +50,7 @@ target_include_directories(cog2d PRIVATE ${_cog2d_includes} ${COG2D_INCLUDE_DIRE
 # Dependencies #
 
 find_package(PkgConfig QUIET)
-
-if(PKG_CONFIG_FOUND)
-	option(COG2D_USE_PKGCONFIG "Use pkgconfig for finding dependencies" YES)
-endif()
+option(COG2D_USE_PKGCONFIG "Use pkgconfig for finding dependencies" ${PKG_CONFIG_FOUND})
 
 ## SDL2 ##
 find_package(SDL2 REQUIRED)
@@ -114,21 +111,15 @@ if(COG2D_USE_FMT OR (COG2D_CXX_STANDARD LESS 20))
 	target_compile_definitions(cog2d PUBLIC COG2D_USE_FMT)
 endif()
 
-## json ##
+## toml++ ##
 
-include(FetchContent)
-
-# The heck does this warning even mean?? Leave me alone!
-if(CMAKE_VERSION VERSION_GREATER "3.24.0")
-	cmake_policy(SET CMP0135 OLD)
+if(COG2D_USE_PKGCONFIG)
+	pkg_check_modules(tomlplusplus REQUIRED IMPORTED_TARGET tomlplusplus)
+	target_link_libraries(cog2d PUBLIC PkgConfig::tomlplusplus)
+else()
+	find_package(tomlplusplus REQUIRED)
+	target_link_libraries(cog2d PUBLIC tomlplusplus::tomlplusplus)
 endif()
-
-FetchContent_Declare(
-	json
-	URL "https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz"
-)
-FetchContent_MakeAvailable(json)
-target_include_directories(cog2d PUBLIC ${nlohmann_json_SOURCE_DIR}/include/)
 
 # Preprocessor definitions #
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
