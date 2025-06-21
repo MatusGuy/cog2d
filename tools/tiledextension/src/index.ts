@@ -1,6 +1,7 @@
 /// <reference types="@mapeditor/tiled-api" />
 import TOML from "smol-toml";
 
+// Constants
 const TEMP_LEVEL_PATHS = {
 	windows: {
 		mapExport: "~/AppData/Local/Temp/test.toml"
@@ -13,12 +14,21 @@ const TEMP_LEVEL_PATHS = {
 // @ts-ignore
 const PLATFORM_KEY = File.exists("C:/Windows/System32/KERNELBASE.dll") ? "windows" : "unix";
 
-// Settings
+// - Settings
 const SETTING_EXE_PATH = "cog2d.executable"
 const SETTING_MAP_COMPRESS = "cog2d.mapCompress"
+const SETTING_EMBED_TILESETS = "cog2d.embedTilesets"
 
-type TomlTileset = Object & {
-	firstgid: number;
+// - Actions
+const ACTION_TEST = "cog2d.TestMap"
+
+// Types
+type TomlDocument = Object & {
+	type: string;
+	version: number
+}
+
+type TomlTileSetData = Object & {
 	tilewidth: number;
 	tileheight: number;
 	columns: number;
@@ -26,7 +36,15 @@ type TomlTileset = Object & {
 	image: string;
 };
 
-type TomlLayer = Object & {
+type TomlTileSetDocument = TomlDocument & {
+	data: TomlTileSetData
+};
+
+type TomlEmbeddedTileSet = Object & {
+	firstgid: number;
+} & Partial<{ source: string }> & Partial<TomlTileSetData>;
+
+type TomlTileLayer = Object & {
 	name: string;
 	type: "tilelayer";
 	width: number;
@@ -35,15 +53,50 @@ type TomlLayer = Object & {
 	data: number[];
 };
 
-type TomlData = Object & {
-	tilesets: TomlTileset[];
-	layers: TomlLayer[];
+type TomlTileMapDocument = TomlDocument & {
+	data: {
+		tilesets: TomlEmbeddedTileSet[];
+		layers: TomlTileLayer[];
+	}
 };
 
+function getTilesetData(tileset: Tileset): TomlTileSetData {
+	let imgpath = tileset.imageFileName;
+	// TODO: regex to only get filename and not full path
+
+	return {
+		tilewidth: tileset.tileWidth,
+		tileheight: tileset.tileHeight,
+		columns: tileset.columnCount,
+		imageheight: tileset.imageHeight,
+		image: imgpath,
+	};
+};
+
+let tomlSet: ScriptedTilesetFormat = {
+	name: "cog2d TOML Tileset",
+	extension: "toml",
+
+	write: function (tileset: Tileset, fileName: string): string | undefined {
+		let doc: TomlTileSetDocument = {
+			type: "tileset",
+			version: 1,
+			data: getTilesetData(tileset),
+		};
+
+		let file = new TextFile(fileName, TextFile.WriteOnly);
+		file.write(TOML.stringify(doc));
+		file.commit();
+
+		return undefined;
+	}
+};
+tiled.registerTilesetFormat("c2tomlset", tomlSet);
+
 function writeTiles(layer: TileLayer, data: number[]) {
-	for (var y = 0; y < layer.height; ++y) {
-		for (var x = 0; x < layer.width; ++x) {
-			var id = layer.cellAt(x, y).tileId;
+	for (let y = 0; y < layer.height; ++y) {
+		for (let x = 0; x < layer.width; ++x) {
+			let id = layer.cellAt(x, y).tileId;
 
 			if (id == -1)
 				id = 0;
@@ -51,16 +104,17 @@ function writeTiles(layer: TileLayer, data: number[]) {
 			data.push(id);
 		}
 	}
-}
+};
 
 function writeTilesCompressed(layer: TileLayer, data: number[]) {
-	// Don't trust this function
-	var repeatid = 0;
-	var repeats = 1;
+	tiled.warn("Compressed tiles are currently not supported by cog2d.", () => {});
 
-	for (var y = 0; y < layer.height; ++y) {
-		for (var x = 0; x < layer.width; ++x) {
-			var id = layer.cellAt(x, y).tileId;
+	let repeatid = 0;
+	let repeats = 1;
+
+	for (let y = 0; y < layer.height; ++y) {
+		for (let x = 0; x < layer.width; ++x) {
+			let id = layer.cellAt(x, y).tileId;
 
 			if (id == -1)
 				id = 0;
@@ -79,69 +133,74 @@ function writeTilesCompressed(layer: TileLayer, data: number[]) {
 			repeatid = id;
 		}
 	}
-}
+};
 
 // Map Format
-var tomlMap: ScriptedMapFormat = {
+let tomlMap: ScriptedMapFormat = {
 	name: "cog2d TOML Map",
 	extension: "toml",
 
 	write: function (map: TileMap, fileName: string): string | undefined {
-		var fileDat: TomlData = {
-			tilesets: [],
-			layers: [],
+		let fileDat: TomlTileMapDocument = {
+			data: {
+				tilesets: [],
+				layers: [],
+			}
 		};
 
-		var nextGid = 1;
+		let nextGid = 1;
 
-		var usedTilesets = map.usedTilesets();
+		let usedTilesets = map.usedTilesets();
 
-		for (var setIndex = 0; setIndex < usedTilesets.length; setIndex++) {
-			var activeSet = usedTilesets[setIndex];
+		for (let setIndex = 0; setIndex < usedTilesets.length; setIndex++) {
+			let activeSet = usedTilesets[setIndex];
+			let setData: TomlEmbeddedTileSet = {
+				firstgid: nextGid
+			}
 
-			fileDat.tilesets.push({
-				firstgid: nextGid,
-				tilewidth: activeSet.tileWidth,
-				tileheight: activeSet.tileHeight,
-				columns: activeSet.columnCount,
-				imageheight: activeSet.imageHeight,
-				image: activeSet.imageFileName,
-			});
+			if (tiled.project.property(SETTING_EMBED_TILESETS)) {
+				Object.assign(setData, getTilesetData(activeSet));
+			} else {
+				// TODO: We only need the file name, not the full path.
+				setData.source = activeSet.fileName
+			}
 
 			nextGid += activeSet.tileCount;
 
-			tiled.log(`Processed tileset '${setIndex}'`)
+			fileDat.data.tilesets.push(setData)
+
+			tiled.log(`Processed tileset '${setIndex}'\nResult: ${TOML.stringify(setData)}`);
 		}
 
-		for (var layerIndex = 0; layerIndex < map.layerCount; layerIndex++) {
-			var fakelayer: Layer = map.layerAt(layerIndex);
+		for (let layerIndex = 0; layerIndex < map.layerCount; layerIndex++) {
+			let layer: Layer = map.layerAt(layerIndex);
 
-			if (!fakelayer.isTileLayer) {
+			if (!layer.isTileLayer) {
 				tiled.log(`Processed tilemap layer '${layerIndex}' with early return`)
 				continue;
 			}
 
-			var layer: TileLayer = fakelayer as TileLayer;
+			let tilelayer: TileLayer = layer as TileLayer;
 
-			var data: TomlLayer = {
-				name: layer.name,
+			let data: TomlTileLayer = {
+				name: tilelayer.name,
 				type: "tilelayer",
-				width: layer.width,
-				height: layer.height,
+				width: tilelayer.width,
+				height: tilelayer.height,
 				data: []
 			};
 
 			if (tiled.project.property(SETTING_MAP_COMPRESS))
-				writeTilesCompressed(layer, data.data);
+				writeTilesCompressed(tilelayer, data.data);
 			else
-				writeTiles(layer, data.data);
+				writeTiles(tilelayer, data.data);
 
-			fileDat.layers.push(data);
+			fileDat.data.layers.push(data);
 
 			tiled.log(`Processed tilemap layer '${layerIndex}'`)
 		}
 
-		var file = new TextFile(fileName, TextFile.WriteOnly);
+		let file = new TextFile(fileName, TextFile.WriteOnly);
 		file.write(TOML.stringify(fileDat));
 		file.commit();
 
@@ -149,13 +208,14 @@ var tomlMap: ScriptedMapFormat = {
 	},
 };
 
-tiled.registerMapFormat("toml", tomlMap);
+tiled.registerMapFormat("c2tomlmap", tomlMap);
 
 // Playtest
-var process: Process | null = null;
+let process: Process | null = null;
 
 function tryTest(_action: Action) {
 	const program = tiled.project.property(SETTING_EXE_PATH) as string;
+
 	// @ts-ignore
 	if (!File.exists(program)) {
 		tiled.error(`Could not find executable: "${program}"\n` +
@@ -217,7 +277,7 @@ function testMap(action: Action) {
 
 // Setup Actions
 
-const testAction: Action = tiled.registerAction("LevelTest", testMap);
+const testAction: Action = tiled.registerAction("cog2d.LevelTest", testMap);
 
 testAction.text = "Test Level/Map";
 testAction.checkable = false;
@@ -225,7 +285,7 @@ testAction.shortcut = "F5";
 testAction.enabled = false;
 
 tiled.extendMenu("Map", [
-	{ action: "LevelTest", before: "MapProperties" },
+    { action: "cog2d.LevelTest", before: "MapProperties" },
 	{ separator: true, before: "MapProperties" },
 ]);
 
@@ -238,8 +298,11 @@ tiled.activeAssetChanged.connect((asset: Asset) => {
 
 const EMPTY_PATH = tiled.filePath("");
 
-if (tiled.project.property(SETTING_EXE_PATH) == undefined)
+if (tiled.project.property(SETTING_EXE_PATH) === undefined)
 	tiled.project.setProperty(SETTING_EXE_PATH, EMPTY_PATH);
 
-if (tiled.project.property(SETTING_MAP_COMPRESS) == undefined)
+if (tiled.project.property(SETTING_MAP_COMPRESS) === undefined)
 	tiled.project.setProperty(SETTING_MAP_COMPRESS, false);
+
+if (tiled.project.property(SETTING_EMBED_TILESETS) === undefined)
+	tiled.project.setProperty(SETTING_EMBED_TILESETS, true);
