@@ -13,7 +13,7 @@ class TileMap
 {
 public:
 	using TileSets = std::vector<TileSet>;
-	using TileLayers = std::vector<TileLayer>;
+	using TileLayers = std::vector<std::unique_ptr<TileLayer>>;
 
 public:
 	TileSets m_sets;
