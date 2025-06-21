@@ -142,6 +142,8 @@ let tomlMap: ScriptedMapFormat = {
 
 	write: function (map: TileMap, fileName: string): string | undefined {
 		let fileDat: TomlTileMapDocument = {
+			type: "tilemap"
+			version: 1
 			data: {
 				tilesets: [],
 				layers: [],
