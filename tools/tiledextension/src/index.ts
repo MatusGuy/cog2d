@@ -26,9 +26,7 @@ type TomlTileSetData = Object & {
 	image: string;
 };
 
-type TomlTileSetDocument = TomlDocument & {
-	data: TomlTileSetData
-};
+type TomlTileSetDocument = TomlDocument & TomlTileSetData;
 
 type TomlEmbeddedTileSet = Object & {
 	firstgid: number;
@@ -44,10 +42,8 @@ type TomlTileLayer = Object & {
 };
 
 type TomlTileMapDocument = TomlDocument & {
-	data: {
-		tilesets: TomlEmbeddedTileSet[];
-		layers: TomlTileLayer[];
-	}
+	tilesets: TomlEmbeddedTileSet[];
+	layers: TomlTileLayer[];
 };
 
 let process = new Process();
@@ -83,9 +79,10 @@ let tomlSet: ScriptedTilesetFormat = {
 	write: function (tileset: Tileset, fileName: string): string | undefined {
 		let doc: TomlTileSetDocument = {
 			type: "tileset",
-			version: 1,
-			data: getTilesetData(tileset),
+			version: 1
 		};
+
+		Object.assign(doc, getTilesetData(tileset));
 
 		let file = new TextFile(fileName, TextFile.WriteOnly);
 		file.write(TOML.stringify(doc));
@@ -147,10 +144,8 @@ let tomlMap: ScriptedMapFormat = {
 		let fileDat: TomlTileMapDocument = {
 			type: "tilemap",
 			version: 1,
-			data: {
-				tilesets: [],
-				layers: [],
-			}
+			tilesets: [],
+			layers: [],
 		};
 
 		let nextGid = 1;
@@ -171,7 +166,7 @@ let tomlMap: ScriptedMapFormat = {
 
 			nextGid += activeSet.tileCount;
 
-			fileDat.data.tilesets.push(setData)
+			fileDat.tilesets.push(setData)
 
 			tiled.log(`Processed tileset '${setIndex}'\nResult: ${TOML.stringify(setData)}`);
 		}
@@ -199,7 +194,7 @@ let tomlMap: ScriptedMapFormat = {
 			else
 				writeTiles(tilelayer, data.data);
 
-			fileDat.data.layers.push(data);
+			fileDat.layers.push(data);
 
 			tiled.log(`Processed tilemap layer '${layerIndex}'`)
 		}
