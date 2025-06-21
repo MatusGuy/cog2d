@@ -9,7 +9,7 @@
 
 COG2D_NAMESPACE_BEGIN_DECL
 
-using TileId = std::uint32_t;
+using TileId = std::uint16_t;
 using TileIds = std::vector<TileId>;
 
 COG2D_NAMESPACE_END_DECL

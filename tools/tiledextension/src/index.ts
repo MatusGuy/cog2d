@@ -1,18 +1,8 @@
 /// <reference types="@mapeditor/tiled-api" />
 import TOML from "smol-toml";
 
-// Constants
-const TEMP_LEVEL_PATHS = {
-	windows: {
-		mapExport: "~/AppData/Local/Temp/test.toml"
-	},
-	unix: {
-		mapExport: "~/.cache/test.toml"
-	}
-};
-
 // @ts-ignore
-const PLATFORM_KEY = File.exists("C:/Windows/System32/KERNELBASE.dll") ? "windows" : "unix";
+const PLATFORM = File.exists("C:/Windows/System32/KERNELBASE.dll") ? "windows" : "unix";
 
 // - Settings
 const SETTING_EXE_PATH = "cog2d.executable"
@@ -59,6 +49,15 @@ type TomlTileMapDocument = TomlDocument & {
 		layers: TomlTileLayer[];
 	}
 };
+
+let process = new Process();
+
+function getTempPath(): string {
+	switch (PLATFORM) {
+	case "windows": return process.getEnv("APPDATA") + "/Temp/";
+	case "unix": return "/tmp/";
+	}
+}
 
 function getTilesetData(tileset: Tileset): TomlTileSetData {
 	let imgpath = tileset.imageFileName;
@@ -135,15 +134,15 @@ function writeTilesCompressed(layer: TileLayer, data: number[]) {
 	}
 };
 
-// Map Format
+// Map Formats
 let tomlMap: ScriptedMapFormat = {
 	name: "cog2d TOML Map",
 	extension: "toml",
 
 	write: function (map: TileMap, fileName: string): string | undefined {
 		let fileDat: TomlTileMapDocument = {
-			type: "tilemap"
-			version: 1
+			type: "tilemap",
+			version: 1,
 			data: {
 				tilesets: [],
 				layers: [],
@@ -212,8 +211,106 @@ let tomlMap: ScriptedMapFormat = {
 
 tiled.registerMapFormat("c2tomlmap", tomlMap);
 
+type ObjectSize = 1 | 2 | 4;
+
+class BinaryFileStream {
+	file: BinaryFile
+
+	constructor(file: BinaryFile) {
+		this.file = file;
+	}
+
+	write_array(data: number[], size: ObjectSize, unsigned: boolean) {
+		let buf = new ArrayBuffer(data.length * size);
+		let arr: any = null;
+		if (unsigned) {
+			switch (size) {
+			case 1: arr = new Uint8Array(buf); break;
+			case 2: arr = new Uint16Array(buf); break;
+			case 4: arr = new Uint32Array(buf); break;
+			}
+		} else {
+			switch (size) {
+			case 1: arr = new Int8Array(buf); break;
+			case 2: arr = new Int16Array(buf); break;
+			case 4: arr = new Int32Array(buf); break;
+			}
+		}
+
+		arr.set(data, 0);
+		this.file.write(buf);
+	}
+
+	write_object(data: number, size: ObjectSize, unsigned: boolean) {
+		this.write_array([data], size, unsigned);
+	}
+
+	write_string(data: string) {
+		const arr = Array.from(data + "\0").map(char => char.charCodeAt(0));
+		this.write_array(arr, 1, true);
+	}
+}
+
+let binMap: ScriptedMapFormat = {
+	name: "cog2d Binary Map",
+	extension: "dat",
+
+	write: function (map: TileMap, fileName: string): string | undefined {
+		let buf = new ArrayBuffer(2);
+		let out = new BinaryFileStream(new BinaryFile(fileName, BinaryFile.WriteOnly));
+
+		// Header
+		//                  C     2     M
+		out.write_array([0x43, 0x32, 0x4D], 1, true);
+
+		// Version
+		out.write_object(1, 2, true);
+
+		let nextGid = 1;
+		let usedTilesets = map.usedTilesets();
+
+		for (let setIndex = 0; setIndex < usedTilesets.length; setIndex++) {
+			let activeSet = usedTilesets[setIndex];
+			out.write_object(nextGid, 2, true);
+			out.write_string(activeSet.fileName);
+			nextGid += activeSet.tileCount;
+		}
+		out.write_object(0, 1, true);
+
+		for (let layerIndex = 0; layerIndex < map.layerCount; layerIndex++) {
+			let layer: Layer = map.layerAt(layerIndex);
+
+			if (!layer.isTileLayer) {
+				continue;
+			}
+
+			let tilelayer: TileLayer = layer as TileLayer;
+
+			out.write_object(tilelayer.isTileLayer ? 0 : 1, 1, true);
+			out.write_string(tilelayer.name)
+			out.write_object(tilelayer.width, 4, true);
+			out.write_object(tilelayer.height, 4, true);
+
+			let tiles: number[] = [];
+			let compress = tiled.project.property(SETTING_MAP_COMPRESS) as boolean;
+			if (compress)
+				writeTilesCompressed(tilelayer, tiles);
+			else
+				writeTiles(tilelayer, tiles);
+
+			out.write_array(tiles, 2, !compress);
+		}
+
+		out.file.commit();
+
+		return undefined;
+	},
+};
+
+tiled.registerMapFormat("c2map", binMap);
+
 // Playtest
-let process: Process | null = null;
+let testing: boolean = false;
 
 function tryTest(_action: Action) {
 	const program = tiled.project.property(SETTING_EXE_PATH) as string;
@@ -228,7 +325,7 @@ function tryTest(_action: Action) {
 		return;
 	}
 
-	if (process != null)
+	if (testing)
 		return;
 
 	if (!tiled.activeAsset) {
@@ -248,10 +345,9 @@ function tryTest(_action: Action) {
 
 	//tiled.activeAsset.save();
 
-	process = new Process();
+	testing = true;
 
-	const tempPath = TEMP_LEVEL_PATHS[PLATFORM_KEY]["mapExport"].replace('~',
-	                                                                     process.getEnv("HOME"));
+	const tempPath = getTempPath();
 	tiled.log(`Temporary level path: ${tempPath}`);
 
 	tomlMap.write(tiled.activeAsset as TileMap, tempPath);
@@ -262,16 +358,16 @@ function tryTest(_action: Action) {
 }
 
 function endTest(_action: Action) {
-	if (process == null)
+	if (!testing)
 		return;
 
 	process.terminate();
 
-	process = null;
+	testing = false;
 }
 
 function testMap(action: Action) {
-	if (process != null)
+	if (testing)
 		endTest(action);
 
 	tryTest(action);
