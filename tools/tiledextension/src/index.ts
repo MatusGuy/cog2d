@@ -59,9 +59,13 @@ function getTempPath(): string {
 	}
 }
 
+function getPathFileName(path: string): string {
+	const matches = path.match(/[^\\/]+(?=(?:\.[^.]+)?$)/);
+	return matches != null ? matches[0] : "";
+}
+
 function getTilesetData(tileset: Tileset): TomlTileSetData {
-	let imgpath = tileset.imageFileName;
-	// TODO: regex to only get filename and not full path
+	const imgpath = getPathFileName(tileset.imageFileName);
 
 	return {
 		tilewidth: tileset.tileWidth,
@@ -162,8 +166,7 @@ let tomlMap: ScriptedMapFormat = {
 			if (tiled.project.property(SETTING_EMBED_TILESETS)) {
 				Object.assign(setData, getTilesetData(activeSet));
 			} else {
-				// TODO: We only need the file name, not the full path.
-				setData.source = activeSet.fileName
+				setData.source = getPathFileName(activeSet.fileName);
 			}
 
 			nextGid += activeSet.tileCount;
@@ -272,7 +275,7 @@ let binMap: ScriptedMapFormat = {
 		for (let setIndex = 0; setIndex < usedTilesets.length; setIndex++) {
 			let activeSet = usedTilesets[setIndex];
 			out.write_object(nextGid, 2, true);
-			out.write_string(activeSet.fileName);
+			out.write_string(getPathFileName(activeSet.fileName));
 			nextGid += activeSet.tileCount;
 		}
 		out.write_object(0, 1, true);
