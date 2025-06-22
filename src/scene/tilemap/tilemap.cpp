@@ -146,7 +146,7 @@ void TileMap::parse_bin(IoDevice&& device)
 		m_sets.push_back(set);
 	}
 
-	while (device.eof()) {
+	while (!device.eof()) {
 		std::uint8_t type;
 		device.read(&type, sizeof(type), 1);
 
