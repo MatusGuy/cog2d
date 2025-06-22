@@ -44,7 +44,9 @@ public:
 
 	~Asset()
 	{
-		collection->try_remove_asset(*this);
+		if (collection)
+			collection->try_remove_asset(*this);
+
 		this->reset();
 	}
 

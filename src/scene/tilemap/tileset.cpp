@@ -13,8 +13,8 @@ TileSet::TileSet()
 
 void TileSet::load(const toml::table& data)
 {
-	if (!data.contains("columns")) {
-		// Sorry, but the actual tileset data is in another castle.
+	if (data.contains("source")) {
+		// Sorry, but your tileset data is in another castle.
 		parse_external(data);
 		return;
 	}
@@ -42,11 +42,11 @@ void TileSet::parse_external(const toml::table& data)
 	m_first_gid = *data["firstgid"].value<int>();
 
 	std::filesystem::path setpath = *data["source"].value<std::string>();
-	setpath.replace_extension("c2s");
+	setpath.replace_extension("toml");
 
 	AssetFile setfile(setpath);
 	setfile.open(AssetFile::OPENMODE_READ);
-	parse(toml::parse(setfile));
+	parse(toml::parse(std::move(setfile)));
 	setfile.close();
 }
 

@@ -7,6 +7,7 @@
 #include "cog2d/assets/assetmanager.hpp"
 #include "cog2d/util/math/vector.hpp"
 #include "cog2d/util/parsing.hpp"
+#include "cog2d/scene/tilemap/tile.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 
@@ -15,8 +16,8 @@ class Texture;
 class TileSet
 {
 public:
-	int m_first_gid;
-	Vector_t<int> m_tile_sz;
+	TileId m_first_gid;
+	Vector_t<std::uint16_t> m_tile_sz;
 	Vector_t<int> m_set_sz;
 	Asset<Texture> m_texture;
 

@@ -26,7 +26,7 @@ type TomlTileSetData = Object & {
 	image: string;
 };
 
-type TomlTileSetDocument = TomlDocument & TomlTileSetData;
+type TomlTileSetDocument = TomlDocument & Partial<TomlTileSetData>;
 
 type TomlEmbeddedTileSet = Object & {
 	firstgid: number;
@@ -56,7 +56,12 @@ function getTempPath(): string {
 }
 
 function getPathFileName(path: string): string {
-	const matches = path.match(/[^\\/]+(?=(?:\.[^.]+)?$)/);
+	const matches = path.match(/[^\\/]+$/);
+	return matches != null ? matches[0] : "";
+}
+
+function getPathBaseName(path: string): string {
+	const matches = path.match(/[^\\/]+(?=\..*$)/);
 	return matches != null ? matches[0] : "";
 }
 
@@ -93,14 +98,16 @@ let tomlSet: ScriptedTilesetFormat = {
 };
 tiled.registerTilesetFormat("c2tomlset", tomlSet);
 
+function getTileId(layer: TileLayer, x: number, y: number): number {
+	const tile = layer.tileAt(x, y);
+	const firstgid = tile != null ? tile.tileset.property("cog2d._firstgid") as number : 0;
+	return tile != null ? tile.id + firstgid : 0;
+}
+
 function writeTiles(layer: TileLayer, data: number[]) {
 	for (let y = 0; y < layer.height; ++y) {
 		for (let x = 0; x < layer.width; ++x) {
-			let id = layer.cellAt(x, y).tileId;
-
-			if (id == -1)
-				id = 0;
-
+			const id = getTileId(layer, x, y);
 			data.push(id);
 		}
 	}
@@ -114,10 +121,7 @@ function writeTilesCompressed(layer: TileLayer, data: number[]) {
 
 	for (let y = 0; y < layer.height; ++y) {
 		for (let x = 0; x < layer.width; ++x) {
-			let id = layer.cellAt(x, y).tileId;
-
-			if (id == -1)
-				id = 0;
+			const id = getTileId(layer, x, y);
 
 			if (repeatid == id) {
 				repeats++;
@@ -164,6 +168,7 @@ let tomlMap: ScriptedMapFormat = {
 				setData.source = getPathFileName(activeSet.fileName);
 			}
 
+			activeSet.setProperty("cog2d._firstgid", nextGid);
 			nextGid += activeSet.tileCount;
 
 			fileDat.tilesets.push(setData)
@@ -267,13 +272,19 @@ let binMap: ScriptedMapFormat = {
 		let nextGid = 1;
 		let usedTilesets = map.usedTilesets();
 
+		// There can only be one tilesize per map.
+		out.write_object(usedTilesets[0].tileWidth, 2, true);
+		out.write_object(usedTilesets[0].tileHeight, 2, true);
+
 		for (let setIndex = 0; setIndex < usedTilesets.length; setIndex++) {
 			let activeSet = usedTilesets[setIndex];
 			out.write_object(nextGid, 2, true);
-			out.write_string(getPathFileName(activeSet.fileName));
+			out.write_string(getPathBaseName(activeSet.fileName) + ".toml");
+
+			activeSet.setProperty("cog2d._firstgid", nextGid);
 			nextGid += activeSet.tileCount;
 		}
-		out.write_object(0, 1, true);
+		out.write_object(0, 2, true);
 
 		for (let layerIndex = 0; layerIndex < map.layerCount; layerIndex++) {
 			let layer: Layer = map.layerAt(layerIndex);
@@ -285,7 +296,7 @@ let binMap: ScriptedMapFormat = {
 			let tilelayer: TileLayer = layer as TileLayer;
 
 			out.write_object(tilelayer.isTileLayer ? 0 : 1, 1, true);
-			out.write_string(tilelayer.name)
+			out.write_string(tilelayer.name);
 			out.write_object(tilelayer.width, 4, true);
 			out.write_object(tilelayer.height, 4, true);
 
