@@ -149,4 +149,6 @@ if(COG2D_UTIL)
 		                         -P ${PROJECT_SOURCE_DIR}/cmake/Cog2dTidySources.cmake
 		COMMENT "Tidying source files"
 	)
+
+	add_subdirectory(tools)
 endif()
