@@ -7,7 +7,7 @@ add_custom_target(cog2d_tiled_extension
 	COMMAND ${PNPM_PATH} patchjs
 	WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
 	BYPRODUCTS dist/index.js
-	SOURCES ${COG2D_TILED_EXTENSION_SRC}
+	SOURCES ${COG2D_TILED_EXTENSION_SRC} webpack.config.js package.json tsconfig.json
 )
 
 add_custom_target(cog2d_tiled_extension_test
