@@ -29,6 +29,7 @@ public:
 	std::size_t read(void* ptr, std::size_t size, std::size_t maxnum) override;
 	std::size_t write(const void* ptr, std::size_t size, std::size_t num) override;
 	int close() override;
+	bool eof() override;
 
 	std::iostream* stl_stream() override { return &m_stream; }
 };

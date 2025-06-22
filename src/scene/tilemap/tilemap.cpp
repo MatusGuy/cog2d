@@ -146,7 +146,7 @@ void TileMap::parse_bin(IoDevice&& device)
 		m_sets.push_back(set);
 	}
 
-	while (true) {
+	while (device.eof()) {
 		std::uint8_t type;
 		device.read(&type, sizeof(type), 1);
 
@@ -174,6 +174,9 @@ void TileMap::parse_bin(IoDevice&& device)
 		//}
 
 		layer->m_tiles.reserve(layer->m_size.x * layer->m_size.y);
+
+		// slower than solution below???????
+		//device.read(layer->m_tiles.data(), sizeof(TileId), layer->m_tiles.capacity());
 
 		for (int i = 0; i < layer->m_tiles.capacity(); ++i) {
 			std::uint16_t n = layer->m_tiles[i];

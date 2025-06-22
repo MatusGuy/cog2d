@@ -37,10 +37,12 @@ public:
 	virtual bool is_open() = 0;
 	virtual std::int64_t size() = 0;
 	virtual std::int64_t seek(std::int64_t offset, SeekPos seekpos) = 0;
-	virtual std::int64_t tell() = 0;
 	virtual std::size_t read(void* ptr, std::size_t size, std::size_t maxnum) = 0;
 	virtual std::size_t write(const void* ptr, std::size_t size, std::size_t num) = 0;
 	virtual int close() = 0;
+
+	virtual std::int64_t tell();
+	virtual bool eof();
 
 	virtual SDL_RWops* to_sdl();
 
