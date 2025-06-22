@@ -12,6 +12,7 @@ add_custom_target(cog2d_tiled_extension
 
 add_custom_target(cog2d_tiled_extension_test
 	COMMAND ${PNPM_PATH} test
+	WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
 	DEPENDS cog2d_tiled_extension
 )
 set_target_properties(cog2d_tiled_extension_test PROPERTIES FOLDER "qtc_runnable")
