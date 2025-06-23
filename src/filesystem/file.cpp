@@ -72,9 +72,4 @@ int File::close()
 	return m_stream.good() ? 0 : -1;
 }
 
-bool File::eof()
-{
-	return m_stream.eof();
-}
-
 COG2D_NAMESPACE_END_IMPL

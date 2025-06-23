@@ -44,6 +44,12 @@ public:
 	virtual std::int64_t tell();
 	virtual bool eof();
 
+	template<class T>
+	inline std::size_t read(T& ref, std::size_t maxnum = 1)
+	{
+		return read(static_cast<void*>(&ref), sizeof(T), maxnum);
+	}
+
 	virtual SDL_RWops* to_sdl();
 
 	static std::int64_t sdl_size(SDL_RWops* context)

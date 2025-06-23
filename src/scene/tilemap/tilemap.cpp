@@ -23,16 +23,18 @@ TileMap::TileMap()
 
 void TileMap::load(std::filesystem::path path)
 {
-	std::filesystem::path ext = path.extension();
 	AssetFile file(path);
-	file.open(AssetFile::OPENMODE_READ);
 
+	std::filesystem::path ext = path.extension();
 	if (ext == ".dat") {
+		file.open(AssetFile::OPENMODE_READ | AssetFile::OPENMODE_BINARY);
 		parse_bin(std::move(file));
 	} else {
+		file.open(AssetFile::OPENMODE_READ);
 		toml::table data = toml::parse(std::move(file));
 		parse_toml(data);
 	}
+
 	file.close();
 }
 
@@ -108,34 +110,36 @@ void TileMap::parse_bin(IoDevice&& device)
 	}
 
 	std::uint16_t version;
-	device.read(&version, sizeof(version), 1);
+	device.read(version);
 
 	//if constexpr (SDL_BYTEORDER == SDL_LIL_ENDIAN)
 	//	version = ntohs(version);
 
 	// TODO: impl
 	Vector_t<std::uint16_t> tilesz;
-	device.read(&tilesz, 2, 2);
+	device.read(tilesz);
 	//if constexpr (SDL_BYTEORDER == SDL_LIL_ENDIAN) {
 	//	tilesz.x = ntohs(tilesz.x);
 	//	tilesz.y = ntohs(tilesz.y);
 	//}
 
 	while (true) {
-		TileSet set;
-
-		device.read(&set.m_first_gid, sizeof(set.m_first_gid), 1);
+		TileId firstgid;
+		device.read(firstgid);
 		//if constexpr (SDL_BYTEORDER == SDL_LIL_ENDIAN)
 		//	set.m_first_gid = ntohs(set.m_first_gid);
 
-		if (set.m_first_gid == 0)
+		if (firstgid == 0)
 			break;
+
+		TileSet set;
+		set.m_first_gid = firstgid;
 
 		// TODO: reading strings from iodevice utility
 		std::string name;
 		char c;
 		while (true) {
-			device.read(&c, sizeof(c), 1);
+			device.read(c);
 			if (c == '\0')
 				break;
 			name += c;
@@ -148,7 +152,7 @@ void TileMap::parse_bin(IoDevice&& device)
 
 	while (!device.eof()) {
 		std::uint8_t type;
-		device.read(&type, sizeof(type), 1);
+		device.read(type);
 
 		if (type != 0)
 			// This is an object layer. Implement later.
@@ -161,13 +165,13 @@ void TileMap::parse_bin(IoDevice&& device)
 		std::string name;
 		char c;
 		while (true) {
-			device.read(&c, sizeof(c), 1);
+			device.read(c);
 			if (c == '\0')
 				break;
 			name += c;
 		}
 
-		device.read(&layer->m_size, sizeof(std::int32_t), 2);
+		device.read(layer->m_size);
 		//if constexpr (SDL_BYTEORDER == SDL_LIL_ENDIAN) {
 		//	layer->m_size.x = ntohl(layer->m_size.x);
 		//	layer->m_size.y = ntohl(layer->m_size.y);
@@ -179,20 +183,19 @@ void TileMap::parse_bin(IoDevice&& device)
 		//device.read(layer->m_tiles.data(), sizeof(TileId), layer->m_tiles.capacity());
 
 		for (int i = 0; i < layer->m_tiles.capacity(); ++i) {
-			std::uint16_t n = layer->m_tiles[i];
+			//TileId n = layer->m_tiles[i];
+			TileId n;
 
-			device.read(&n, sizeof(TileId), 1);
+			device.read(n);
 
 			//if constexpr (SDL_BYTEORDER == SDL_LIL_ENDIAN)
 			//	n = ntohs(n);
 
 			layer->m_tiles.push_back(n);
+			COG2D_LOG_DEBUG(fmt::format("tell(): {}", device.tell()));
 		}
 
 		m_layers.push_back(std::move(layer));
-
-		// TODO: detect eof
-		break;
 	}
 }
 

@@ -15,18 +15,7 @@ std::int64_t IoDevice::tell()
 
 bool IoDevice::eof()
 {
-	uint8_t a;
-
-	try {
-		read(&a, 1, 1);
-	} catch (...) {
-		// TODO: check specifically for eof exception
-		return true;
-	}
-
-	seek(-1, SEEKPOS_CURSOR);
-
-	return false;
+	return tell() == size();
 }
 
 SDL_RWops* IoDevice::to_sdl()
