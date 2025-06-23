@@ -4,7 +4,7 @@
 
 #include <filesystem>
 
-#include "cog2d/assets/assetmanager.hpp"
+#include "cog2d/assets/asset.hpp"
 #include "cog2d/util/math/vector.hpp"
 #include "cog2d/util/parsing.hpp"
 #include "cog2d/scene/tilemap/tile.hpp"
@@ -16,7 +16,6 @@ class Texture;
 class TileSet
 {
 public:
-	TileId m_first_gid;
 	Vector_t<std::uint16_t> m_tile_sz;
 	Vector_t<int> m_set_sz;
 	Asset<Texture> m_texture;

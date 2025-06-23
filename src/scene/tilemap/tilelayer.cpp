@@ -49,22 +49,22 @@ void TileLayer::draw()
 			continue;
 		}
 
-		TileSet& set = m_map->get_tileset(id);
-		id -= set.m_first_gid;
+		TileMap::TileSetRef& set = m_map->get_tileset(id);
+		id -= set.firstgid;
 
-		Vector_t<int> srcpos = get_tile_pos(id, set.m_set_sz);
+		Vector_t<int> srcpos = get_tile_pos(id, set->m_set_sz);
 		Rect_t<int> src;
 
-		src.size = set.m_tile_sz;
+		src.size = m_map->m_tile_sz;
 		src.pos = srcpos * src.size;
 
 		Rect dest;
-		dest.size = set.m_tile_sz;
+		dest.size = m_map->m_tile_sz;
 		dest.pos = destpos;
 
 		const SDL_Rect ssrc = src.to_sdl_rect();
 		const SDL_FRect sdest = dest.to_sdl_frect();
-		SDL_RenderCopyF(graphicsengine.get_renderer(), set.m_texture.get()->to_sdl(), &ssrc,
+		SDL_RenderCopyF(graphicsengine.get_renderer(), set->m_texture.get()->to_sdl(), &ssrc,
 		                &sdest);
 
 		next_tile();

@@ -22,8 +22,7 @@ CameraTileLayerIterator CameraTileLayerIterator::advance(difference_type n)
 	if (n == 0)
 		return *this;
 
-	// Whatever... All sets have the same tile size anyway
-	Vector tilesz = m_layer.m_map->m_sets[0].m_tile_sz;
+	Vector tilesz = m_layer.m_map->m_tile_sz;
 
 	// Position of the camera in tile coordinates
 	Vector campos = viewport.get_camera()->m_pos / tilesz;

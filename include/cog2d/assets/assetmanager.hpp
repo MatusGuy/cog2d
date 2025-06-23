@@ -17,6 +17,7 @@ class AssetManager : public Currenton<AssetManager>
 {
 public:
 	PixmapCollection pixmaps;
+	TileSetCollection tilesets;
 
 public:
 	AssetManager();

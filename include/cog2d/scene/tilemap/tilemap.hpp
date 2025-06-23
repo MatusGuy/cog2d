@@ -7,18 +7,29 @@
 #include "cog2d/scene/tilemap/tileset.hpp"
 #include "cog2d/scene/tilemap/tilelayer.hpp"
 #include "cog2d/util/parsing.hpp"
+#include "cog2d/assets/asset.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 
 class TileMap
 {
 public:
-	using TileSets = std::vector<TileSet>;
+	struct TileSetRef
+	{
+		Asset<TileSet> set;
+		TileId firstgid;
+
+		auto operator->() { return set; }
+	};
+
+	using TileSets = std::vector<TileSetRef>;
 	using TileLayers = std::vector<std::unique_ptr<TileLayer>>;
 
 public:
 	TileSets m_sets;
 	TileLayers m_layers;
+
+	Vector_t<std::uint16_t> m_tile_sz;
 
 public:
 	TileMap();
@@ -27,7 +38,7 @@ public:
 
 	void draw();
 
-	TileSet& get_tileset(TileId tileid);
+	TileSetRef& get_tileset(TileId tileid);
 
 private:
 	void parse_toml(toml::table& table);

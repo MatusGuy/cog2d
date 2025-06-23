@@ -4,16 +4,18 @@
 
 #include <fstream>
 
+/*
 // this is kind of ridiculous but whatevz
 #ifdef _WIN32
 #include <winsock.h>
 #else
 #include <netinet/in.h>
 #endif
+#include <SDL2/SDL_config.h>
+*/
 
 #include "cog2d/util/logger.hpp"
-
-#include <SDL2/SDL_config.h>
+#include "cog2d/assets/assetmanager.hpp"
 
 COG2D_NAMESPACE_BEGIN_IMPL
 
@@ -45,11 +47,11 @@ void TileMap::draw()
 	}
 }
 
-TileSet& TileMap::get_tileset(TileId tileid)
+TileMap::TileSetRef& TileMap::get_tileset(TileId tileid)
 {
 	for (TileSets::reverse_iterator it = m_sets.rbegin(); it != m_sets.rend(); ++it) {
-		TileSet& set = *it;
-		if (tileid >= set.m_first_gid)
+		TileSetRef& set = *it;
+		if (tileid >= set.firstgid)
 			return set;
 	}
 
@@ -58,13 +60,20 @@ TileSet& TileMap::get_tileset(TileId tileid)
 
 void TileMap::parse_toml(toml::table& data)
 {
+	COG2D_USE_ASSETMANAGER;
+
 	toml::array& sets = *data["tilesets"].as_array();
 
 	for (toml::array::iterator it = sets.begin(); it != sets.end(); ++it) {
-		// TODO: A tileset is an asset. It should not be owned by the tilemap.
-		TileSet set;
-		toml::table& jsonset = *(*it).as_table();
-		set.load(jsonset);
+		TileSetRef set;
+
+		toml::table& setdata = *(*it).as_table();
+		set.firstgid = static_cast<TileId>(setdata.get_as<std::int64_t>("firstgid")->value_or(1));
+
+		// TODO: support embedded tileset
+		std::string path = setdata.get_as<std::string>("source")->value_or("");
+		set.set = assetmanager.tilesets.load_file(path);
+
 		m_sets.push_back(set);
 	}
 
@@ -98,6 +107,8 @@ void TileMap::parse_toml(toml::table& data)
 
 void TileMap::parse_bin(IoDevice&& device)
 {
+	COG2D_USE_ASSETMANAGER;
+
 	device.seek(0, IoDevice::SEEKPOS_BEGIN);
 
 	char header[4];
@@ -116,8 +127,7 @@ void TileMap::parse_bin(IoDevice&& device)
 	//	version = ntohs(version);
 
 	// TODO: impl
-	Vector_t<std::uint16_t> tilesz;
-	device.read(tilesz);
+	device.read(m_tile_sz);
 	//if constexpr (SDL_BYTEORDER == SDL_LIL_ENDIAN) {
 	//	tilesz.x = ntohs(tilesz.x);
 	//	tilesz.y = ntohs(tilesz.y);
@@ -132,8 +142,8 @@ void TileMap::parse_bin(IoDevice&& device)
 		if (firstgid == 0)
 			break;
 
-		TileSet set;
-		set.m_first_gid = firstgid;
+		TileSetRef set;
+		set.firstgid = firstgid;
 
 		// TODO: reading strings from iodevice utility
 		std::string name;
@@ -145,7 +155,7 @@ void TileMap::parse_bin(IoDevice&& device)
 			name += c;
 		}
 
-		set.load(toml::parse(AssetFile(name)));
+		set.set = assetmanager.tilesets.load_file(name);
 
 		m_sets.push_back(set);
 	}
@@ -192,7 +202,6 @@ void TileMap::parse_bin(IoDevice&& device)
 			//	n = ntohs(n);
 
 			layer->m_tiles.push_back(n);
-			COG2D_LOG_DEBUG(fmt::format("tell(): {}", device.tell()));
 		}
 
 		m_layers.push_back(std::move(layer));

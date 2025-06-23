@@ -9,49 +9,12 @@
 #include "cog2d/filesystem/assetfile.hpp"
 #include "cog2d/video/texture.hpp"
 #include "cog2d/video/font/pixmapfont.hpp"
+#include "cog2d/scene/tilemap/tileset.hpp"
+
+#include "cog2d/assets/asset.hpp"
+#include "cog2d/util/parsing.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
-
-enum AssetType
-{
-	ASSET_IMAGE,
-	ASSET_SFX,
-	ASSET_MUSIC,
-	ASSET_FONT,
-
-	ASSET_COUNT
-};
-
-template<class A>
-class AssetCollection;
-
-template<class T>
-using AssetRef = std::weak_ptr<T>;
-
-template<class T>
-class Asset : public std::shared_ptr<T>
-{
-public:
-	AssetCollection<T>* collection = nullptr;
-
-public:
-	Asset() {}
-	Asset(std::shared_ptr<T> ptr, AssetCollection<T>* col)
-	    : std::shared_ptr<T>(std::move(ptr)),
-	      collection(col)
-	{
-	}
-
-	~Asset()
-	{
-		if (collection)
-			collection->try_remove_asset(*this);
-
-		this->reset();
-	}
-
-	inline bool valid() { return collection != nullptr && this->get() != nullptr; }
-};
 
 template<class A>
 class AssetCollection
@@ -100,6 +63,13 @@ class PixmapFontCollection : public AssetCollection<PixmapFont>
 {
 public:
 	Asset<PixmapFont> load(std::string_view name, IoDevice& device) override;
+};
+
+class TileSetCollection : public AssetCollection<TileSet>
+{
+public:
+	Asset<TileSet> load(std::string_view name, IoDevice& device) override;
+	Asset<TileSet> load(std::string_view name, toml::table& data);
 };
 
 COG2D_NAMESPACE_END_DECL

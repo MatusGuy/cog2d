@@ -21,6 +21,18 @@ Asset<A> AssetCollection<A>::add(std::string_view name, std::unique_ptr<A> asset
 }
 
 template<class A>
+void AssetCollection<A>::try_remove_asset(AssetRef<A> asset)
+{
+	std::shared_ptr<A> ptr = asset.lock();
+	auto it = std::find_if(m_assets.begin(), m_assets.end(),
+	                       [&ptr](auto&& p) { return p.second.lock() == ptr; });
+	ptr.reset();
+
+	if (it != m_assets.end())
+		try_remove_key((*it).first, false);
+}
+
+template<class A>
 void AssetCollection<A>::try_remove_key(std::string_view name, bool check)
 {
 	std::string key(name);
@@ -38,16 +50,13 @@ void AssetCollection<A>::try_remove_key(std::string_view name, bool check)
 	m_assets.erase(key);
 }
 
-template<class A>
-void AssetCollection<A>::try_remove_asset(AssetRef<A> asset)
+template<class T>
+Asset<T>::~Asset()
 {
-	std::shared_ptr<A> ptr = asset.lock();
-	auto it = std::find_if(m_assets.begin(), m_assets.end(),
-	                       [&ptr](auto&& p) { return p.second.lock() == ptr; });
-	ptr.reset();
+	if (collection)
+		collection->try_remove_asset(*this);
 
-	if (it != m_assets.end())
-		try_remove_key((*it).first, false);
+	this->reset();
 }
 
 Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
@@ -73,6 +82,22 @@ Asset<PixmapFont> PixmapFontCollection::load(std::string_view name, IoDevice& de
 	auto font = new PixmapFont();
 	font->load(std::move(device));
 	return add(name, std::unique_ptr<AssetType>(std::move(font)));
+}
+
+Asset<TileSet> TileSetCollection::load(std::string_view name, IoDevice& device)
+{
+	if (!device.is_open())
+		device.open(IoDevice::OPENMODE_READ);
+
+	toml::table data = toml::parse(std::move(device));
+	return load(name, data);
+}
+
+Asset<TileSet> TileSetCollection::load(std::string_view name, toml::table& data)
+{
+	std::unique_ptr<TileSet> set = std::make_unique<TileSet>();
+	set->load(data);
+	return add(name, std::move(set));
 }
 
 COG2D_NAMESPACE_END_IMPL

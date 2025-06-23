@@ -24,9 +24,6 @@ void TileSet::load(const toml::table& data)
 
 void TileSet::parse(const toml::table& data)
 {
-	if (data.contains("firstgid"))
-		m_first_gid = *data["firstgid"].value<int>();
-
 	m_tile_sz.x = *data["tilewidth"].value<int>();
 	m_tile_sz.y = *data["tileheight"].value<int>();
 
@@ -39,7 +36,7 @@ void TileSet::parse(const toml::table& data)
 
 void TileSet::parse_external(const toml::table& data)
 {
-	m_first_gid = *data["firstgid"].value<int>();
+	//m_first_gid = *data["firstgid"].value<int>();
 
 	std::filesystem::path setpath = *data["source"].value<std::string>();
 	setpath.replace_extension("toml");
