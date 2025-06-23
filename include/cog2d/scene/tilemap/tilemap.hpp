@@ -19,7 +19,7 @@ public:
 		Asset<TileSet> set;
 		TileId firstgid;
 
-		auto operator->() { return set; }
+		Asset<TileSet>& operator->() { return set; }
 	};
 
 	using TileSets = std::vector<TileSetRef>;
