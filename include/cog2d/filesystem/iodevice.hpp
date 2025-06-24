@@ -50,6 +50,20 @@ public:
 		return read(static_cast<void*>(&ref), sizeof(T), maxnum);
 	}
 
+	template<class T>
+	inline std::size_t read(std::basic_string<T>& ref)
+	{
+		T c;
+		while (true) {
+			read(c);
+			if (c == 0)
+				break;
+			ref += c;
+		}
+
+		return ref.size() + 1;
+	}
+
 	virtual SDL_RWops* to_sdl();
 
 	static std::int64_t sdl_size(SDL_RWops* context)

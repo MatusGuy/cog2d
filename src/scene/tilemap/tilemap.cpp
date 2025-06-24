@@ -126,7 +126,6 @@ void TileMap::parse_bin(IoDevice&& device)
 	//if constexpr (SDL_BYTEORDER == SDL_LIL_ENDIAN)
 	//	version = ntohs(version);
 
-	// TODO: impl
 	device.read(m_tile_sz);
 	//if constexpr (SDL_BYTEORDER == SDL_LIL_ENDIAN) {
 	//	tilesz.x = ntohs(tilesz.x);
@@ -147,13 +146,7 @@ void TileMap::parse_bin(IoDevice&& device)
 
 		// TODO: reading strings from iodevice utility
 		std::string name;
-		char c;
-		while (true) {
-			device.read(c);
-			if (c == '\0')
-				break;
-			name += c;
-		}
+		device.read(name);
 
 		set.set = assetmanager.tilesets.load_file(name);
 
@@ -173,13 +166,7 @@ void TileMap::parse_bin(IoDevice&& device)
 
 		// TODO: impl name
 		std::string name;
-		char c;
-		while (true) {
-			device.read(c);
-			if (c == '\0')
-				break;
-			name += c;
-		}
+		device.read(name);
 
 		device.read(layer->m_size);
 		//if constexpr (SDL_BYTEORDER == SDL_LIL_ENDIAN) {
