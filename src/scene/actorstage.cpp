@@ -4,7 +4,7 @@
 
 #include "cog2d/scene/scene.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 ActorStage::ActorStage()
     : m_current_scene(nullptr),
@@ -46,4 +46,4 @@ void ActorStage::set_current_scene(Scene* scene)
 	m_current_scene->init();
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

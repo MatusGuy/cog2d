@@ -4,9 +4,7 @@
 
 #include <memory>
 
-#include "cog2d/util/namespacedef.hpp"
-
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 /*
 enum AssetType
@@ -49,4 +47,4 @@ public:
 	inline bool valid() { return collection != nullptr && this->get() != nullptr; }
 };
 
-COG2D_NAMESPACE_END_DECL
+}  //namespace cog2d

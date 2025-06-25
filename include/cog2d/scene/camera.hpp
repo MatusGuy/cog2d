@@ -4,7 +4,7 @@
 
 #include "cog2d/util/math/vector.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class Viewport;
 
@@ -22,4 +22,4 @@ public:
 	virtual void update() {}
 };
 
-COG2D_NAMESPACE_END_DECL
+}

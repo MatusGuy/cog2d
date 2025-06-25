@@ -1,6 +1,6 @@
 #include "tilescene.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 TileScene::TileScene()
 {
@@ -31,4 +31,4 @@ void TileScene::draw()
 	Scene::draw();
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

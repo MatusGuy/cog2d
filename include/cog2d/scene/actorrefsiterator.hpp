@@ -4,7 +4,7 @@
 
 #include "cog2d/scene/actormanager.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 struct ActorRefsIterator
 {
@@ -60,4 +60,4 @@ public:
 	reference operator*() { return *m_it; }
 };
 
-COG2D_NAMESPACE_END_DECL
+}

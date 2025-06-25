@@ -10,7 +10,7 @@
 #include "cog2d/util/fmt.hpp"
 #include "cog2d/util/currenton.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 #define COG2D_LOGGING_LEVEL(lv, name, func)                                \
 	static constexpr uint8_t name = lv;                                    \
@@ -74,4 +74,4 @@ public:
 	}
 };
 
-COG2D_NAMESPACE_END_DECL
+}

@@ -10,7 +10,7 @@
 
 #include <iterator>
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 TileLayer::TileLayer()
 {
@@ -94,4 +94,4 @@ Vector_t<int> TileLayer::get_tile_pos(int i, const Vector_t<int>& size)
 	return {i - (y * size.x), y};
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

@@ -6,7 +6,7 @@
 
 #include "cog2d/util/types.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 /*
 class Surface
@@ -25,4 +25,4 @@ private:
 };
 */
 
-COG2D_NAMESPACE_END_DECL
+}

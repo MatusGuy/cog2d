@@ -5,7 +5,7 @@
 #include "cog2d/scene/actormanager.hpp"
 #include "cog2d/program.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 Actor::Actor(bool active)
     : CollisionBody(),
@@ -41,4 +41,4 @@ void Actor::gravity()
 	m_vel.y += (m_accel.y + m_grav) * Program::get().m_delta_time;
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

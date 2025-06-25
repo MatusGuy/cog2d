@@ -4,7 +4,7 @@
 
 #include "cog2d/input/controller.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class KeyboardController : public Controller
 {
@@ -16,4 +16,4 @@ public:
 	void event(SDL_Event* ev) override;
 };
 
-COG2D_NAMESPACE_END_DECL
+}

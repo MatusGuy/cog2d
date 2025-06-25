@@ -5,7 +5,7 @@
 #include "cog2d/scene/actormanager.hpp"
 #include "cog2d/scene/collision/collisionsystem.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class Viewport;
 class ActorStage;
@@ -31,4 +31,4 @@ protected:
 	CollisionSystem m_collisionsystem;
 };
 
-COG2D_NAMESPACE_END_DECL
+}

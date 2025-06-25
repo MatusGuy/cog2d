@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 JoypadController::JoypadController(SDL_JoystickID id)
     : m_device_id(id)
@@ -44,4 +44,4 @@ void JoypadController::event(SDL_Event* ev)
 	};
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

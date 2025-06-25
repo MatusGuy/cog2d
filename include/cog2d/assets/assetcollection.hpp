@@ -14,7 +14,7 @@
 #include "cog2d/assets/asset.hpp"
 #include "cog2d/util/parsing.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 template<class A>
 class AssetCollection
@@ -72,4 +72,4 @@ public:
 	Asset<TileSet> load(std::string_view name, toml::table& data);
 };
 
-COG2D_NAMESPACE_END_DECL
+}  //namespace cog2d

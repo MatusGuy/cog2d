@@ -4,9 +4,7 @@
 
 #include <SDL_events.h>
 
-#include "cog2d/util/namespacedef.hpp"
-
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class Screen
 {
@@ -19,4 +17,4 @@ public:
 	virtual bool event(SDL_Event* ev) = 0;
 };
 
-COG2D_NAMESPACE_END_DECL
+}

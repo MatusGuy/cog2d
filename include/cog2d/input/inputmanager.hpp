@@ -11,7 +11,7 @@
 #include "cog2d/util/currenton.hpp"
 #include "cog2d/input/controller.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 struct InputAction
 {
@@ -63,4 +63,4 @@ private:
 	std::vector<Controller*> m_controllers;
 };
 
-COG2D_NAMESPACE_END_DECL
+}

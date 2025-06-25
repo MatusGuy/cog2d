@@ -2,7 +2,7 @@
 
 #include "timer.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 Timer::Timer()
     : m_start(0),
@@ -31,4 +31,4 @@ bool Timer::check()
 	return false;
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

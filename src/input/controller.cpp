@@ -7,7 +7,7 @@
 #include "cog2d/input/inputmanager.hpp"
 #include "cog2d/util/logger.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 Controller::Controller()
     : m_id(0),
@@ -52,4 +52,4 @@ bool Controller::held(uint8_t id) const
 	return m_held.at(id);
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

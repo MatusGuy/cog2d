@@ -10,7 +10,7 @@
 #include "cog2d/video/graphicsengine.hpp"
 #include "cog2d/util/logger.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 template<class A>
 Asset<A> AssetCollection<A>::add(std::string_view name, std::unique_ptr<A> asset)
@@ -105,4 +105,4 @@ Asset<TileSet> TileSetCollection::load(std::string_view name, toml::table& data)
 	return add(name, std::move(set));
 }
 
-COG2D_NAMESPACE_END_IMPL
+}  //namespace cog2d

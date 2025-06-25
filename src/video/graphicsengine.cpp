@@ -4,7 +4,7 @@
 
 #include "cog2d/program.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 void GraphicsEngine::init(ProgramSettings* settings)
 {
@@ -234,4 +234,4 @@ Color GraphicsEngine::get_current_color()
 	return resp;
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

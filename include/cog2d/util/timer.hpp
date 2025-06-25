@@ -6,7 +6,7 @@
 
 #include "cog2d/program.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class Timer
 {
@@ -29,4 +29,4 @@ public:
 	std::uint32_t m_period;
 };
 
-COG2D_NAMESPACE_END_DECL
+}

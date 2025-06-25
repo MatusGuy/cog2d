@@ -5,7 +5,7 @@
 #include <iostream>
 #include "cog2d/util/logger.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 KeyboardController::KeyboardController()
     : Controller()
@@ -44,4 +44,4 @@ void KeyboardController::event(SDL_Event* ev)
 	}
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

@@ -7,7 +7,7 @@
 #include <iostream>
 #include <ios>
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 File::File(const std::filesystem::path& path)
     : m_path(path),
@@ -72,4 +72,4 @@ int File::close()
 	return m_stream.good() ? 0 : -1;
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

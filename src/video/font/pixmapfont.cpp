@@ -9,7 +9,7 @@
 #include "cog2d/video/surface.hpp"
 #include "cog2d/video/graphicsengine.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 static constexpr std::string_view s_chars = " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
@@ -176,4 +176,4 @@ Color PixmapFont::get_pixel(Surface& surface, Vector_t<int> pos)
 	return rgba;
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

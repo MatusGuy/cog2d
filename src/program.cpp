@@ -13,7 +13,7 @@
 #include "cog2d/assets/assetmanager.hpp"
 #include "cog2d/config/config.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 Program::Program()
     : m_keep_running(true),
@@ -155,4 +155,4 @@ void Program::poll_sdl_events()
 	}
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

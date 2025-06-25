@@ -10,7 +10,7 @@
 #include "cog2d/video/color.hpp"
 #include "cog2d/video/font/font.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class Surface;
 
@@ -47,4 +47,4 @@ private:
 	static Color get_pixel(Surface& surface, Vector_t<int> pos);
 };
 
-COG2D_NAMESPACE_END_DECL
+}

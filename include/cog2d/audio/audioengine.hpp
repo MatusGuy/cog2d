@@ -8,7 +8,7 @@
 
 #include "cog2d/util/currenton.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 #define COG2D_USE_AUDIOENGINE COG2D_USING(AudioEngine, audioengine)
 class AudioEngine : public Currenton<AudioEngine>
@@ -28,4 +28,4 @@ private:
 	std::string m_error;
 };
 
-COG2D_NAMESPACE_END_DECL
+}

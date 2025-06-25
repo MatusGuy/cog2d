@@ -4,7 +4,7 @@
 
 #include "cog2d/video/graphicsengine.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 Viewport::Viewport()
     : m_region(0, 0, 0, 0),
@@ -25,4 +25,4 @@ void Viewport::set_camera(Camera* camera)
 	m_camera = camera;
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

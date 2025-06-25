@@ -8,9 +8,7 @@
 
 #include <SDL2/SDL_rwops.h>
 
-#include "cog2d/util/namespacedef.hpp"
-
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class IoDevice
 {
@@ -97,4 +95,4 @@ public:
 	virtual std::iostream* stl_stream() { return nullptr; }
 };
 
-COG2D_NAMESPACE_END_DECL
+}

@@ -4,9 +4,7 @@
 
 #include <SDL2/SDL_surface.h>
 
-#include "cog2d/util/namespacedef.hpp"
-
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class Surface
 {
@@ -26,4 +24,4 @@ private:
 	SDL_Surface* m_surface;
 };
 
-COG2D_NAMESPACE_END_DECL
+}

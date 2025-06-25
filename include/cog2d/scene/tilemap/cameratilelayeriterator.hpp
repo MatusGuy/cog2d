@@ -4,7 +4,7 @@
 
 #include "cog2d/scene/tilemap/tile.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class TileLayer;
 
@@ -111,4 +111,4 @@ private:
 	TileIds::iterator m_it;
 };
 
-COG2D_NAMESPACE_END_DECL
+}

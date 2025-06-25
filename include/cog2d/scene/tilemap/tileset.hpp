@@ -9,7 +9,7 @@
 #include "cog2d/util/parsing.hpp"
 #include "cog2d/scene/tilemap/tile.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class Texture;
 
@@ -30,4 +30,4 @@ private:
 	void parse_external(toml::table& data);
 };
 
-COG2D_NAMESPACE_END_DECL
+}  //namespace cog2d

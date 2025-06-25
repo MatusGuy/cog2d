@@ -10,7 +10,7 @@
 #include "cog2d/scene/actor.hpp"
 #include "cog2d/util/currenton.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 /*!
  * \class ActorManager
@@ -65,4 +65,4 @@ private:
 	ActorRefs m_active_actors;
 };
 
-COG2D_NAMESPACE_END_DECL
+}

@@ -10,7 +10,7 @@
 
 #include "cog2d/util/currenton.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 struct ProgramSettings;
 
@@ -84,4 +84,4 @@ private:
 	std::map<std::string, ConfigValue> m_settings;
 };
 
-COG2D_NAMESPACE_END_DECL
+}

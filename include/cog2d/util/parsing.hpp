@@ -14,7 +14,7 @@ inline auto parse(cog2d::IoDevice& stream)
 }
 }  //namespace toml
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 namespace toml_util {
 
@@ -71,4 +71,4 @@ inline toml::array& get_as_table(toml::node& node, std::string_view key)
 
 }  //namespace toml_util
 
-COG2D_NAMESPACE_END_DECL
+}

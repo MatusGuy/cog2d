@@ -4,7 +4,7 @@
 
 #include "cog2d/util/logger.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 AudioEngine::AudioEngine()
     : m_error()
@@ -42,4 +42,4 @@ void AudioEngine::play_music(Mix_Music* music, int loops)
 	}
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

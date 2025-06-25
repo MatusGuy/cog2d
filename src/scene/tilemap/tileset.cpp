@@ -5,7 +5,7 @@
 #include "cog2d/assets/assetmanager.hpp"
 #include "cog2d/util/logger.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 TileSet::TileSet()
 {
@@ -50,4 +50,4 @@ void TileSet::parse_external(toml::table& data)
 	setfile.close();
 }
 
-COG2D_NAMESPACE_END_IMPL
+}  //namespace cog2d

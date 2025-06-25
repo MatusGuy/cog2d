@@ -4,7 +4,7 @@
 
 #include "cog2d/scene/collision/collisionbody.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 /*!
  * \brief A moving object on a scene
@@ -49,4 +49,4 @@ private:
 	bool m_active;
 };
 
-COG2D_NAMESPACE_END_DECL
+}

@@ -5,11 +5,9 @@
 #include <cstdint>
 #include <vector>
 
-#include "cog2d/util/namespacedef.hpp"
-
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 using TileId = std::uint16_t;
 using TileIds = std::vector<TileId>;
 
-COG2D_NAMESPACE_END_DECL
+}

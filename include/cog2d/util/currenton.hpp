@@ -2,11 +2,9 @@
 
 #pragma once
 
-#include "cog2d/util/namespacedef.hpp"
-
 #define COG2D_USING(c, n) cog2d::c& n = cog2d::c::get()
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 /**
  * A 'Currenton' allows access to the currently active instance of a
@@ -47,4 +45,4 @@ public:                                       \
 		return *CLASS::s_instance;            \
 	}
 
-COG2D_NAMESPACE_END_DECL
+}

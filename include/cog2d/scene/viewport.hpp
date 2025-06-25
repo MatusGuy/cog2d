@@ -6,7 +6,7 @@
 #include "cog2d/scene/camera.hpp"
 #include "cog2d/util/currenton.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 #define COG2D_USE_VIEWPORT COG2D_USING(Viewport, viewport)
 #define COG2D_USE_CAMERA cog2d::Camera& camera = Viewport::get().get_camera()
@@ -28,4 +28,4 @@ private:
 	Camera* m_camera;
 };
 
-COG2D_NAMESPACE_END_DECL
+}

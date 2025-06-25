@@ -7,7 +7,7 @@
 #include "cog2d/video/graphicsengine.hpp"
 #include "cog2d/util/logger.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 CameraTileLayerIterator::CameraTileLayerIterator(TileLayer& layer, TileIds::iterator start)
     : m_layer(layer),
@@ -77,4 +77,4 @@ CameraTileLayerIterator::difference_type CameraTileLayerIterator::layer_index()
 	return std::distance(m_layer.m_tiles.begin(), m_it);
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

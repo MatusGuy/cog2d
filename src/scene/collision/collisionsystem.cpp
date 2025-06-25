@@ -5,7 +5,7 @@
 #include "cog2d/scene/actorrefsiterator.hpp"
 #include "cog2d/util/logger.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 CollisionSystem::CollisionSystem()
 {
@@ -108,4 +108,4 @@ void CollisionSystem::rect_rect(CollisionBody* a, CollisionBody* b)
 	}
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

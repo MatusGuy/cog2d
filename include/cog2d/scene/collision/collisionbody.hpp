@@ -7,7 +7,7 @@
 #include "cog2d/scene/collision/collisionsystem.hpp"
 #include "cog2d/util/math/rect.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class CollisionBody
 {
@@ -37,4 +37,4 @@ public:
 	}
 };
 
-COG2D_NAMESPACE_END_DECL
+}

@@ -4,7 +4,7 @@
 
 #include "cog2d/scene/viewport.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 Scene::Scene()
 {
@@ -32,4 +32,4 @@ void Scene::prepare_context()
 	CollisionSystem::s_current = &m_collisionsystem;
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

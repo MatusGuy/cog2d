@@ -8,7 +8,7 @@
 #include "cog2d/scene/tilemap/cameratilelayeriterator.hpp"
 #include "cog2d/util/math/vector.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 class TileSet;
 class TileMap;
 
@@ -33,4 +33,4 @@ public:
 	CameraTileLayerIterator camend();
 };
 
-COG2D_NAMESPACE_END_DECL
+}

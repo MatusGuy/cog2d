@@ -6,9 +6,7 @@
 
 #include <SDL2/SDL.h>
 
-#include "cog2d/util/namespacedef.hpp"
-
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 #define COG2D_CONTROLLER_TYPE(t) \
 public:                          \
@@ -48,4 +46,4 @@ protected:
 	std::map<uint8_t, bool> m_held;
 };
 
-COG2D_NAMESPACE_END_DECL
+}

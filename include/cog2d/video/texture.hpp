@@ -7,7 +7,7 @@
 
 #include "cog2d/util/math/vector.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class IoDevice;
 class Surface;
@@ -31,4 +31,4 @@ public:
 	Vector query_size();
 };
 
-COG2D_NAMESPACE_END_DECL
+}

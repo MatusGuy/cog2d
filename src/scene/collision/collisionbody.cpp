@@ -2,7 +2,7 @@
 
 #include "collisionbody.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 CollisionBody::CollisionBody()
     : m_bbox(0, 0, 0, 0),
@@ -24,4 +24,4 @@ void CollisionBody::apply_movement()
 	m_mov.y = 0;
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

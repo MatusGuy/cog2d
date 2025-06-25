@@ -13,7 +13,7 @@
 #include "cog2d/util/math/rect.hpp"
 #include "cog2d/util/currenton.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 struct ProgramSettings;
 
@@ -52,4 +52,4 @@ public:
 	inline const Vector_t<int>& get_logical_size() { return m_logical_size; }
 };
 
-COG2D_NAMESPACE_END_DECL
+}

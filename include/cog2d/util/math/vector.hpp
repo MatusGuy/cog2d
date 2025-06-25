@@ -18,7 +18,7 @@ struct SDL_FPoint
 };
 #endif
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 COG2D_NUMERIC_TEMPLATE(T)
 class Vector_t
@@ -133,7 +133,7 @@ public:
 };
 using Vector = Vector_t<>;
 
-COG2D_NAMESPACE_END_DECL
+}
 
 template<typename T>
 struct cog2d::fmt::formatter<cog2d::Vector_t<T>, char>

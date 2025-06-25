@@ -8,7 +8,7 @@
 #include "cog2d/util/math/rect.hpp"
 #include "cog2d/util/currenton.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class CollisionBody;
 class ActorManager;
@@ -40,4 +40,4 @@ public:
 	void rect_rect(CollisionBody* a, CollisionBody* b);
 };
 
-COG2D_NAMESPACE_END_DECL
+}

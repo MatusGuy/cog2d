@@ -11,7 +11,7 @@
 #include "cog2d/video/texture.hpp"
 #include "cog2d/util/logger.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 AssetManager::AssetManager()
     : pixmaps(),
@@ -19,4 +19,4 @@ AssetManager::AssetManager()
 {
 }
 
-COG2D_NAMESPACE_END_IMPL
+}  //namespace cog2d

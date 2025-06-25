@@ -5,7 +5,7 @@
 #include "cog2d/video/graphicsengine.hpp"
 #include "cog2d/video/surface.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 Texture* Texture::from_surface(Surface& surface)
 {
@@ -39,4 +39,4 @@ Vector Texture::query_size()
 	return m_size;
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

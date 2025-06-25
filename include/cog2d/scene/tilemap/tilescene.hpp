@@ -7,7 +7,7 @@
 #include "cog2d/scene/scene.hpp"
 #include "cog2d/scene/tilemap/tilemap.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class TileScene : public Scene
 {
@@ -22,4 +22,4 @@ public:
 	void draw() override;
 };
 
-COG2D_NAMESPACE_END_DECL
+}

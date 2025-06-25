@@ -2,11 +2,11 @@
 
 #include "camera.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 Camera::Camera()
 {
 
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

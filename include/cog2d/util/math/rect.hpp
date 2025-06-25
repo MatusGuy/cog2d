@@ -17,7 +17,7 @@ struct SDL_FRect
 };
 #endif
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 COG2D_NUMERIC_TEMPLATE(T)
 class Rect_t
@@ -145,7 +145,7 @@ public:
 };
 using Rect = Rect_t<>;
 
-COG2D_NAMESPACE_END_DECL
+}
 
 template<typename T>
 struct cog2d::fmt::formatter<cog2d::Rect_t<T>, char>

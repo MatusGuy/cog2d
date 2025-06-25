@@ -9,7 +9,7 @@
 #include "cog2d/util/parsing.hpp"
 #include "cog2d/assets/asset.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class TileMap
 {
@@ -45,4 +45,4 @@ private:
 	void parse_bin(IoDevice&& device);
 };
 
-COG2D_NAMESPACE_END_DECL
+}

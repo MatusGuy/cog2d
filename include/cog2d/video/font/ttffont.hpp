@@ -8,7 +8,7 @@
 
 #include "cog2d/video/font/font.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class TtfFont : public Font
 {
@@ -27,4 +27,4 @@ private:
 	TTF_Font* m_font;
 };
 
-COG2D_NAMESPACE_END_DECL
+}

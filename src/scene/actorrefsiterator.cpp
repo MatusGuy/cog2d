@@ -3,7 +3,7 @@
 #include "cog2d/scene/actor.hpp"
 #include "cog2d/util/logger.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 ActorRefsIterator::ActorRefsIterator(ActorRefs::iterator it, ActorRefs::iterator begin)
     : m_it(it),
@@ -27,4 +27,4 @@ ActorRefsIterator ActorRefsIterator::advance(difference_type n)
 	return *this;
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

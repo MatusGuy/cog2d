@@ -7,7 +7,7 @@
 #include "cog2d/assets/assetmanager.hpp"
 #include "cog2d/util/math/rect.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 TtfFont::TtfFont(const std::string& path, int ptsz)
 {
@@ -58,4 +58,4 @@ std::unique_ptr<Texture> TtfFont::create_text(std::string_view text)
 	return std::make_unique<Texture>(texttexture);
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

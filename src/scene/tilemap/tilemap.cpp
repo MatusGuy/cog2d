@@ -17,7 +17,7 @@
 #include "cog2d/util/logger.hpp"
 #include "cog2d/assets/assetmanager.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 TileMap::TileMap()
 {
@@ -198,4 +198,4 @@ void TileMap::parse_bin(IoDevice&& device)
 	}
 }
 
-COG2D_NAMESPACE_END_IMPL
+}  //namespace cog2d

@@ -6,7 +6,7 @@
 
 #include "cog2d/program.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 Config::Config()
 {
@@ -79,4 +79,4 @@ void Config::save(std::ofstream& cfgfile)
 	cfgfile << config << std::endl;
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

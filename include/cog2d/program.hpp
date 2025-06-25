@@ -6,11 +6,10 @@
 #include <stack>
 #include <cstdint>
 
-#include "cog2d/util/namespacedef.hpp"
 #include "cog2d/input/inputmanager.hpp"
 #include "screen.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 #define COG2D_MAIN(prgclass)         \
 	int main(int argc, char* argv[]) \
@@ -101,4 +100,4 @@ private:
 	void poll_sdl_events();
 };
 
-COG2D_NAMESPACE_END_DECL
+}

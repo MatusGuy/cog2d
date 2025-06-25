@@ -7,7 +7,7 @@
 
 #include "cog2d/filesystem/iodevice.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 #define COG2D_FILE_TEMPLATE(defaultfile) \
 	template<class F = defaultfile, class = std::enable_if_t<std::is_base_of_v<File, F>>>
@@ -33,4 +33,4 @@ public:
 	std::iostream* stl_stream() override { return &m_stream; }
 };
 
-COG2D_NAMESPACE_END_DECL
+}  //namespace cog2d

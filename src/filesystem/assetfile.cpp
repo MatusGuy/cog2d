@@ -2,7 +2,7 @@
 
 #include "assetfile.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 AssetFile::AssetFile(const std::filesystem::path& path)
     : File(path)
@@ -30,4 +30,4 @@ int AssetFile::open(OpenMode mode)
 	return File::open(mode);
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

@@ -4,7 +4,7 @@
 
 #include "cog2d/filesystem/file.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class AssetFile : public File
 {
@@ -14,4 +14,4 @@ public:
 	int open(OpenMode mode) override;
 };
 
-COG2D_NAMESPACE_END_DECL
+}

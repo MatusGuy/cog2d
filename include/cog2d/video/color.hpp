@@ -13,7 +13,7 @@ struct SDL_Color
 };
 #endif
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 class Color : public SDL_Color
 {
@@ -44,4 +44,4 @@ public:
 	}
 };
 
-COG2D_NAMESPACE_END_DECL
+}

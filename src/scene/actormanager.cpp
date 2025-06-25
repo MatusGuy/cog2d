@@ -5,7 +5,7 @@
 #include "cog2d/util/logger.hpp"
 #include "cog2d/scene/actorrefsiterator.hpp"
 
-COG2D_NAMESPACE_BEGIN_IMPL
+namespace cog2d {
 
 ActorManager::ActorManager()
     : m_actors()
@@ -71,4 +71,4 @@ void ActorManager::notify_activity(Actor* actor)
 	}
 }
 
-COG2D_NAMESPACE_END_IMPL
+}

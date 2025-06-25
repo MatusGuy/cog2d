@@ -10,7 +10,7 @@
 #include "cog2d/assets/assetcollection.hpp"
 #include "cog2d/util/currenton.hpp"
 
-COG2D_NAMESPACE_BEGIN_DECL
+namespace cog2d {
 
 #define COG2D_USE_ASSETMANAGER COG2D_USING(AssetManager, assetmanager)
 class AssetManager : public Currenton<AssetManager>
@@ -23,4 +23,4 @@ public:
 	AssetManager();
 };
 
-COG2D_NAMESPACE_END_DECL
+}  //namespace cog2d
