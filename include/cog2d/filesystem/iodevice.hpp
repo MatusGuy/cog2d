@@ -3,6 +3,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <ios>
 
 #include <SDL2/SDL_rwops.h>
@@ -36,10 +37,32 @@ public:
 	virtual bool is_open() = 0;
 	virtual std::int64_t size() = 0;
 	virtual std::int64_t seek(std::int64_t offset, SeekPos seekpos) = 0;
-	virtual std::int64_t tell() = 0;
 	virtual std::size_t read(void* ptr, std::size_t size, std::size_t maxnum) = 0;
 	virtual std::size_t write(const void* ptr, std::size_t size, std::size_t num) = 0;
 	virtual int close() = 0;
+
+	virtual std::int64_t tell();
+	virtual bool eof();
+
+	template<class T>
+	inline std::size_t read(T& ref, std::size_t maxnum = 1)
+	{
+		return read(static_cast<void*>(&ref), sizeof(T), maxnum);
+	}
+
+	template<class T>
+	inline std::size_t read(std::basic_string<T>& ref)
+	{
+		T c;
+		while (true) {
+			read(c);
+			if (c == 0)
+				break;
+			ref += c;
+		}
+
+		return ref.size() + 1;
+	}
 
 	virtual SDL_RWops* to_sdl();
 
@@ -70,6 +93,8 @@ public:
 		auto dev = static_cast<IoDevice*>(context->hidden.unknown.data1);
 		return dev->close();
 	}
+
+	virtual std::iostream* stl_stream() { return nullptr; }
 };
 
 COG2D_NAMESPACE_END_DECL

@@ -8,6 +8,16 @@ IoDevice::~IoDevice()
 {
 }
 
+std::int64_t IoDevice::tell()
+{
+	return seek(0, SEEKPOS_CURSOR);
+}
+
+bool IoDevice::eof()
+{
+	return tell() == size();
+}
+
 SDL_RWops* IoDevice::to_sdl()
 {
 	auto result = new SDL_RWops;

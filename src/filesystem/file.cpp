@@ -56,12 +56,7 @@ std::int64_t File::tell()
 
 std::size_t File::read(void* ptr, std::size_t size, std::size_t maxnum)
 {
-	try {
-		m_stream.read(static_cast<char*>(ptr), size * maxnum);
-	} catch (const std::ios::failure& f) {
-		COG2D_LOG_ERROR("File", f.what());
-	}
-
+	m_stream.read(static_cast<char*>(ptr), size * maxnum);
 	return m_stream.gcount();
 }
 

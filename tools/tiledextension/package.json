@@ -1,25 +1,25 @@
 {
-  "name": "cog2d_tiled_extension",
-  "version": "0.0.0",
-  "description": "Tiled plugin meant for use with tilemap-enabled cog2d projects.",
-  "main": "src/index.ts",
-  "scripts": {
-    "build": "webpack",
-    "patchjs": "webpack && mkdir -p dist && cp build/index.js dist/index.js && patch dist/index.js < patching/dist.patch",
-    "test": "pnpm patchjs && cp dist/index.js ~/.config/tiled/extensions/leveltest.js && tiled"
-  },
-  "keywords": [],
-  "author": "Tulpenkiste",
-  "license": "GPL-3.0-only",
-  "packageManager": "pnpm@10.10.0",
-  "devDependencies": {
-    "@mapeditor/tiled-api": "^1.11.0",
-    "ts-loader": "^9.5.2",
-    "typescript": "^5.8.3",
-    "webpack": "^5.99.8",
-    "webpack-cli": "^6.0.1"
-  },
-  "dependencies": {
-    "smol-toml": "^1.3.4"
-  }
+	"name": "cog2d_tiled_extension",
+	"version": "0.0.0",
+	"description": "Tiled plugin meant for use with tilemap-enabled cog2d projects.",
+	"main": "src/index.ts",
+	"scripts": {
+		"build": "webpack",
+		"patchjs": "webpack && mkdir -p dist && cp build/index.js dist/index.js && patch dist/index.js < patching/dist.patch",
+		"test": "pnpm patchjs && cp dist/index.js ~/.config/tiled/extensions/cog2d_tiled_extension.js && tiled"
+	},
+	"keywords": [],
+	"author": "Tulpenkiste",
+	"license": "GPL-3.0-only",
+	"packageManager": "pnpm@10.10.0",
+	"devDependencies": {
+		"@mapeditor/tiled-api": "^1.11.0",
+		"ts-loader": "^9.5.2",
+		"typescript": "^5.8.3",
+		"webpack": "^5.99.8",
+		"webpack-cli": "^6.0.1"
+	},
+	"dependencies": {
+		"smol-toml": "^1.3.4"
+	}
 }

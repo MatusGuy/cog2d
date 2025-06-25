@@ -6,7 +6,7 @@
 #include <vector>
 #include <variant>
 
-#include <nlohmann/json.hpp>
+#include <toml++/toml.hpp>
 
 #include "cog2d/util/currenton.hpp"
 
@@ -14,7 +14,7 @@ COG2D_NAMESPACE_BEGIN_DECL
 
 struct ProgramSettings;
 
-using ConfigValue = std::variant<int*, float*, std::string*, bool*>;
+using ConfigValue = std::variant<std::int64_t*, double*, std::string*, bool*>;
 
 struct ConfigSetting
 {

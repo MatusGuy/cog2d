@@ -1,0 +1,19 @@
+{
+	"$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+	"dependencies": [
+		"sdl2",
+		"sdl2-image",
+		"sdl2-ttf",
+		"sdl2-mixer",
+		"tomlplusplus"
+	],
+	"features": {
+		"fmt": {
+			"description": "Use fmt instead of std::format (must also pass -DCOG2D_USE_FMT=ON)",
+			"dependencies": [
+				"fmt"
+			]
+		}
+	},
+	"default-features": ["nonwasm"]
+}

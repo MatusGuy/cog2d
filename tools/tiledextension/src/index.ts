@@ -1,24 +1,24 @@
 /// <reference types="@mapeditor/tiled-api" />
 import TOML from "smol-toml";
 
-const TEMP_LEVEL_PATHS = {
-	windows: {
-		mapExport: "~/AppData/Local/Temp/test.toml"
-	},
-	unix: {
-		mapExport: "~/.cache/test.toml"
-	}
-};
-
 // @ts-ignore
-const PLATFORM_KEY = File.exists("C:/Windows/System32/KERNELBASE.dll") ? "windows" : "unix";
+const PLATFORM = File.exists("C:/Windows/System32/KERNELBASE.dll") ? "windows" : "unix";
 
-// Settings
+// - Settings
 const SETTING_EXE_PATH = "cog2d.executable"
 const SETTING_MAP_COMPRESS = "cog2d.mapCompress"
+const SETTING_EMBED_TILESETS = "cog2d.embedTilesets"
 
-type TomlTileset = Object & {
-	firstgid: number;
+// - Actions
+const ACTION_TEST = "cog2d.TestMap"
+
+// Types
+type TomlDocument = Object & {
+	type: string;
+	version: number
+}
+
+type TomlTileSetData = Object & {
 	tilewidth: number;
 	tileheight: number;
 	columns: number;
@@ -26,7 +26,13 @@ type TomlTileset = Object & {
 	image: string;
 };
 
-type TomlLayer = Object & {
+type TomlTileSetDocument = TomlDocument & Partial<TomlTileSetData>;
+
+type TomlEmbeddedTileSet = Object & {
+	firstgid: number;
+} & Partial<{ source: string }> & Partial<TomlTileSetData>;
+
+type TomlTileLayer = Object & {
 	name: string;
 	type: "tilelayer";
 	width: number;
@@ -35,35 +41,87 @@ type TomlLayer = Object & {
 	data: number[];
 };
 
-type TomlData = Object & {
-	tilesets: TomlTileset[];
-	layers: TomlLayer[];
+type TomlTileMapDocument = TomlDocument & {
+	tilesets: TomlEmbeddedTileSet[];
+	layers: TomlTileLayer[];
 };
 
-function writeTiles(layer: TileLayer, data: number[]) {
-	for (var y = 0; y < layer.height; ++y) {
-		for (var x = 0; x < layer.width; ++x) {
-			var id = layer.cellAt(x, y).tileId;
+let process = new Process();
 
-			if (id == -1)
-				id = 0;
-
-			data.push(id);
-		}
+function getTempPath(): string {
+	switch (PLATFORM) {
+	case "windows": return process.getEnv("APPDATA") + "/Temp/";
+	case "unix": return "/tmp/";
 	}
 }
 
+function getPathFileName(path: string): string {
+	const matches = path.match(/[^\\/]+$/);
+	return matches != null ? matches[0] : "";
+}
+
+function getPathBaseName(path: string): string {
+	const matches = path.match(/[^\\/]+(?=\..*$)/);
+	return matches != null ? matches[0] : "";
+}
+
+function getTilesetData(tileset: Tileset): TomlTileSetData {
+	const imgpath = getPathFileName(tileset.imageFileName);
+
+	return {
+		tilewidth: tileset.tileWidth,
+		tileheight: tileset.tileHeight,
+		columns: tileset.columnCount,
+		imageheight: tileset.imageHeight,
+		image: imgpath,
+	};
+};
+
+let tomlSet: ScriptedTilesetFormat = {
+	name: "cog2d TOML Tileset",
+	extension: "toml",
+
+	write: function (tileset: Tileset, fileName: string): string | undefined {
+		let doc: TomlTileSetDocument = {
+			type: "tileset",
+			version: 1
+		};
+
+		Object.assign(doc, getTilesetData(tileset));
+
+		let file = new TextFile(fileName, TextFile.WriteOnly);
+		file.write(TOML.stringify(doc));
+		file.commit();
+
+		return undefined;
+	}
+};
+tiled.registerTilesetFormat("c2tomlset", tomlSet);
+
+function getTileId(layer: TileLayer, x: number, y: number): number {
+	const tile = layer.tileAt(x, y);
+	const firstgid = tile != null ? tile.tileset.property("cog2d._firstgid") as number : 0;
+	return tile != null ? tile.id + firstgid : 0;
+}
+
+function writeTiles(layer: TileLayer, data: number[]) {
+	for (let y = 0; y < layer.height; ++y) {
+		for (let x = 0; x < layer.width; ++x) {
+			const id = getTileId(layer, x, y);
+			data.push(id);
+		}
+	}
+};
+
 function writeTilesCompressed(layer: TileLayer, data: number[]) {
-	// Don't trust this function
-	var repeatid = 0;
-	var repeats = 1;
+	tiled.warn("Compressed tiles are currently not supported by cog2d.", () => {});
 
-	for (var y = 0; y < layer.height; ++y) {
-		for (var x = 0; x < layer.width; ++x) {
-			var id = layer.cellAt(x, y).tileId;
+	let repeatid = 0;
+	let repeats = 1;
 
-			if (id == -1)
-				id = 0;
+	for (let y = 0; y < layer.height; ++y) {
+		for (let x = 0; x < layer.width; ++x) {
+			const id = getTileId(layer, x, y);
 
 			if (repeatid == id) {
 				repeats++;
@@ -79,69 +137,74 @@ function writeTilesCompressed(layer: TileLayer, data: number[]) {
 			repeatid = id;
 		}
 	}
-}
+};
 
-// Map Format
-var tomlMap: ScriptedMapFormat = {
+// Map Formats
+let tomlMap: ScriptedMapFormat = {
 	name: "cog2d TOML Map",
 	extension: "toml",
 
 	write: function (map: TileMap, fileName: string): string | undefined {
-		var fileDat: TomlData = {
+		let fileDat: TomlTileMapDocument = {
+			type: "tilemap",
+			version: 1,
 			tilesets: [],
 			layers: [],
 		};
 
-		var nextGid = 1;
+		let nextGid = 1;
 
-		var usedTilesets = map.usedTilesets();
+		let usedTilesets = map.usedTilesets();
 
-		for (var setIndex = 0; setIndex < usedTilesets.length; setIndex++) {
-			var activeSet = usedTilesets[setIndex];
+		for (let setIndex = 0; setIndex < usedTilesets.length; setIndex++) {
+			let activeSet = usedTilesets[setIndex];
+			let setData: TomlEmbeddedTileSet = {
+				firstgid: nextGid
+			}
 
-			fileDat.tilesets.push({
-				firstgid: nextGid,
-				tilewidth: activeSet.tileWidth,
-				tileheight: activeSet.tileHeight,
-				columns: activeSet.columnCount,
-				imageheight: activeSet.imageHeight,
-				image: activeSet.imageFileName,
-			});
+			if (tiled.project.property(SETTING_EMBED_TILESETS)) {
+				Object.assign(setData, getTilesetData(activeSet));
+			} else {
+				setData.source = getPathFileName(activeSet.fileName);
+			}
 
+			activeSet.setProperty("cog2d._firstgid", nextGid);
 			nextGid += activeSet.tileCount;
 
-			tiled.log(`Processed tileset '${setIndex}'`)
+			fileDat.tilesets.push(setData)
+
+			tiled.log(`Processed tileset '${setIndex}'\nResult: ${TOML.stringify(setData)}`);
 		}
 
-		for (var layerIndex = 0; layerIndex < map.layerCount; layerIndex++) {
-			var fakelayer: Layer = map.layerAt(layerIndex);
+		for (let layerIndex = 0; layerIndex < map.layerCount; layerIndex++) {
+			let layer: Layer = map.layerAt(layerIndex);
 
-			if (!fakelayer.isTileLayer) {
+			if (!layer.isTileLayer) {
 				tiled.log(`Processed tilemap layer '${layerIndex}' with early return`)
 				continue;
 			}
 
-			var layer: TileLayer = fakelayer as TileLayer;
+			let tilelayer: TileLayer = layer as TileLayer;
 
-			var data: TomlLayer = {
-				name: layer.name,
+			let data: TomlTileLayer = {
+				name: tilelayer.name,
 				type: "tilelayer",
-				width: layer.width,
-				height: layer.height,
+				width: tilelayer.width,
+				height: tilelayer.height,
 				data: []
 			};
 
 			if (tiled.project.property(SETTING_MAP_COMPRESS))
-				writeTilesCompressed(layer, data.data);
+				writeTilesCompressed(tilelayer, data.data);
 			else
-				writeTiles(layer, data.data);
+				writeTiles(tilelayer, data.data);
 
 			fileDat.layers.push(data);
 
 			tiled.log(`Processed tilemap layer '${layerIndex}'`)
 		}
 
-		var file = new TextFile(fileName, TextFile.WriteOnly);
+		let file = new TextFile(fileName, TextFile.WriteOnly);
 		file.write(TOML.stringify(fileDat));
 		file.commit();
 
@@ -149,13 +212,118 @@ var tomlMap: ScriptedMapFormat = {
 	},
 };
 
-tiled.registerMapFormat("toml", tomlMap);
+tiled.registerMapFormat("c2tomlmap", tomlMap);
+
+type ObjectSize = 1 | 2 | 4;
+
+class BinaryFileStream {
+	file: BinaryFile
+
+	constructor(file: BinaryFile) {
+		this.file = file;
+	}
+
+	write_array(data: number[], size: ObjectSize, unsigned: boolean) {
+		let buf = new ArrayBuffer(data.length * size);
+		let arr: any = null;
+		if (unsigned) {
+			switch (size) {
+			case 1: arr = new Uint8Array(buf); break;
+			case 2: arr = new Uint16Array(buf); break;
+			case 4: arr = new Uint32Array(buf); break;
+			}
+		} else {
+			switch (size) {
+			case 1: arr = new Int8Array(buf); break;
+			case 2: arr = new Int16Array(buf); break;
+			case 4: arr = new Int32Array(buf); break;
+			}
+		}
+
+		arr.set(data, 0);
+		this.file.write(buf);
+	}
+
+	write_object(data: number, size: ObjectSize, unsigned: boolean) {
+		this.write_array([data], size, unsigned);
+	}
+
+	write_string(data: string) {
+		const arr = Array.from(data + "\0").map(char => char.charCodeAt(0));
+		this.write_array(arr, 1, true);
+	}
+}
+
+let binMap: ScriptedMapFormat = {
+	name: "cog2d Binary Map",
+	extension: "dat",
+
+	write: function (map: TileMap, fileName: string): string | undefined {
+		let buf = new ArrayBuffer(2);
+		let out = new BinaryFileStream(new BinaryFile(fileName, BinaryFile.WriteOnly));
+
+		// Header
+		//                  C     2     M
+		out.write_array([0x43, 0x32, 0x4D], 1, true);
+
+		// Version
+		out.write_object(1, 2, true);
+
+		let nextGid = 1;
+		let usedTilesets = map.usedTilesets();
+
+		// There can only be one tilesize per map.
+		out.write_object(usedTilesets[0].tileWidth, 2, true);
+		out.write_object(usedTilesets[0].tileHeight, 2, true);
+
+		for (let setIndex = 0; setIndex < usedTilesets.length; setIndex++) {
+			let activeSet = usedTilesets[setIndex];
+			out.write_object(nextGid, 2, true);
+			out.write_string(getPathBaseName(activeSet.fileName) + ".toml");
+
+			activeSet.setProperty("cog2d._firstgid", nextGid);
+			nextGid += activeSet.tileCount;
+		}
+		out.write_object(0, 2, true);
+
+		for (let layerIndex = 0; layerIndex < map.layerCount; layerIndex++) {
+			let layer: Layer = map.layerAt(layerIndex);
+
+			if (!layer.isTileLayer) {
+				continue;
+			}
+
+			let tilelayer: TileLayer = layer as TileLayer;
+
+			out.write_object(tilelayer.isTileLayer ? 0 : 1, 1, true);
+			out.write_string(tilelayer.name);
+			out.write_object(tilelayer.width, 4, true);
+			out.write_object(tilelayer.height, 4, true);
+
+			let tiles: number[] = [];
+			let compress = tiled.project.property(SETTING_MAP_COMPRESS) as boolean;
+			if (compress)
+				writeTilesCompressed(tilelayer, tiles);
+			else
+				writeTiles(tilelayer, tiles);
+
+			out.write_array(tiles, 2, !compress);
+		}
+
+		out.file.commit();
+
+		return undefined;
+	},
+};
+
+tiled.registerMapFormat("c2map", binMap);
 
 // Playtest
-var process: Process | null = null;
+let testing: boolean = false;
 
 function tryTest(_action: Action) {
 	const program = tiled.project.property(SETTING_EXE_PATH) as string;
+
 	// @ts-ignore
 	if (!File.exists(program)) {
 		tiled.error(`Could not find executable: "${program}"\n` +
@@ -166,7 +334,7 @@ function tryTest(_action: Action) {
 		return;
 	}
 
-	if (process != null)
+	if (testing)
 		return;
 
 	if (!tiled.activeAsset) {
@@ -186,10 +354,9 @@ function tryTest(_action: Action) {
 
 	//tiled.activeAsset.save();
 
-	process = new Process();
+	testing = true;
 
-	const tempPath = TEMP_LEVEL_PATHS[PLATFORM_KEY]["mapExport"].replace('~',
-	                                                                     process.getEnv("HOME"));
+	const tempPath = getTempPath();
 	tiled.log(`Temporary level path: ${tempPath}`);
 
 	tomlMap.write(tiled.activeAsset as TileMap, tempPath);
@@ -200,16 +367,16 @@ function tryTest(_action: Action) {
 }
 
 function endTest(_action: Action) {
-	if (process == null)
+	if (!testing)
 		return;
 
 	process.terminate();
 
-	process = null;
+	testing = false;
 }
 
 function testMap(action: Action) {
-	if (process != null)
+	if (testing)
 		endTest(action);
 
 	tryTest(action);
@@ -217,7 +384,7 @@ function testMap(action: Action) {
 
 // Setup Actions
 
-const testAction: Action = tiled.registerAction("LevelTest", testMap);
+const testAction: Action = tiled.registerAction("cog2d.LevelTest", testMap);
 
 testAction.text = "Test Level/Map";
 testAction.checkable = false;
@@ -225,7 +392,7 @@ testAction.shortcut = "F5";
 testAction.enabled = false;
 
 tiled.extendMenu("Map", [
-	{ action: "LevelTest", before: "MapProperties" },
+    { action: "cog2d.LevelTest", before: "MapProperties" },
 	{ separator: true, before: "MapProperties" },
 ]);
 
@@ -238,8 +405,11 @@ tiled.activeAssetChanged.connect((asset: Asset) => {
 
 const EMPTY_PATH = tiled.filePath("");
 
-if (tiled.project.property(SETTING_EXE_PATH) == undefined)
+if (tiled.project.property(SETTING_EXE_PATH) === undefined)
 	tiled.project.setProperty(SETTING_EXE_PATH, EMPTY_PATH);
 
-if (tiled.project.property(SETTING_MAP_COMPRESS) == undefined)
+if (tiled.project.property(SETTING_MAP_COMPRESS) === undefined)
 	tiled.project.setProperty(SETTING_MAP_COMPRESS, false);
+
+if (tiled.project.property(SETTING_EMBED_TILESETS) === undefined)
+	tiled.project.setProperty(SETTING_EMBED_TILESETS, true);
