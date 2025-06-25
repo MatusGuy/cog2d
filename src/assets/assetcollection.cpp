@@ -89,7 +89,10 @@ Asset<TileSet> TileSetCollection::load(std::string_view name, IoDevice& device)
 	if (!device.is_open())
 		device.open(IoDevice::OPENMODE_READ);
 
-	toml::table data = toml::parse(std::move(device));
+	toml::table data = toml::parse(device);
+
+	device.close();
+
 	return load(name, data);
 }
 

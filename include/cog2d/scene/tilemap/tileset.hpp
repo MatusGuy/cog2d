@@ -23,11 +23,11 @@ public:
 public:
 	TileSet();
 
-	void load(const toml::table& data);
+	void load(toml::table& data);
 
 private:
-	void parse(const toml::table& data);
-	void parse_external(const toml::table& data);
+	void parse(toml::table& data);
+	void parse_external(toml::table& data);
 };
 
 COG2D_NAMESPACE_END_DECL

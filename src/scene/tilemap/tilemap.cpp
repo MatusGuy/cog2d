@@ -33,7 +33,7 @@ void TileMap::load(std::filesystem::path path)
 		parse_bin(std::move(file));
 	} else {
 		file.open(AssetFile::OPENMODE_READ);
-		toml::table data = toml::parse(std::move(file));
+		toml::table data = toml::parse(file);
 		parse_toml(data);
 	}
 
@@ -62,43 +62,46 @@ void TileMap::parse_toml(toml::table& data)
 {
 	COG2D_USE_ASSETMANAGER;
 
-	toml::array& sets = *data["tilesets"].as_array();
+	using namespace toml_util;
+
+	toml::array& sets = get_as_array(data, "tilesets");
 
 	for (toml::array::iterator it = sets.begin(); it != sets.end(); ++it) {
 		TileSetRef set;
 
-		toml::table& setdata = *(*it).as_table();
-		set.firstgid = static_cast<TileId>(setdata.get_as<std::int64_t>("firstgid")->value_or(1));
+		toml::table& setdata = as_table(*it);
+		set.firstgid = static_cast<TileId>(get_as<std::int64_t>(setdata, "firstgid"));
 
 		// TODO: support embedded tileset
-		std::string path = setdata.get_as<std::string>("source")->value_or("");
+		std::string path = get_as<std::string>(setdata, "source");
 		set.set = assetmanager.tilesets.load_file(path);
 
 		m_sets.push_back(set);
 	}
 
-	toml::array& layers = *data["layers"].as_array();
+	toml::array& layers = get_as_array(data, "layers");
 
 	for (toml::array::iterator it = layers.begin(); it != layers.end(); ++it) {
 		auto layer = std::make_unique<TileLayer>();
 		layer->m_map = this;
 
-		toml::table& layerdata = *(*it).as_table();
+		toml::table& layerdata = as_table(*it);
 
-		if (*layerdata["type"].as_string() != "tilelayer")
+		std::string type = get_as<std::string>(layerdata, "type");
+		if (type != "tilelayer")
 			continue;
 
-		toml::array& tiles = *layerdata["data"].as_array();
+		toml::array& tiles = get_as_array(layerdata, "data");
 
-		layer->m_size.x = static_cast<int>(layerdata.get_as<std::int64_t>("width")->value_or(0));
-		layer->m_size.y = static_cast<int>(layerdata.get_as<std::int64_t>("height")->value_or(0));
+		layer->m_size.x = static_cast<int>(get_as<std::int64_t>(layerdata, "width"));
+		layer->m_size.y = static_cast<int>(get_as<std::int64_t>(layerdata, "height"));
 
 		layer->m_tiles.reserve(layer->m_size.x * layer->m_size.y);
 
 		// HACK: Terrible, isn't it? Don't worry. The format will be replaced with binary soon
 		// anyway.
 		for (toml::array::iterator it = tiles.begin(); it != tiles.end(); ++it) {
-			layer->m_tiles.push_back(static_cast<TileId>((*it).as_integer()->value_or(0)));
+			layer->m_tiles.push_back(static_cast<TileId>(as<std::int64_t>(*it)));
 		}
 
 		m_layers.push_back(std::move(layer));

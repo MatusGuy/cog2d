@@ -5,17 +5,70 @@
 #include <toml++/toml.hpp>
 
 #include "cog2d/filesystem/iodevice.hpp"
+#include "cog2d/util/fmt.hpp"
 
 namespace toml {
-inline auto parse(cog2d::IoDevice&& stream)
+inline auto parse(cog2d::IoDevice& stream)
 {
-	if (!stream.is_open())
-		stream.open(cog2d::IoDevice::OPENMODE_READ);
-
-	auto out = parse(*stream.stl_stream());
-
-	stream.close();
-
-	return out;
+	return parse(*stream.stl_stream());
 }
 }  //namespace toml
+
+COG2D_NAMESPACE_BEGIN_DECL
+
+namespace toml_util {
+
+template<class T>
+inline T as(toml::node& node)
+{
+	if (!node.is<T>())
+		throw std::runtime_error("Attempted to use node with wrong type");
+
+	return node.value<T>().value();
+}
+
+inline toml::array& as_array(toml::node& node)
+{
+	if (!node.is_array())
+		throw std::runtime_error("Attempted to use node with wrong type array");
+
+	return *node.as_array();
+}
+
+inline toml::table& as_table(toml::node& node)
+{
+	if (!node.is_table())
+		throw std::runtime_error("Attempted to use node with wrong type table");
+
+	return *node.as_table();
+}
+
+inline toml::node& get(toml::node& node, std::string_view key)
+{
+	toml::table& table = as_table(node);
+
+	if (!table.contains(key))
+		throw std::runtime_error(fmt::format("Could not find key '{}'", key));
+
+	return table.at(key);
+}
+
+template<class T>
+inline T get_as(toml::node& node, std::string_view key)
+{
+	return as<T>(get(node, key));
+}
+
+inline toml::array& get_as_array(toml::node& node, std::string_view key)
+{
+	return as_array(get(node, key));
+}
+
+inline toml::array& get_as_table(toml::node& node, std::string_view key)
+{
+	return as_array(get(node, key));
+}
+
+}  //namespace toml_util
+
+COG2D_NAMESPACE_END_DECL
