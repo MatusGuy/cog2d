@@ -74,6 +74,8 @@ Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
 		return {};
 	}
 
+	device.close();
+
 	return add(name, std::make_unique<Texture>(texture));
 }
 
