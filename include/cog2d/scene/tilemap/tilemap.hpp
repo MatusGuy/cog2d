@@ -6,7 +6,7 @@
 
 #include "cog2d/scene/tilemap/tileset.hpp"
 #include "cog2d/scene/tilemap/tilelayer.hpp"
-#include "cog2d/util/parsing.hpp"
+#include "cog2d/filesystem/document/documentnode.hpp"
 #include "cog2d/assets/asset.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
@@ -41,7 +41,7 @@ public:
 	TileSetRef& get_tileset(TileId tileid);
 
 private:
-	void parse_toml(toml::table& table);
+	void parse_toml(TomlDocument& table);
 	void parse_bin(IoDevice&& device);
 };
 

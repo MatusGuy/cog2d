@@ -5,6 +5,8 @@
 #include <fstream>
 
 #include "cog2d/program.hpp"
+#include "cog2d/filesystem/file.hpp"
+#include "cog2d/filesystem/document/tomldocument.hpp"
 
 COG2D_NAMESPACE_BEGIN_IMPL
 
@@ -19,7 +21,10 @@ void Config::init(const ProgramSettings* prgsettings)
 	std::filesystem::path cfgpath = get_config_path(prgsettings);
 
 	if (std::filesystem::exists(cfgpath)) {
-		std::ifstream cfgfile(cfgpath);
+		File cfgfile(cfgpath);
+		cfgfile.open(File::OPENMODE_READ);
+
+		// TODO: Support other file formats?? Eh...
 		toml::table config = toml::parse(cfgfile);
 
 #define COG2D_READ_SETTING_CASE(e, t)                                 \
@@ -44,9 +49,12 @@ void Config::init(const ProgramSettings* prgsettings)
 				break;
 			}
 		}
+
+		cfgfile.close();
 	} else {
 		std::filesystem::create_directories(cfgpath.parent_path());
-		std::ofstream cfgfile(cfgpath);
+		File cfgfile(cfgpath);
+		cfgfile.open(File::OPENMODE_WRITE);
 		save(cfgfile);
 		cfgfile.close();
 	}
@@ -59,7 +67,7 @@ std::filesystem::path Config::get_config_path(const ProgramSettings* prgsettings
 	return prefpath / "config.toml";
 }
 
-void Config::save(std::ofstream& cfgfile)
+void Config::save(IoDevice& cfgfile)
 {
 #define COG2D_WRITE_SETTING_CASE(i, t)                 \
 	case i:                                            \
@@ -76,7 +84,8 @@ void Config::save(std::ofstream& cfgfile)
 		}
 	}
 
-	cfgfile << config << std::endl;
+	std::iostream& stream = *cfgfile.stl_stream();
+	stream << config << std::endl;
 }
 
 COG2D_NAMESPACE_END_IMPL

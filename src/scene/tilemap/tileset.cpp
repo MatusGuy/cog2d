@@ -11,7 +11,7 @@ TileSet::TileSet()
 {
 }
 
-void TileSet::load(const toml::table& data)
+void TileSet::load(TomlDocument& data)
 {
 	if (data.contains("source")) {
 		// Sorry, but your tileset data is in another castle.
@@ -22,28 +22,29 @@ void TileSet::load(const toml::table& data)
 	parse(data);
 }
 
-void TileSet::parse(const toml::table& data)
+void TileSet::parse(TomlDocument& data)
 {
-	m_tile_sz.x = *data["tilewidth"].value<int>();
-	m_tile_sz.y = *data["tileheight"].value<int>();
+	m_tile_sz.x = data["tilewidth"].as_int();
+	m_tile_sz.y = data["tileheight"].as_int();
 
-	m_set_sz.x = *data["columns"].value<int>();
-	m_set_sz.y = *data["imageheight"].value<int>() / m_tile_sz.y;
+	m_set_sz.x = data["columns"].as_int();
+	m_set_sz.y = data["imageheight"].as_int() / m_tile_sz.y;
 
-	std::filesystem::path path = *data["image"].value<std::string>();
+	std::filesystem::path path = data["image"].as_string();
 	m_texture = AssetManager::get().pixmaps.load_file(path);
 }
 
-void TileSet::parse_external(const toml::table& data)
+void TileSet::parse_external(TomlDocument& data)
 {
 	//m_first_gid = *data["firstgid"].value<int>();
 
-	std::filesystem::path setpath = *data["source"].value<std::string>();
+	std::filesystem::path setpath = data["source"].as_string();
 	setpath.replace_extension("toml");
 
 	AssetFile setfile(setpath);
 	setfile.open(AssetFile::OPENMODE_READ);
-	parse(toml::parse(std::move(setfile)));
+	TomlDocument doc = toml::parse(setfile);
+	parse(doc);
 	setfile.close();
 }
 

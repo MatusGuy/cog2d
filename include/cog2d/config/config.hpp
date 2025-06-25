@@ -13,6 +13,7 @@
 COG2D_NAMESPACE_BEGIN_DECL
 
 struct ProgramSettings;
+class IoDevice;
 
 using ConfigValue = std::variant<std::int64_t*, double*, std::string*, bool*>;
 
@@ -78,7 +79,7 @@ public:
 	}
 
 	std::filesystem::path get_config_path(const ProgramSettings* prgsettings);
-	void save(std::ofstream& cfgfile);
+	void save(IoDevice& cfgfile);
 
 private:
 	std::map<std::string, ConfigValue> m_settings;

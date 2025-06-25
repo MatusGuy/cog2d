@@ -6,7 +6,7 @@
 
 #include "cog2d/assets/asset.hpp"
 #include "cog2d/util/math/vector.hpp"
-#include "cog2d/util/parsing.hpp"
+#include "cog2d/filesystem/document/tomldocument.hpp"
 #include "cog2d/scene/tilemap/tile.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
@@ -23,11 +23,11 @@ public:
 public:
 	TileSet();
 
-	void load(const toml::table& data);
+	void load(TomlDocument& data);
 
 private:
-	void parse(const toml::table& data);
-	void parse_external(const toml::table& data);
+	void parse(TomlDocument& data);
+	void parse_external(TomlDocument& data);
 };
 
 COG2D_NAMESPACE_END_DECL

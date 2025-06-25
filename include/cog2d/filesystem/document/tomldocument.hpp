@@ -1,42 +1,53 @@
 #pragma once
 
+#include <iostream>
+
 #include <toml++/toml.hpp>
 
-#include "cog2d/filesystem/document/documentnode.hpp"
+#include "cog2d/filesystem/iodevice.hpp"
 
 namespace toml {
-inline auto parse(cog2d::IoDevice&& stream)
+inline auto parse(cog2d::IoDevice& stream)
 {
-	// NOTE: I don't like all this moving i'm doing...
-	return parse(*stream.stl_stream());
+	std::istream* ptr = stream.stl_stream();
+	return parse(*ptr);
 }
 }  //namespace toml
 
 COG2D_NAMESPACE_BEGIN_DECL
 
-class TomlDocument : public DocumentNode
+class TomlDocument
 {
 public:
-	static ValueType valuetype_from_tomltype(toml::node_type t);
+	TomlDocument();
+	TomlDocument(toml::node& node, bool root = true);
+	TomlDocument(toml::node&& node, bool root = true);
 
-public:
-	void load(IoDevice&& device) override;
+	void load(IoDevice& device);
 
-	std::unique_ptr<DocumentNode> get(std::string_view key) override;
-	std::unique_ptr<DocumentNode> get(int key) override;
+	TomlDocument get(std::string_view key);
+	TomlDocument get(int key);
 
-	int as_int() override;
-	float as_float() override;
-	std::string as_string() override;
-	bool as_bool() override;
+	int as_int();
+	float as_float();
+	std::string as_string();
+	bool as_bool();
 
-	bool contains(std::string_view key) override;
-	ValueType type() override;
+	bool contains(std::string_view key);
+	toml::node_type type();
+
+	toml::array::iterator abegin();
+	toml::array::iterator aend();
+
+	toml::table::iterator dbegin();
+	toml::table::iterator dend();
+
+	TomlDocument operator[](std::string_view key) { return get(key); }
+	TomlDocument operator[](int key) { return get(key); }
 
 private:
-	TomlDocument(toml::node& node, bool root = false);
-
 	toml::node_view<toml::node> m_node;
+	bool m_root;
 };
 
 COG2D_NAMESPACE_END_DECL

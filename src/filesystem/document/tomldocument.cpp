@@ -6,37 +6,30 @@
 
 COG2D_NAMESPACE_BEGIN_IMPL
 
+TomlDocument::TomlDocument()
+    : m_node(nullptr),
+      m_root(true)
+{
+}
+
 TomlDocument::TomlDocument(toml::node& node, bool root)
-    : DocumentNode(root),
-      m_node(std::move(node))
+    : m_node(std::move(node)),
+      m_root(root)
 {
 }
 
-DocumentNode::ValueType TomlDocument::valuetype_from_tomltype(toml::node_type t)
+TomlDocument::TomlDocument(toml::node&& node, bool root)
+    : m_node(node),
+      m_root(root)
 {
-	switch (t) {
-	case toml::node_type::integer:
-		return DocumentNode::VALUE_INT;
-	case toml::node_type::floating_point:
-		return DocumentNode::VALUE_FLOAT;
-	case toml::node_type::string:
-		return DocumentNode::VALUE_STRING;
-	case toml::node_type::boolean:
-		return DocumentNode::VALUE_BOOL;
-	case toml::node_type::array:
-		return DocumentNode::VALUE_ARRAY;
-	default:
-	case toml::node_type::table:
-		return DocumentNode::VALUE_DICT;
-	}
 }
 
-void TomlDocument::load(IoDevice&& device)
+void TomlDocument::load(IoDevice& device)
 {
-	m_node = toml::parse(device);
+	m_node = toml::node_view<toml::node>(toml::parse(device));
 }
 
-std::unique_ptr<DocumentNode> TomlDocument::get(std::string_view key)
+TomlDocument TomlDocument::get(std::string_view key)
 {
 	toml::node_view<toml::node> node = m_node[key];
 
@@ -45,10 +38,10 @@ std::unique_ptr<DocumentNode> TomlDocument::get(std::string_view key)
 		throw std::runtime_error(fmt::format("Could not find key '{}'", key));
 	}
 
-	return std::unique_ptr<DocumentNode>(new TomlDocument(*node.node()));
+	return TomlDocument(*node.node(), false);
 }
 
-std::unique_ptr<DocumentNode> TomlDocument::get(int key)
+TomlDocument TomlDocument::get(int key)
 {
 	if (!m_node.is_array()) {
 		throw std::runtime_error(fmt::format("Node is not of type array"));
@@ -60,7 +53,7 @@ std::unique_ptr<DocumentNode> TomlDocument::get(int key)
 		throw std::runtime_error(fmt::format("Could not find index '{}'", key));
 	}
 
-	return std::unique_ptr<DocumentNode>(new TomlDocument(*node.node()));
+	return TomlDocument(*node.node(), false);
 }
 
 int TomlDocument::as_int()
@@ -104,9 +97,45 @@ bool TomlDocument::contains(std::string_view key)
 	return m_node[key].node() != nullptr;
 }
 
-DocumentNode::ValueType TomlDocument::type()
+toml::node_type TomlDocument::type()
 {
-	return valuetype_from_tomltype(m_node.type());
+	return m_node.type();
+}
+
+toml::array::iterator TomlDocument::abegin()
+{
+	if (!m_node.is_array()) {
+		throw std::runtime_error(fmt::format("Node is not of type array"));
+	}
+
+	return m_node.as_array()->begin();
+}
+
+toml::array::iterator TomlDocument::aend()
+{
+	if (!m_node.is_array()) {
+		throw std::runtime_error(fmt::format("Node is not of type array"));
+	}
+
+	return m_node.as_array()->end();
+}
+
+toml::table::iterator TomlDocument::dbegin()
+{
+	if (!m_node.is_table()) {
+		throw std::runtime_error(fmt::format("Node is not of type dictionary"));
+	}
+
+	return m_node.as_table()->begin();
+}
+
+toml::table::iterator TomlDocument::dend()
+{
+	if (!m_node.is_table()) {
+		throw std::runtime_error(fmt::format("Node is not of type dictionary"));
+	}
+
+	return m_node.as_table()->end();
 }
 
 COG2D_NAMESPACE_END_IMPL

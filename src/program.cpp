@@ -96,7 +96,8 @@ void Program::quit()
 	graphicsengine.deinit();
 
 	if (m_settings->systems & System::SYSTEM_CONFIG) {
-		std::ofstream cfgfile(config.get_config_path(m_settings));
+		File cfgfile(config.get_config_path(m_settings));
+		cfgfile.open(File::OPENMODE_WRITE);
 		config.save(cfgfile);
 		cfgfile.close();
 	}

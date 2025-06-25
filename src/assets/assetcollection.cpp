@@ -89,11 +89,12 @@ Asset<TileSet> TileSetCollection::load(std::string_view name, IoDevice& device)
 	if (!device.is_open())
 		device.open(IoDevice::OPENMODE_READ);
 
-	toml::table data = toml::parse(std::move(device));
+	TomlDocument data;
+	data.load(device);
 	return load(name, data);
 }
 
-Asset<TileSet> TileSetCollection::load(std::string_view name, toml::table& data)
+Asset<TileSet> TileSetCollection::load(std::string_view name, TomlDocument& data)
 {
 	std::unique_ptr<TileSet> set = std::make_unique<TileSet>();
 	set->load(data);

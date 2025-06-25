@@ -12,7 +12,7 @@
 #include "cog2d/scene/tilemap/tileset.hpp"
 
 #include "cog2d/assets/asset.hpp"
-#include "cog2d/util/parsing.hpp"
+#include "cog2d/filesystem/document/tomldocument.hpp"
 
 COG2D_NAMESPACE_BEGIN_DECL
 
@@ -69,7 +69,7 @@ class TileSetCollection : public AssetCollection<TileSet>
 {
 public:
 	Asset<TileSet> load(std::string_view name, IoDevice& device) override;
-	Asset<TileSet> load(std::string_view name, toml::table& data);
+	Asset<TileSet> load(std::string_view name, TomlDocument& data);
 };
 
 COG2D_NAMESPACE_END_DECL
