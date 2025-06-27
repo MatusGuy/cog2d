@@ -9,6 +9,8 @@
 
 #include "cog2d/scene/actor.hpp"
 #include "cog2d/util/currenton.hpp"
+#include "cog2d/scene/collision/collisionsystem.hpp"
+#include "cog2d/scene/actorcontainers.hpp"
 
 namespace cog2d {
 
@@ -19,14 +21,10 @@ namespace cog2d {
  * This class controls all \ref Actor instances.
  * They are updated & drawn by the \ref Program.
  */
-
+#define COG2D_USE_ACTORMANAGER COG2D_USING(ActorManager, actormanager)
 class ActorManager : public Currenton<ActorManager>
 {
 	friend class Actor;
-
-public:
-	using Actors = std::vector<std::unique_ptr<Actor>>;
-	using ActorRefs = std::list<Actor*>;
 
 public:
 	ActorManager();
@@ -54,15 +52,20 @@ public:
 	 */
 	inline ActorRefs& get_active_actors() { return m_active_actors; }
 
+	inline CollisionSystem& colsystem() { return m_collisionsystem; }
+
 	void update();
 	void draw();
 
 private:
 	void notify_activity(Actor* actor);
 
+	void update_actor(Actor* actor);
+
 private:
 	Actors m_actors;
 	ActorRefs m_active_actors;
+	CollisionSystem m_collisionsystem;
 };
 
 }

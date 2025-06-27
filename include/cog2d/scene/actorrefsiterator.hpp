@@ -2,14 +2,14 @@
 
 #include <iterator>
 
-#include "cog2d/scene/actormanager.hpp"
+#include "cog2d/scene/actorcontainers.hpp"
 
 namespace cog2d {
 
+class Actor;
+
 struct ActorRefsIterator
 {
-	using ActorRefs = ActorManager::ActorRefs;
-
 	using iterator_category = ActorRefs::iterator::iterator_category;
 	using difference_type = ActorRefs::iterator::difference_type;
 	using value_type = ActorRefs::iterator::value_type;

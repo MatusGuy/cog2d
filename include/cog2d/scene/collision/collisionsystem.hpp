@@ -7,13 +7,14 @@
 
 #include "cog2d/util/math/rect.hpp"
 #include "cog2d/util/currenton.hpp"
+#include "cog2d/scene/actorcontainers.hpp"
 
 namespace cog2d {
 
 class CollisionBody;
 class ActorManager;
 
-class CollisionSystem : public Currenton<CollisionSystem>
+class CollisionSystem
 {
 public:
 	/// @brief A collision group.
@@ -30,14 +31,16 @@ public:
 	};
 
 public:
+	ActorManager* m_manager;
 	std::vector<Group> m_groups;
+	ActorRefs m_actors;
 
 public:
 	CollisionSystem();
 
 	void update(ActorManager& actormanager);
 
-	void rect_rect(CollisionBody* a, CollisionBody* b);
+	void rect_rect(Actor* a, Actor* b);
 };
 
 }

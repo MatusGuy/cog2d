@@ -45,11 +45,11 @@ void Controller::apply_finish()
 
 bool Controller::held(uint8_t id) const
 {
-	auto input = m_held.find(id);
-	if (input == m_held.end())
+	auto it = m_held.find(id);
+	if (it == m_held.end())
 		return false;
 
-	return m_held.at(id);
+	return it->second;
 }
 
 }

@@ -8,16 +8,23 @@
 namespace cog2d {
 
 ActorManager::ActorManager()
-    : m_actors()
+    : m_actors(),
+      m_active_actors(),
+      m_collisionsystem()
 {
+	m_collisionsystem.m_manager = this;
 }
 
 void ActorManager::add(std::unique_ptr<Actor> actor)
 {
 	Actor* ptr = actor.get();
-	m_actors.push_back(std::move(actor));
 
 	ptr->m_manager = this;
+	ptr->add_components();
+
+	m_actors.push_back(std::move(actor));
+
+	ptr->init();
 
 	if (ptr->is_active()) {
 		m_active_actors.push_back(ptr);
@@ -33,12 +40,6 @@ void ActorManager::update()
 
 		actor->update();
 
-		//// Only advance if actor is active, because if otherwise, that means it has been removed
-		//// from the active actors list, which would invalidate the iterator.
-		//if (actor->is_active())
-		//	it++;
-		//else
-		//	it = std::next(m_active_actors.begin(), idx);
 		++it;
 	}
 }
@@ -60,6 +61,7 @@ void ActorManager::notify_activity(Actor* actor)
 
 	if (actor->is_active()) {
 		m_active_actors.push_back(actor);
+
 	} else {
 		auto it = std::find(m_active_actors.begin(), m_active_actors.end(), actor);
 		if (it == m_active_actors.end()) {
@@ -70,5 +72,4 @@ void ActorManager::notify_activity(Actor* actor)
 		m_active_actors.erase(it);
 	}
 }
-
 }

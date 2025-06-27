@@ -2,9 +2,18 @@
 
 #pragma once
 
-#include "cog2d/scene/collision/collisionbody.hpp"
+#include <memory>
+
+#include "cog2d/scene/collision/collisionsystem.hpp"
+#include "cog2d/scene/actorcomponents.hpp"
+#include "cog2d/util/typetraits.hpp"
+
+#define COG2D_GET_COMPONENT(comp) \
+	(static_cast<ActorComps::comp*>(m_comps[ActorComps::comp::type].get()))
 
 namespace cog2d {
+
+class ActorManager;
 
 /*!
  * \brief A moving object on a scene
@@ -12,21 +21,25 @@ namespace cog2d {
  * It can be used to represent a player, an enemy, or
  * just a normal object in the game.
  */
-// TODO: Special type of actor without collision?
-// "Why is this inheritly bad?"
-// "Well, because, the diamond problem."
-class Actor : public CollisionBody
+class Actor
 {
 	friend class ActorManager;
 
 public:
-	Vector m_vel;
-	Vector m_accel;
-	float m_grav;
 	ActorManager* m_manager;
+
+	std::unique_ptr<ActorComps::Component> m_comps[ActorComps::COMP_COUNT];
 
 public:
 	Actor(bool active = true);
+
+	template<class T, class = BaseOf<ActorComps::Component, T>>
+	bool has_component()
+	{
+		return m_comps[T::type] != nullptr;
+	}
+
+	virtual void init() {}
 
 	/*!
 	 * Updates the position of the actor for the next frame.
@@ -45,8 +58,32 @@ public:
 
 	void gravity();
 
+	Rect get_dest();
+	void apply_movement();
+
+	virtual CollisionSystem::Response collision(Actor* other);
+
+public:
+	// The following functions crash the program if the component does not exist.
+	// And I don't care.
+
+	inline Rect& bbox() { return *COG2D_GET_COMPONENT(Geometry); }
+	inline Vector& vel() { return *COG2D_GET_COMPONENT(Velocity); }
+	inline Vector& accel() { return COG2D_GET_COMPONENT(Gravity)->accel; }
+	inline float& grav() { return COG2D_GET_COMPONENT(Gravity)->grav; }
+	inline ActorComps::Collision& col() { return *COG2D_GET_COMPONENT(Collision); }
+
+protected:
+	template<class T, class = BaseOf<ActorComps::Component, T>>
+	void add_component()
+	{
+		m_comps[T::type] = std::make_unique<T>();
+	}
+
+	virtual void add_components() = 0;
+
 private:
 	bool m_active;
 };
 
-}
+}  //namespace cog2d

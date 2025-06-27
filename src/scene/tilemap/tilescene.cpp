@@ -10,6 +10,7 @@ TileScene::TileScene()
 
 void TileScene::init()
 {
+	prepare_context();
 }
 
 void TileScene::update()

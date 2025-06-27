@@ -2,6 +2,7 @@
 
 #include "collisionsystem.hpp"
 
+#include "cog2d/scene/actor.hpp"
 #include "cog2d/scene/actorrefsiterator.hpp"
 #include "cog2d/util/logger.hpp"
 
@@ -13,14 +14,12 @@ CollisionSystem::CollisionSystem()
 
 void CollisionSystem::update(ActorManager& actormanager)
 {
-	ActorManager::ActorRefs& actors = actormanager.get_active_actors();
-
-	ActorRefsIterator it_a(actors.begin(), actors.begin());
-	while (it_a.m_it != actors.end()) {
+	ActorRefsIterator it_a(m_actors.begin(), m_actors.begin());
+	while (it_a.m_it != m_actors.end()) {
 		Actor* a = *it_a;
 
-		ActorRefsIterator it_b(std::next(actors.begin(), 1), actors.begin());
-		while (it_b.m_it != actors.end()) {
+		ActorRefsIterator it_b(std::next(m_actors.begin(), 1), m_actors.begin());
+		while (it_b.m_it != m_actors.end()) {
 			Actor* b = *it_b;
 
 			if (a == b) {
@@ -36,27 +35,30 @@ void CollisionSystem::update(ActorManager& actormanager)
 		++it_a;
 	}
 
-	for (Actor* actor : actors) {
+	for (Actor* actor : m_actors) {
 		actor->apply_movement();
 	}
 }
 
-void CollisionSystem::rect_rect(CollisionBody* a, CollisionBody* b)
+void CollisionSystem::rect_rect(Actor* a, Actor* b)
 {
+	ActorComps::Collision& col_a = a->col();
+	ActorComps::Collision& col_b = b->col();
+
 	// TODO: There should be a way to specify if the interaction should
 	// trigger if both are accepted or only one is.
-	if (!m_groups[a->m_group][b->m_group] && !m_groups[b->m_group][a->m_group])
+	if (!m_groups[col_a.group][col_b.group] && !m_groups[col_a.group][col_b.group])
 		return;
 
-	CollisionBody* target = a->m_static ? b : a;
-	CollisionBody* other = target == a ? b : a;
+	Actor* target = col_a.heavy ? b : a;
+	Actor* other = target == a ? b : a;
 
-	Rect& r1 = target->m_bbox;
-	Rect& r2 = other->m_bbox;
+	Rect& r1 = target->bbox();
+	Rect& r2 = other->bbox();
 	Rect d1 = target->get_dest();
 	Rect d2 = other->get_dest();
-	Vector oldmov1 = target->m_mov;
-	Vector oldmov2 = other->m_mov;
+	Vector oldmov1 = target->col().mov;
+	Vector oldmov2 = other->col().mov;
 
 	if (!d1.overlaps_exc(d2))
 		return;
@@ -66,7 +68,7 @@ void CollisionSystem::rect_rect(CollisionBody* a, CollisionBody* b)
 	if (resp1 == COLRESP_REJECT || resp2 == COLRESP_REJECT)
 		return;
 
-	Vector& mov = target->m_mov;
+	Vector& mov = target->col().mov;
 
 	float itop = d1.get_bottom() - d2.get_top();
 	float ibottom = d2.get_bottom() - d1.get_top();
@@ -92,18 +94,18 @@ void CollisionSystem::rect_rect(CollisionBody* a, CollisionBody* b)
 		move_horiz = true;
 	}
 
-	if (!a->m_static && !b->m_static) {
+	if (!col_a.heavy && !col_b.heavy) {
 		Vector avg = oldmov1.avg(oldmov2);
 		// if (!a->m_static)
 		//a->m_mov += avg;
 
 		// if (!b->m_static)
 		if (move_horiz) {
-			a->m_mov.x += avg.x;
-			b->m_mov.x += avg.x;
+			col_a.mov.x += avg.x;
+			col_b.mov.x += avg.x;
 		} else {
-			a->m_mov.y += avg.y;
-			b->m_mov.y += avg.y;
+			col_a.mov.y += avg.y;
+			col_b.mov.y += avg.y;
 		}
 	}
 }

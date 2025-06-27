@@ -29,7 +29,6 @@ void Scene::draw()
 void Scene::prepare_context()
 {
 	ActorManager::s_current = &m_actormanager;
-	CollisionSystem::s_current = &m_collisionsystem;
 }
 
 }

@@ -8,21 +8,20 @@
 namespace cog2d {
 
 Actor::Actor(bool active)
-    : CollisionBody(),
-      m_vel(0, 0),
-      m_accel(0, 0),
-      m_grav(0),
-      m_active(active),
+    : m_active(active),
       m_manager(nullptr)
 {
 }
 
 void Actor::update()
 {
-	if (m_grav != 0)
+	if (has_component<ActorComps::Gravity>())
 		gravity();
 
-	m_mov = m_vel;
+	if (has_component<ActorComps::Collision>())
+		col().mov = vel();
+	else if (has_component<ActorComps::Velocity>())
+		bbox().pos += vel();
 }
 
 void Actor::set_active(bool active)
@@ -36,9 +35,26 @@ void Actor::set_active(bool active)
 
 void Actor::gravity()
 {
-	// This function hates operator overloads, so just add the x and y seperately.
-	m_vel.x += m_accel.x * Program::get().m_delta_time;
-	m_vel.y += (m_accel.y + m_grav) * Program::get().m_delta_time;
+	vel().x += accel().x * Program::get().m_delta_time;
+	vel().y += (accel().y + grav()) * Program::get().m_delta_time;
 }
 
+Rect Actor::get_dest()
+{
+	Rect rect = bbox();
+	rect.pos += col().mov;
+	return rect;
+}
+
+CollisionSystem::Response Actor::collision(Actor*)
+{
+	return CollisionSystem::COLRESP_ACCEPT;
+}
+
+void Actor::apply_movement()
+{
+	bbox().pos = get_dest().pos;
+	col().mov.x = 0;
+	col().mov.y = 0;
+}
 }
