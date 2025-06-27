@@ -38,7 +38,7 @@ public:
 public:
 	CollisionSystem();
 
-	void update(ActorManager& actormanager);
+	void update();
 
 	void rect_rect(Actor* a, Actor* b);
 };

@@ -28,7 +28,6 @@ protected:
 
 protected:
 	ActorManager m_actormanager;
-	CollisionSystem m_collisionsystem;
 };
 
 }

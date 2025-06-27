@@ -12,7 +12,7 @@ CollisionSystem::CollisionSystem()
 {
 }
 
-void CollisionSystem::update(ActorManager& actormanager)
+void CollisionSystem::update()
 {
 	ActorRefsIterator it_a(m_actors.begin(), m_actors.begin());
 	while (it_a.m_it != m_actors.end()) {

@@ -16,7 +16,6 @@ void Scene::update()
 	prepare_context();
 
 	m_actormanager.update();
-	m_collisionsystem.update(m_actormanager);
 }
 
 void Scene::draw()
