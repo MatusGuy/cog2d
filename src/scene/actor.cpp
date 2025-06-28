@@ -4,8 +4,26 @@
 
 #include "cog2d/scene/actormanager.hpp"
 #include "cog2d/program.hpp"
+#include "cog2d/util/logger.hpp"
 
 namespace cog2d {
+
+namespace ActorComps {
+void Velocity::setup(Actor* actor)
+{
+	COG2D_ACTOR_COMP_DEPEND(Geometry, actor)
+}
+
+void Gravity::setup(Actor* actor)
+{
+	COG2D_ACTOR_COMP_DEPEND(Velocity, actor)
+}
+
+void Collision::setup(Actor* actor)
+{
+	COG2D_ACTOR_COMP_DEPEND(Geometry, actor)
+}
+}  //namespace ActorComps
 
 Actor::Actor(bool active)
     : m_active(active),
@@ -15,13 +33,15 @@ Actor::Actor(bool active)
 
 void Actor::update()
 {
-	if (has_component<ActorComps::Gravity>())
-		gravity();
+	if (has_component<ActorComps::Velocity>()) {
+		if (has_component<ActorComps::Gravity>())
+			gravity();
 
-	if (has_component<ActorComps::Collision>())
-		col().mov = vel();
-	else if (has_component<ActorComps::Velocity>())
-		bbox().pos += vel();
+		if (has_component<ActorComps::Collision>())
+			col().mov = vel();
+		else
+			bbox().pos += vel();
+	}
 }
 
 void Actor::set_active(bool active)

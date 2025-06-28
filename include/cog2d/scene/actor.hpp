@@ -78,6 +78,7 @@ protected:
 	void add_component()
 	{
 		m_comps[T::type] = std::make_unique<T>();
+		static_cast<T*>(m_comps[T::type].get())->setup(this);
 	}
 
 	virtual void add_components() = 0;
