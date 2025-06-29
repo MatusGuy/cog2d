@@ -1,3 +1,6 @@
+// Copyright (C) MatusGuy 2025
+// SPDX-License-Identifier: LGPL-3.0-only
+
 #include "actorrefsiterator.hpp"
 
 #include "cog2d/scene/actor.hpp"
