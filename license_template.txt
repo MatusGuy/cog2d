@@ -1,0 +1,2 @@
+// Copyright (C) %YEAR% %{Git:Config:user.name}
+// SPDX-License-Identifier: LGPL-3.0-only
