@@ -41,7 +41,7 @@ target_compile_features(cog2d PUBLIC cxx_std_${COG2D_CXX_STANDARD})
 target_include_directories(cog2d SYSTEM PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 # Get all include subdirectories so that it becomes possible to just write the name of the header
-# in implementation files.
+# in source (cpp) files.
 set(COG2D_INCLUDE_DIRECTORY ${PROJECT_SOURCE_DIR}/include)
 file(GLOB_RECURSE _cog2d_includes LIST_DIRECTORIES true ${COG2D_INCLUDE_DIRECTORY}/cog2d/*)
 list(FILTER _cog2d_includes EXCLUDE REGEX "[.][A-Za-z0-9]+$")
