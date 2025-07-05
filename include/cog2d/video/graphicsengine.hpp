@@ -41,8 +41,14 @@ public:
 	void draw_circle(Vector center, float radius, bool filled = false, Color color = 0xFFFFFFFF);
 	void draw_line(Vector a, Vector b, Color color = 0xFFFFFFFF);
 	void draw_point(Vector point, Color color = 0xFFFFFFFF);
-	void draw_texture(Rect dest, Texture* tex);
-	void draw_texture(Rect dest, Texture* tex, float angle, SDL_RendererFlip flip = SDL_FLIP_NONE);
+
+	void draw_texture(Texture* tex, Rect src, Rect dest, float angle, Vector center = {-1, -1},
+	                  SDL_RendererFlip flip = SDL_FLIP_NONE);
+	void draw_texture(Texture* tex, Rect src, Rect dest);
+	void draw_texture(Texture* tex, Rect dest, float angle, Vector center = {-1, -1},
+	                  SDL_RendererFlip flip = SDL_FLIP_NONE);
+	void draw_texture(Texture* tex, Rect dest);
+	void draw_texture(Texture* tex, Vector pos);
 
 	inline SDL_Window* get_window() { return m_window; }
 	inline SDL_Renderer* get_renderer() { return m_renderer; }

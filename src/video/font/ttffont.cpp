@@ -43,7 +43,7 @@ void TtfFont::write_text(Texture* texture, std::string_view text, const Vector& 
 	                                                   textsurface.to_sdl());
 
 	SDL_SetRenderTarget(graphicsengine.get_renderer(), texture->to_sdl());
-	graphicsengine.draw_texture(Rect(pos, texttexture.get_size()), &texttexture);
+	graphicsengine.draw_texture(&texttexture, pos);
 	SDL_SetRenderTarget(graphicsengine.get_renderer(), nullptr);
 }
 
