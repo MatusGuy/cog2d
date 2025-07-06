@@ -3,10 +3,12 @@
 
 #pragma once
 
+#include <cstdint>
+
 #include "cog2d/util/fmt.hpp"
 
-#if __has_include(<SDL2/SDL.h>)
-#include <SDL2/SDL.h>
+#if __has_include(<SDL2/SDL_pixels.h>)
+#include <SDL2/SDL_pixels.h>
 #else
 struct SDL_Color
 {
@@ -23,24 +25,30 @@ public:
 	    : SDL_Color{0, 0, 0, 0}
 	{
 	}
-	Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+
+	Color(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a)
 	    : SDL_Color{r, g, b, a}
 	{
 	}
 
 	/**
-	 * @param abgr The color in \bold abgr format (e.g. 0xFF0000FF for red)
+	 * @param rgba The color in \bold rgba format (e.g. 0xFF0000FF for red)
 	 */
-	Color(uint32_t abgr)
+	Color(std::uint32_t rgba)
 	    : SDL_Color{}
 	{
-		// wow
-		*(uint32_t*) this = abgr;
+		if constexpr (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+			*(std::uint32_t*) this = rgba;
+		else {
+			r = static_cast<std::uint8_t>(col >> 24);
+			g = static_cast<std::uint8_t>(col >> 16);
+			b = static_cast<std::uint8_t>(col >> 08);
+			a = static_cast<std::uint8_t>(col >> 00);
+		}
 	}
 
 	inline bool operator==(const Color& other)
 	{
-		// TODO: Big endian
 		return r == other.r && g == other.g && b == other.b && a == other.a;
 	}
 };
