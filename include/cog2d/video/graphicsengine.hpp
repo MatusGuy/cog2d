@@ -7,6 +7,7 @@
 #include <cmath>
 #include <memory>
 #include <string>
+#include <stack>
 
 #include "cog2d/util/currenton.hpp"
 #include "cog2d/util/math/rect.hpp"
@@ -29,6 +30,8 @@ private:
 	std::string m_error = "";
 
 	Vector_t<int> m_logical_size;
+
+	std::stack<Texture*> m_target_stack;
 
 public:
 	void init(ProgramSettings* settings);
@@ -57,6 +60,10 @@ public:
 
 	inline const std::string& get_error() { return m_error; }
 	inline const Vector_t<int>& get_logical_size() { return m_logical_size; }
+
+	void push_target(Texture* tex);
+	void pop_target();
+	inline Texture* get_target() { return m_target_stack.top(); }
 };
 
 }  // namespace cog2d

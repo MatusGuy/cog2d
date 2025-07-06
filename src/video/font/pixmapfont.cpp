@@ -105,7 +105,7 @@ void PixmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 {
 	COG2D_USE_GRAPHICSENGINE;
 
-	SDL_SetRenderTarget(graphicsengine.get_renderer(), texture->to_sdl());
+	graphicsengine.push_target(texture);
 
 	int x = pos.x;
 	for (char c : text) {
@@ -121,8 +121,7 @@ void PixmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 		x += g.width + m_horizontal_spacing;
 	}
 
-	// TODO: Target stack
-	SDL_SetRenderTarget(graphicsengine.get_renderer(), nullptr);
+	graphicsengine.pop_target();
 }
 
 std::unique_ptr<Texture> PixmapFont::create_text(std::string_view text)

@@ -65,14 +65,11 @@ void GraphicsEngine::deinit()
 
 void GraphicsEngine::pre_draw()
 {
-	SDL_RenderClear(m_renderer);
-
 	if (m_proxy) {
 		SDL_SetRenderTarget(m_renderer, m_proxy);
-		SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 0xFF);
-		SDL_Rect rect = Rect_t<int>({0, 0}, get_logical_size()).to_sdl_rect();
-		SDL_RenderFillRect(m_renderer, &rect);
 	}
+
+	SDL_RenderClear(m_renderer);
 }
 
 void GraphicsEngine::post_draw()
@@ -252,5 +249,17 @@ Color GraphicsEngine::get_current_color()
 	Color resp;
 	SDL_GetRenderDrawColor(m_renderer, &resp.r, &resp.g, &resp.b, &resp.a);
 	return resp;
+}
+
+void GraphicsEngine::push_target(Texture* tex)
+{
+	m_target_stack.push(tex);
+	SDL_SetRenderTarget(get_renderer(), m_target_stack.empty() ? nullptr : get_target()->to_sdl());
+}
+
+void GraphicsEngine::pop_target()
+{
+	m_target_stack.pop();
+	SDL_SetRenderTarget(get_renderer(), m_target_stack.empty() ? nullptr : get_target()->to_sdl());
 }
 }  //namespace cog2d
