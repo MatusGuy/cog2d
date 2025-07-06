@@ -3,16 +3,16 @@
 
 #pragma once
 
-#include <string>
+#include <SDL2/SDL.h>
 #include <cmath>
 #include <memory>
-#include <SDL2/SDL.h>
+#include <string>
 
-#include "cog2d/video/texture.hpp"
-#include "cog2d/video/font/font.hpp"
-#include "cog2d/video/color.hpp"
-#include "cog2d/util/math/rect.hpp"
 #include "cog2d/util/currenton.hpp"
+#include "cog2d/util/math/rect.hpp"
+#include "cog2d/video/color.hpp"
+#include "cog2d/video/font/font.hpp"
+#include "cog2d/video/texture.hpp"
 
 namespace cog2d {
 
@@ -42,9 +42,9 @@ public:
 	void draw_line(Vector a, Vector b, Color color = 0xFFFFFFFF);
 	void draw_point(Vector point, Color color = 0xFFFFFFFF);
 
-	void draw_texture(Texture* tex, Rect src, Rect dest, float angle, Vector center = {-1, -1},
-	                  SDL_RendererFlip flip = SDL_FLIP_NONE);
-	void draw_texture(Texture* tex, Rect src, Rect dest);
+	void draw_texture(Texture* tex, Rect_t<int> src, Rect dest, float angle,
+	                  Vector center = {-1, -1}, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	void draw_texture(Texture* tex, Rect_t<int> src, Rect dest);
 	void draw_texture(Texture* tex, Rect dest, float angle, Vector center = {-1, -1},
 	                  SDL_RendererFlip flip = SDL_FLIP_NONE);
 	void draw_texture(Texture* tex, Rect dest);
@@ -59,4 +59,4 @@ public:
 	inline const Vector_t<int>& get_logical_size() { return m_logical_size; }
 };
 
-}
+}  // namespace cog2d

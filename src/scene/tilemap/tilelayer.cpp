@@ -63,10 +63,7 @@ void TileLayer::draw()
 		dest.size = m_map->m_tile_sz;
 		dest.pos = destpos;
 
-		const SDL_Rect ssrc = src.to_sdl_rect();
-		const SDL_FRect sdest = dest.to_sdl_frect();
-		SDL_RenderCopyF(graphicsengine.get_renderer(), set->m_texture.get()->to_sdl(), &ssrc,
-		                &sdest);
+		graphicsengine.draw_texture(set->m_texture.get(), src, dest);
 
 		next_tile();
 	}
@@ -95,4 +92,4 @@ Vector_t<int> TileLayer::get_tile_pos(int i, const Vector_t<int>& size)
 	return {i - (y * size.x), y};
 }
 
-}
+}  //namespace cog2d

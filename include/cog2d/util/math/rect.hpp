@@ -47,13 +47,13 @@ public:
 		size = other.size;
 	}
 
-	inline SDL_Rect to_sdl_rect()
+	inline SDL_Rect to_sdl_rect() const
 	{
 		return {static_cast<int>(pos.x), static_cast<int>(pos.y), static_cast<int>(size.x),
 		        static_cast<int>(size.y)};
 	}
 
-	inline SDL_FRect to_sdl_frect()
+	inline SDL_FRect to_sdl_frect() const
 	{
 		return {static_cast<float>(pos.x), static_cast<float>(pos.y), static_cast<float>(size.x),
 		        static_cast<float>(size.y)};
@@ -146,7 +146,7 @@ public:
 };
 using Rect = Rect_t<>;
 
-}
+}  //namespace cog2d
 
 template<typename T>
 struct cog2d::fmt::formatter<cog2d::Rect_t<T>, char>

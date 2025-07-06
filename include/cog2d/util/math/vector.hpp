@@ -134,7 +134,7 @@ public:
 };
 using Vector = Vector_t<>;
 
-}
+}  //namespace cog2d
 
 template<typename T>
 struct cog2d::fmt::formatter<cog2d::Vector_t<T>, char>

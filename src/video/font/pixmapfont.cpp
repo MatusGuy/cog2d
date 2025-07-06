@@ -111,11 +111,11 @@ void PixmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 	for (char c : text) {
 		Glyph g = m_glyphs[c];
 		if (c != ' ') {
-			SDL_Rect src = {g.pos.x, g.pos.y, g.width, m_glyph_height};
-			SDL_Rect dest = {x, static_cast<int>(pos.y), g.width, m_glyph_height};
+			const Vector_t<int> size = {g.width, m_glyph_height};
+			const Rect_t<int> src = {g.pos, size};
+			const Rect dest = {{static_cast<float>(x), pos.y}, static_cast<Vector>(size)};
 
-			// TODO: Support RenderCopyF (lazy)
-			SDL_RenderCopy(graphicsengine.get_renderer(), m_texture->to_sdl(), &src, &dest);
+			graphicsengine.draw_texture(m_texture.get(), src, dest);
 		}
 
 		x += g.width + m_horizontal_spacing;
@@ -177,4 +177,4 @@ Color PixmapFont::get_pixel(Surface& surface, Vector_t<int> pos)
 	return rgba;
 }
 
-}
+}  //namespace cog2d

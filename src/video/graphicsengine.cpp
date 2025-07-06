@@ -194,8 +194,8 @@ void GraphicsEngine::draw_point(Vector point, Color color)
 	SDL_SetRenderDrawColor(m_renderer, currcolor.r, currcolor.g, currcolor.b, currcolor.a);
 }
 
-void GraphicsEngine::draw_texture(Texture* tex, Rect src, Rect dest, float angle, Vector center,
-                                  SDL_RendererFlip flip)
+void GraphicsEngine::draw_texture(Texture* tex, Rect_t<int> src, Rect dest, float angle,
+                                  Vector center, SDL_RendererFlip flip)
 {
 #ifdef COG2D_GRAPHICS_USE_INT
 	SDL_Point scenter = center.to_sdl_point();
@@ -219,14 +219,14 @@ void GraphicsEngine::draw_texture(Texture* tex, Rect src, Rect dest, float angle
 		scenter.y = tex->get_size().y / 2;
 	}
 
-	SDL_FRect ssrc = src.to_sdl_frect();
+	SDL_Rect ssrc = src.to_sdl_rect();
 	SDL_FRect sdest = dest.to_sdl_frect();
 	SDL_RenderCopyExF(m_renderer, tex->to_sdl(), &ssrc, &sdest, static_cast<float>(angle), &scenter,
 	                  flip);
 #endif
 }
 
-void GraphicsEngine::draw_texture(Texture* tex, Rect src, Rect dest)
+void GraphicsEngine::draw_texture(Texture* tex, Rect_t<int> src, Rect dest)
 {
 	draw_texture(tex, src, dest, 0);
 }
@@ -253,4 +253,4 @@ Color GraphicsEngine::get_current_color()
 	SDL_GetRenderDrawColor(m_renderer, &resp.r, &resp.g, &resp.b, &resp.a);
 	return resp;
 }
-}
+}  //namespace cog2d
