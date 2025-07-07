@@ -40,10 +40,10 @@ public:
 		if constexpr (SDL_BYTEORDER == SDL_BIG_ENDIAN)
 			*(std::uint32_t*) this = rgba;
 		else {
-			r = static_cast<std::uint8_t>(col >> 24);
-			g = static_cast<std::uint8_t>(col >> 16);
-			b = static_cast<std::uint8_t>(col >> 08);
-			a = static_cast<std::uint8_t>(col >> 00);
+			r = static_cast<std::uint8_t>(rgba >> 24);
+			g = static_cast<std::uint8_t>(rgba >> 16);
+			b = static_cast<std::uint8_t>(rgba >> 8);
+			a = static_cast<std::uint8_t>(rgba);
 		}
 	}
 
@@ -51,6 +51,9 @@ public:
 	{
 		return r == other.r && g == other.g && b == other.b && a == other.a;
 	}
+
+	Color inverted() { return {0xFF - r, 0xFF - g, 0xFF - b, a}; }
+	Color inverted_alpha() { return {0xFF - r, 0xFF - g, 0xFF - b, 0xFF - a}; }
 };
 
 }
