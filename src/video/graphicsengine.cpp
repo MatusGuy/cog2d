@@ -65,9 +65,10 @@ void GraphicsEngine::deinit()
 
 void GraphicsEngine::pre_draw()
 {
-	if (m_proxy) {
+	SDL_SetRenderDrawColor(get_renderer(), 0x0, 0x0, 0x0, 0x0);
+
+	if (m_proxy)
 		SDL_SetRenderTarget(m_renderer, m_proxy);
-	}
 
 	SDL_RenderClear(m_renderer);
 }
@@ -84,15 +85,13 @@ void GraphicsEngine::post_draw()
 
 void GraphicsEngine::draw_rect(Rect rect, bool filled, Color color)
 {
-	// TODO: Push/pop color
+	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+
 #ifdef COG2D_GRAPHICS_USE_INT
 	SDL_Rect srect = rect.to_sdl_rect();
 #else
 	SDL_FRect srect = rect.to_sdl_frect();
 #endif
-
-	Color currcolor = get_current_color();
-	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 
 #ifdef COG2D_GRAPHICS_USE_INT
 	if (filled)
@@ -106,12 +105,11 @@ void GraphicsEngine::draw_rect(Rect rect, bool filled, Color color)
 		SDL_RenderDrawRectF(m_renderer, &srect);
 #endif
 
-	SDL_SetRenderDrawColor(m_renderer, currcolor.r, currcolor.g, currcolor.b, currcolor.a);
+	//SDL_SetRenderDrawColor(get_renderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 }
 
 void GraphicsEngine::draw_circle(Vector center, float radius, bool filled, Color color)
 {
-	Color currcolor = get_current_color();
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 
 	if (filled) {
@@ -163,37 +161,41 @@ void GraphicsEngine::draw_circle(Vector center, float radius, bool filled, Color
 		}
 	}
 
-	SDL_SetRenderDrawColor(m_renderer, currcolor.r, currcolor.g, currcolor.b, currcolor.a);
+	//SDL_SetRenderDrawColor(get_renderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 }
 
 void GraphicsEngine::draw_line(Vector a, Vector b, Color color)
 {
-	Color currcolor = get_current_color();
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+
 #ifdef COG2D_GRAPHICS_USE_INT
 	SDL_RenderDrawLine(m_renderer, static_cast<int>(a.x), static_cast<int>(a.y),
 	                   static_cast<int>(b.x), static_cast<int>(b.y));
 #else
 	SDL_RenderDrawLineF(m_renderer, a.x, a.y, b.x, b.y);
 #endif
-	SDL_SetRenderDrawColor(m_renderer, currcolor.r, currcolor.g, currcolor.b, currcolor.a);
+
+	//SDL_SetRenderDrawColor(get_renderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 }
 
 void GraphicsEngine::draw_point(Vector point, Color color)
 {
-	Color currcolor = get_current_color();
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+
 #ifdef COG2D_GRAPHICS_USE_INT
 	SDL_RenderDrawPoint(m_renderer, static_cast<int>(point.x), static_cast<int>(point.y));
 #else
 	SDL_RenderDrawPointF(m_renderer, point.x, point.y);
 #endif
-	SDL_SetRenderDrawColor(m_renderer, currcolor.r, currcolor.g, currcolor.b, currcolor.a);
+
+	//SDL_SetRenderDrawColor(get_renderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 }
 
-void GraphicsEngine::draw_texture(Texture* tex, Rect_t<int> src, Rect dest, float angle,
-                                  Vector center, SDL_RendererFlip flip)
+void GraphicsEngine::draw_texture(Texture* tex, Rect_t<int> src, Rect dest, Color color,
+                                  float angle, Vector center, SDL_RendererFlip flip)
 {
+	SDL_SetRenderDrawColor(get_renderer(), color.r, color.g, color.b, color.a);
+
 #ifdef COG2D_GRAPHICS_USE_INT
 	SDL_Point scenter = center.to_sdl_point();
 	if (scenter.x < 0)
@@ -221,27 +223,20 @@ void GraphicsEngine::draw_texture(Texture* tex, Rect_t<int> src, Rect dest, floa
 	SDL_RenderCopyExF(m_renderer, tex->to_sdl(), &ssrc, &sdest, static_cast<float>(angle), &scenter,
 	                  flip);
 #endif
+
+	//SDL_SetRenderDrawColor(get_renderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 }
 
-void GraphicsEngine::draw_texture(Texture* tex, Rect_t<int> src, Rect dest)
-{
-	draw_texture(tex, src, dest, 0);
-}
-
-void GraphicsEngine::draw_texture(Texture* tex, Rect dest, float angle, Vector center,
+void GraphicsEngine::draw_texture(Texture* tex, Rect dest, Color color, float angle, Vector center,
                                   SDL_RendererFlip flip)
 {
-	draw_texture(tex, {{0, 0}, tex->get_size()}, dest, angle, center, flip);
+	draw_texture(tex, {{0, 0}, tex->get_size()}, dest, color, angle, center, flip);
 }
 
-void GraphicsEngine::draw_texture(Texture* tex, Rect dest)
+void GraphicsEngine::draw_texture(Texture* tex, Vector pos, Color color, float angle, Vector center,
+                                  SDL_RendererFlip flip)
 {
-	draw_texture(tex, {{0, 0}, tex->get_size()}, dest);
-}
-
-void GraphicsEngine::draw_texture(Texture* tex, Vector pos)
-{
-	draw_texture(tex, {pos, tex->get_size()});
+	draw_texture(tex, {pos, tex->get_size()}, color, angle, center, flip);
 }
 
 Color GraphicsEngine::get_current_color()

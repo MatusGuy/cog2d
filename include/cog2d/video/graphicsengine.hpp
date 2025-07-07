@@ -32,6 +32,7 @@ private:
 	Vector_t<int> m_logical_size;
 
 	std::stack<Texture*> m_target_stack;
+	std::stack<Color> m_color_stack;
 
 public:
 	void init(ProgramSettings* settings);
@@ -45,13 +46,14 @@ public:
 	void draw_line(Vector a, Vector b, Color color = 0xFFFFFFFF);
 	void draw_point(Vector point, Color color = 0xFFFFFFFF);
 
-	void draw_texture(Texture* tex, Rect_t<int> src, Rect dest, float angle,
-	                  Vector center = {-1, -1}, SDL_RendererFlip flip = SDL_FLIP_NONE);
-	void draw_texture(Texture* tex, Rect_t<int> src, Rect dest);
-	void draw_texture(Texture* tex, Rect dest, float angle, Vector center = {-1, -1},
+	// TODO: what if center really should be {-1, -1}?? Uhh.......
+	void draw_texture(Texture* tex, Rect_t<int> src, Rect dest, Color color = 0xFFFFFFFF,
+	                  float angle = 0.f, Vector center = {-1, -1},
 	                  SDL_RendererFlip flip = SDL_FLIP_NONE);
-	void draw_texture(Texture* tex, Rect dest);
-	void draw_texture(Texture* tex, Vector pos);
+	void draw_texture(Texture* tex, Rect dest, Color color = 0xFFFFFFFF, float angle = 0,
+	                  Vector center = {-1, -1}, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	void draw_texture(Texture* tex, Vector pos, Color color = 0xFFFFFFFF, float angle = 0,
+	                  Vector center = {-1, -1}, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 	inline SDL_Window* get_window() { return m_window; }
 	inline SDL_Renderer* get_renderer() { return m_renderer; }
