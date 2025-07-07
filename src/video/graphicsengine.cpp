@@ -104,8 +104,6 @@ void GraphicsEngine::draw_rect(Rect rect, bool filled, Color color)
 	else
 		SDL_RenderDrawRectF(m_renderer, &srect);
 #endif
-
-	//SDL_SetRenderDrawColor(get_renderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 }
 
 void GraphicsEngine::draw_circle(Vector center, float radius, bool filled, Color color)
@@ -160,8 +158,6 @@ void GraphicsEngine::draw_circle(Vector center, float radius, bool filled, Color
 			}
 		}
 	}
-
-	//SDL_SetRenderDrawColor(get_renderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 }
 
 void GraphicsEngine::draw_line(Vector a, Vector b, Color color)
@@ -174,8 +170,6 @@ void GraphicsEngine::draw_line(Vector a, Vector b, Color color)
 #else
 	SDL_RenderDrawLineF(m_renderer, a.x, a.y, b.x, b.y);
 #endif
-
-	//SDL_SetRenderDrawColor(get_renderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 }
 
 void GraphicsEngine::draw_point(Vector point, Color color)
@@ -187,8 +181,6 @@ void GraphicsEngine::draw_point(Vector point, Color color)
 #else
 	SDL_RenderDrawPointF(m_renderer, point.x, point.y);
 #endif
-
-	//SDL_SetRenderDrawColor(get_renderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 }
 
 void GraphicsEngine::draw_texture(Texture* tex, Rect_t<int> src, Rect dest, Color color,
@@ -223,8 +215,6 @@ void GraphicsEngine::draw_texture(Texture* tex, Rect_t<int> src, Rect dest, Colo
 	SDL_RenderCopyExF(m_renderer, tex->to_sdl(), &ssrc, &sdest, static_cast<float>(angle), &scenter,
 	                  flip);
 #endif
-
-	//SDL_SetRenderDrawColor(get_renderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 }
 
 void GraphicsEngine::draw_texture(Texture* tex, Rect dest, Color color, float angle, Vector center,
