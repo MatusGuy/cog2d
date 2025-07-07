@@ -25,19 +25,17 @@ void TileLayer::draw()
 	Camera* camera = viewport.get_camera();
 
 	// Position of the camera in tiles
-	// TODO: Easy way of getting tile size knowing that two tilesets can't have different tile
-	// dimensions
-	Vector camtilepos = camera->m_pos / 16;
+	Vector camtilepos = camera->m_pos / m_map->m_tile_sz;
 
 	// Final position of tile on screen
-	Vector destpos = (camtilepos.floor() - camtilepos) * 16;
+	Vector destpos = (camtilepos.floor() - camtilepos) * m_map->m_tile_sz;
 	float startx = destpos.x;
 
-	const auto next_tile = [&destpos, &startx, &viewport]() {
-		destpos.x += 16;
+	const auto next_tile = [this, &destpos, &startx, &viewport]() {
+		destpos.x += m_map->m_tile_sz.x;
 
-		if (destpos.x >= viewport.m_region.size.x + 16 - (-startx)) {
-			destpos.y += 16;
+		if (destpos.x >= viewport.m_region.size.x + m_map->m_tile_sz.x - (-startx)) {
+			destpos.y += m_map->m_tile_sz.y;
 			destpos.x = startx;
 		}
 	};
