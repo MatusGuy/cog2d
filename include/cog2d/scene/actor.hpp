@@ -64,7 +64,7 @@ public:
 
 	virtual CollisionSystem::Response collision(Actor* other);
 
-	Vector get_draw_pos();
+	Vector viewport_pos();
 
 public:
 	// The following functions crash the program if the component does not exist.

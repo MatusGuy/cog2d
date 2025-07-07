@@ -16,11 +16,13 @@ class Camera
 public:
 	Viewport* m_viewport;
 	Vector m_pos;
+	Vector m_oldpos;
+	Vector m_delta;
 
 public:
 	Camera();
 
-	virtual void update() {}
+	virtual void update();
 };
 
 }

@@ -41,7 +41,7 @@ void Actor::update()
 	COG2D_USE_VIEWPORT;
 
 	if (COG2D_GET_COMPONENT(Geometry)->follow_camera)
-		bbox().pos += viewport.get_camera()->m_pos;
+		bbox().pos += viewport.get_camera()->m_delta;
 
 	if (!has_component<ActorComps::Velocity>())
 		return;
@@ -82,7 +82,7 @@ CollisionSystem::Response Actor::collision(Actor*)
 	return CollisionSystem::COLRESP_ACCEPT;
 }
 
-Vector Actor::get_draw_pos()
+Vector Actor::viewport_pos()
 {
 	return bbox().pos - Viewport::get().get_camera()->m_pos;
 }

@@ -10,4 +10,9 @@ Camera::Camera()
 
 }
 
+void Camera::update()
+{
+	m_oldpos = m_pos;
+	m_delta = m_pos - m_oldpos;
+}
 }
