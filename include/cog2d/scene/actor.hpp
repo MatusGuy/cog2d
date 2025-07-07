@@ -64,12 +64,14 @@ public:
 
 	virtual CollisionSystem::Response collision(Actor* other);
 
+	Vector get_draw_pos();
+
 public:
 	// The following functions crash the program if the component does not exist.
 	// And I don't care.
 
-	inline Rect& bbox() { return *COG2D_GET_COMPONENT(Geometry); }
-	inline Vector& vel() { return *COG2D_GET_COMPONENT(Velocity); }
+	inline Rect& bbox() { return COG2D_GET_COMPONENT(Geometry)->bbox; }
+	inline Vector& vel() { return COG2D_GET_COMPONENT(Velocity)->vel; }
 	inline Vector& accel() { return COG2D_GET_COMPONENT(Gravity)->accel; }
 	inline float& grav() { return COG2D_GET_COMPONENT(Gravity)->grav; }
 	inline ActorComps::Collision& col() { return *COG2D_GET_COMPONENT(Collision); }

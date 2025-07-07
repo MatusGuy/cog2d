@@ -30,11 +30,16 @@ struct Component
 struct Geometry : public Component, public Rect
 {
 	COG2D_ACTOR_COMPONENT(0)
+
+	Rect bbox;
+	bool follow_camera = false;
 };
 
-struct Velocity : public Component, public Vector
+struct Velocity : public Component
 {
 	COG2D_ACTOR_COMPONENT(1)
+
+	Vector vel;
 
 	void setup(Actor* actor);
 };

@@ -6,6 +6,7 @@
 #include "cog2d/scene/actormanager.hpp"
 #include "cog2d/program.hpp"
 #include "cog2d/util/logger.hpp"
+#include "cog2d/scene/viewport.hpp"
 
 namespace cog2d {
 
@@ -34,15 +35,24 @@ Actor::Actor(bool active)
 
 void Actor::update()
 {
-	if (has_component<ActorComps::Velocity>()) {
-		if (has_component<ActorComps::Gravity>())
-			gravity();
+	if (!has_component<ActorComps::Geometry>())
+		return;
 
-		if (has_component<ActorComps::Collision>())
-			col().mov = vel();
-		else
-			bbox().pos += vel();
-	}
+	COG2D_USE_VIEWPORT;
+
+	if (COG2D_GET_COMPONENT(Geometry)->follow_camera)
+		bbox().pos += viewport.get_camera()->m_pos;
+
+	if (!has_component<ActorComps::Velocity>())
+		return;
+
+	if (has_component<ActorComps::Gravity>())
+		gravity();
+
+	if (has_component<ActorComps::Collision>())
+		col().mov = vel();
+	else
+		bbox().pos += vel();
 }
 
 void Actor::set_active(bool active)
@@ -70,6 +80,11 @@ Rect Actor::get_dest()
 CollisionSystem::Response Actor::collision(Actor*)
 {
 	return CollisionSystem::COLRESP_ACCEPT;
+}
+
+Vector Actor::get_draw_pos()
+{
+	return bbox().pos - Viewport::get().get_camera()->m_pos;
 }
 
 void Actor::apply_movement()
