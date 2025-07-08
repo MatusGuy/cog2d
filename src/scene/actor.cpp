@@ -28,7 +28,7 @@ void Collision::setup(Actor* actor)
 }  //namespace ActorComps
 
 Actor::Actor(bool active)
-    : m_active(active),
+    : m_manual_active(active),
       m_manager(nullptr)
 {
 }
@@ -40,7 +40,7 @@ void Actor::update()
 
 	COG2D_USE_VIEWPORT;
 
-	if (COG2D_GET_COMPONENT(Geometry)->follow_camera)
+	if (follow_camera())
 		bbox().pos += viewport.get_camera()->m_delta;
 
 	if (!has_component<ActorComps::Velocity>())
@@ -57,10 +57,27 @@ void Actor::update()
 
 void Actor::set_active(bool active)
 {
-	if (is_active() == active)
+	if (m_manual_active == active)
 		return;
 
-	m_active = active;
+	bool old_active = is_active();
+	m_manual_active = active;
+	if (old_active == is_active())
+		return;
+
+	m_manager->notify_activity(this);
+}
+
+void Actor::set_viewport_active(bool active)
+{
+	if (m_viewport_active == active)
+		return;
+
+	bool old_active = is_active();
+	m_viewport_active = active;
+	if (old_active == is_active())
+		return;
+
 	m_manager->notify_activity(this);
 }
 

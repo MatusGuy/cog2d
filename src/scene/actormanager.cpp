@@ -5,6 +5,7 @@
 
 #include "cog2d/util/logger.hpp"
 #include "cog2d/scene/actorrefsiterator.hpp"
+#include "cog2d/scene/viewport.hpp"
 
 namespace cog2d {
 
@@ -34,14 +35,30 @@ void ActorManager::add(std::unique_ptr<Actor> actor)
 
 void ActorManager::update()
 {
+	COG2D_USE_VIEWPORT;
+
+	/*
 	ActorRefsIterator it(m_active_actors.begin(), m_active_actors.begin());
 	while (it.m_it != m_active_actors.end()) {
-		Actor* actor = *it;
-		//int idx = std::distance(m_active_actors.begin(), it);
+	    Actor* actor = *it;
+	    //int idx = std::distance(m_active_actors.begin(), it);
 
-		actor->update();
+	    actor->update();
 
-		++it;
+	    ++it;
+	}
+	*/
+
+	Rect viewportrect = Rect(viewport.get_camera()->m_pos, viewport.m_region.size).grown(32.f);
+
+	for (auto it = m_actors.begin(); it != m_actors.end(); ++it) {
+		Actor* actor = (*it).get();
+
+		if (actor->has_component<ActorComps::Geometry>())
+			actor->set_viewport_active(viewportrect.overlaps(actor->bbox()));
+
+		if (actor->is_active())
+			actor->update();
 	}
 
 	m_collisionsystem.update();

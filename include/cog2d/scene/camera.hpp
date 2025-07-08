@@ -22,7 +22,9 @@ public:
 public:
 	Camera();
 
-	virtual void update();
+	virtual void pre_update();
+	virtual void update() {}
+	virtual void post_update();
 };
 
 }

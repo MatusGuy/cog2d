@@ -16,8 +16,8 @@ namespace cog2d {
 
 class ActorManager;
 
-/*!
- * \brief A moving object on a scene
+/**
+ * @brief A moving object on a scene
  *
  * It can be used to represent a player, an enemy, or
  * just a normal object in the game.
@@ -41,21 +41,11 @@ public:
 	}
 
 	virtual void init() {}
-
-	/*!
-	 * Updates the position of the actor for the next frame.
-	 * This is called automatically by the \ref ActorManager
-	 */
 	virtual void update();
-
-	/*!
-	 * Draws the actor in whatever way you'd like.
-	 * This is called automatically by the \ref ActorManager
-	 */
 	virtual void draw() = 0;
 
 	void set_active(bool active);
-	inline bool is_active() { return m_active; }
+	inline bool is_active() { return m_manual_active && m_viewport_active; }
 
 	void gravity();
 
@@ -71,6 +61,7 @@ public:
 	// And I don't care.
 
 	inline Rect& bbox() { return COG2D_GET_COMPONENT(Geometry)->bbox; }
+	inline bool& follow_camera() { return COG2D_GET_COMPONENT(Geometry)->follow_camera; }
 	inline Vector& vel() { return COG2D_GET_COMPONENT(Velocity)->vel; }
 	inline Vector& accel() { return COG2D_GET_COMPONENT(Gravity)->accel; }
 	inline float& grav() { return COG2D_GET_COMPONENT(Gravity)->grav; }
@@ -87,7 +78,13 @@ protected:
 	virtual void add_components() = 0;
 
 private:
-	bool m_active;
+	/// True if actor wants to be active
+	bool m_manual_active;
+
+	/// True if actor was activated because it entered the camera region
+	bool m_viewport_active;
+
+	void set_viewport_active(bool active);
 };
 
 }  //namespace cog2d

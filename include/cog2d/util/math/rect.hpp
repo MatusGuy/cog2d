@@ -143,6 +143,10 @@ public:
 		float bottom = std::max(get_bottom(), other.get_bottom());
 		return Rect_t<T>(left, top, right - left, bottom - top);
 	}
+
+	Rect_t<T> grown(T x, T y) { return {pos - Vector_t<T>(x, y), size + Vector_t<T>(x, y)}; }
+
+	inline Rect_t<T> grown(T value) { return grown(value, value); }
 };
 using Rect = Rect_t<>;
 
