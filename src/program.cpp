@@ -9,6 +9,7 @@
 #include <SDL2/SDL_ttf.h>
 
 #include "cog2d/util/logger.hpp"
+#include "cog2d/util/timer.hpp"
 #include "cog2d/video/graphicsengine.hpp"
 #include "cog2d/audio/audioengine.hpp"
 #include "cog2d/assets/assetmanager.hpp"
@@ -66,11 +67,18 @@ int Program::run(int argc, char* argv[])
 
 	std::uint32_t now = SDL_GetTicks();
 
+	Timer timer;
+	timer.start(1000);
+
 	while (m_keep_running) {
 		poll_sdl_events();
 
 		m_prog_time = SDL_GetTicks();
-		m_delta_time = m_prog_time - now;
+
+		if (timer.check() && false) {
+			COG2D_LOG_DEBUG(fmt::format("FPS: {}, DT: {}", 1000 / m_delta_time, m_delta_time));
+			timer.start(1000);
+		}
 
 		std::unique_ptr<Screen>& screen = m_screen_stack.top();
 		screen->update();
@@ -80,6 +88,7 @@ int Program::run(int argc, char* argv[])
 		graphicsengine.post_draw();
 
 		now = SDL_GetTicks();
+		m_delta_time = now - m_prog_time;
 	}
 
 	quit();
