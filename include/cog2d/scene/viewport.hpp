@@ -25,6 +25,12 @@ public:
 	void set_camera(Camera* camera);
 	inline Camera* get_camera() { return m_camera; }
 
+	inline Rect get_scene_rect()
+	{
+		return Rect(get_camera() ? get_camera()->m_pos : static_cast<Vector>(m_region.pos),
+		            static_cast<Vector>(m_region.size));
+	}
+
 private:
 	Camera* m_camera;
 };
