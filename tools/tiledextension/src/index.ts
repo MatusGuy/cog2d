@@ -254,12 +254,43 @@ class BinaryFileStream {
 	}
 }
 
+function writeTileLayerBin(stream: BinaryFileStream, layer: TileLayer) {
+	stream.write_object(0, 1, true);
+	stream.write_string(layer.name);
+	stream.write_object(layer.width, 4, true);
+	stream.write_object(layer.height, 4, true);
+
+	let tiles: number[] = [];
+	let compress = tiled.project.property(SETTING_MAP_COMPRESS) as boolean;
+	if (compress)
+		writeTilesCompressed(layer, tiles);
+	else
+		writeTiles(layer, tiles);
+
+	stream.write_array(tiles, 2, !compress);
+}
+
+function writeObjectGroupBin(stream: BinaryFileStream, group: ObjectGroup) {
+	stream.write_object(1, 1, true);
+	stream.write_string(group.name);
+
+	for (let i = 0; i < group.objectCount; ++i) {
+		let obj = group.objectAt(i);
+		stream.write_string(obj.name);
+
+		for (let i = 0; i < group.objectCount; ++i) {
+			let obj = group.objectAt(i);
+			stream.write_string(obj.name);
+
+		}
+	}
+}
+
 let binMap: ScriptedMapFormat = {
 	name: "cog2d Binary Map",
 	extension: "dat",
 
 	write: function (map: TileMap, fileName: string): string | undefined {
-		let buf = new ArrayBuffer(2);
 		let out = new BinaryFileStream(new BinaryFile(fileName, BinaryFile.WriteOnly));
 
 		// Header
@@ -279,6 +310,16 @@ let binMap: ScriptedMapFormat = {
 		for (let setIndex = 0; setIndex < usedTilesets.length; setIndex++) {
 			let activeSet = usedTilesets[setIndex];
 			out.write_object(nextGid, 2, true);
+
+			let setName = getPathBaseName(activeSet.fileName);
+			tiled.log(`Referencing set '${setName}' with path '${activeSet.fileName}'`);
+			if (setName == "") {
+				tiled.error("Could not retrieve filepath basename from path " +
+							activeSet.fileName + ". Make sure Embed Tilesets is disabled.",
+							() => {});
+				return;
+			}
+
 			out.write_string(getPathBaseName(activeSet.fileName) + ".toml");
 
 			activeSet.setProperty("cog2d._firstgid", nextGid);
@@ -289,25 +330,15 @@ let binMap: ScriptedMapFormat = {
 		for (let layerIndex = 0; layerIndex < map.layerCount; layerIndex++) {
 			let layer: Layer = map.layerAt(layerIndex);
 
-			if (!layer.isTileLayer) {
-				continue;
+			if (layer.isTileLayer) {
+				writeTileLayerBin(out, layer as TileLayer);
+			} else (layer.isObjectLayer) {
+
+			} else {
+
 			}
 
-			let tilelayer: TileLayer = layer as TileLayer;
 
-			out.write_object(tilelayer.isTileLayer ? 0 : 1, 1, true);
-			out.write_string(tilelayer.name);
-			out.write_object(tilelayer.width, 4, true);
-			out.write_object(tilelayer.height, 4, true);
-
-			let tiles: number[] = [];
-			let compress = tiled.project.property(SETTING_MAP_COMPRESS) as boolean;
-			if (compress)
-				writeTilesCompressed(tilelayer, tiles);
-			else
-				writeTiles(tilelayer, tiles);
-
-			out.write_array(tiles, 2, !compress);
 		}
 
 		out.file.commit();
