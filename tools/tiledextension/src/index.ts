@@ -46,6 +46,12 @@ type TomlTileMapDocument = TomlDocument & {
 	layers: TomlTileLayer[];
 };
 
+class Vector {
+	x: number, y: number
+
+
+}
+
 let process = new Process();
 
 function getTempPath(): string {
@@ -139,81 +145,6 @@ function writeTilesCompressed(layer: TileLayer, data: number[]) {
 	}
 };
 
-// Map Formats
-let tomlMap: ScriptedMapFormat = {
-	name: "cog2d TOML Map",
-	extension: "toml",
-
-	write: function (map: TileMap, fileName: string): string | undefined {
-		let fileDat: TomlTileMapDocument = {
-			type: "tilemap",
-			version: 1,
-			tilesets: [],
-			layers: [],
-		};
-
-		let nextGid = 1;
-
-		let usedTilesets = map.usedTilesets();
-
-		for (let setIndex = 0; setIndex < usedTilesets.length; setIndex++) {
-			let activeSet = usedTilesets[setIndex];
-			let setData: TomlEmbeddedTileSet = {
-				firstgid: nextGid
-			}
-
-			if (tiled.project.property(SETTING_EMBED_TILESETS)) {
-				Object.assign(setData, getTilesetData(activeSet));
-			} else {
-				setData.source = getPathFileName(activeSet.fileName);
-			}
-
-			activeSet.setProperty("cog2d._firstgid", nextGid);
-			nextGid += activeSet.tileCount;
-
-			fileDat.tilesets.push(setData)
-
-			tiled.log(`Processed tileset '${setIndex}'\nResult: ${TOML.stringify(setData)}`);
-		}
-
-		for (let layerIndex = 0; layerIndex < map.layerCount; layerIndex++) {
-			let layer: Layer = map.layerAt(layerIndex);
-
-			if (!layer.isTileLayer) {
-				tiled.log(`Processed tilemap layer '${layerIndex}' with early return`)
-				continue;
-			}
-
-			let tilelayer: TileLayer = layer as TileLayer;
-
-			let data: TomlTileLayer = {
-				name: tilelayer.name,
-				type: "tilelayer",
-				width: tilelayer.width,
-				height: tilelayer.height,
-				data: []
-			};
-
-			if (tiled.project.property(SETTING_MAP_COMPRESS))
-				writeTilesCompressed(tilelayer, data.data);
-			else
-				writeTiles(tilelayer, data.data);
-
-			fileDat.layers.push(data);
-
-			tiled.log(`Processed tilemap layer '${layerIndex}'`)
-		}
-
-		let file = new TextFile(fileName, TextFile.WriteOnly);
-		file.write(TOML.stringify(fileDat));
-		file.commit();
-
-		return undefined;
-	},
-};
-
-tiled.registerMapFormat("c2tomlmap", tomlMap);
-
 type ObjectSize = 1 | 2 | 4;
 
 class BinaryFileStream {
@@ -244,8 +175,18 @@ class BinaryFileStream {
 		this.file.write(buf);
 	}
 
+	write_array_float(data: number[]) {
+		let buf = new ArrayBuffer(data.length * size);
+		let arr = new Float32Array(buf);
+		arr.set(data, 0);
+		this.file.write(buf);
+	}
+
 	write_object(data: number, size: ObjectSize, unsigned: boolean) {
-		this.write_array([data], size, unsigned);
+		if (Number.isInteger(data))
+			this.write_array([data], size, unsigned);
+		else
+			this.write_array_float([data]);
 	}
 
 	write_string(data: string) {
@@ -270,6 +211,83 @@ function writeTileLayerBin(stream: BinaryFileStream, layer: TileLayer) {
 	stream.write_array(tiles, 2, !compress);
 }
 
+enum PropertyType {
+	Int,
+	Float,
+	Bool,
+	String,
+	Vector
+	Vectori,
+	Rect,
+	Recti
+};
+
+function propTypeFromProperty(value: PropertyValue): PropertyType {
+	switch (value.typeName) {
+		case "number":
+			if (Number.isInteger(value.value))
+				return PropertyType.Int;
+			else
+				return PropertyType.Float;
+
+		case "boolean":
+			return PropertyType.Bool;
+
+		case "string":
+			return PropertyType.String;
+
+		case "Vector":
+			return PropertyType.Vector;
+
+		case "Vectori":
+			return PropertyType.Vectori;
+
+		case "Rect":
+			return PropertyType.Rect;
+
+		case "Recti":
+			return PropertyType.Recti;
+
+		default:
+			tiled.log("oops");
+	}
+}
+
+function writePropertyBin(stream: BinaryFileStream, value: PropertyValue) {
+	let typeid = propTypeFromProperty(value);
+	stream.write_object(typeid, 1, true);
+
+	switch (typeid) {
+		case PropertyType.Int:
+		case PropertyType.Float:
+			stream.write_object(value.value as number, 4, false);
+			break;
+
+		case PropertyType.Bool:
+			stream.write_object((value.value as boolean) ? 1 : 0, 1, true);
+			break;
+
+		case PropertyType.String:
+			stream.write_string(value.value as string);
+			break;
+
+		case PropertyType.Vector:
+			stream.write_array_float([(value as object).x, (value as object).y]);
+			break;
+
+		case PropertyType.Vectori:
+			stream.write_array([(value as object).x, (value as object).y]);
+			break;
+
+		case PropertyType.Rect:
+			stream.write_array([(value as object).x, (value as object).y]);
+			break;
+
+		case PropertyType.Recti:
+
+	}
+}
+
 function writeObjectGroupBin(stream: BinaryFileStream, group: ObjectGroup) {
 	stream.write_object(1, 1, true);
 	stream.write_string(group.name);
@@ -278,11 +296,21 @@ function writeObjectGroupBin(stream: BinaryFileStream, group: ObjectGroup) {
 		let obj = group.objectAt(i);
 		stream.write_string(obj.name);
 
-		for (let i = 0; i < group.objectCount; ++i) {
-			let obj = group.objectAt(i);
-			stream.write_string(obj.name);
+		// TODO: Handle superclasses
+		let props = obj.resolvedProperties();
+		let keys = Object.keys(props);
+		for (let i = 0; i < keys.length(); ++i) {
+			let key = keys[i];
+			let value = props[key] as PropertyValue;
 
+			if (value == null) {
+				tiled.log("Skipping " + key);
+				continue;
+			}
+
+			writePropertyBin(stream, value);
 		}
+		stream.write_object(0, 1, true);
 	}
 }
 
