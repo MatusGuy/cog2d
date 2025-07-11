@@ -41,7 +41,7 @@ using ObjectLayerData;
 struct Layer {
     LayerType type;
     char name[];
-
+    
     match (type) {
         (LayerType::TileLayer): TileLayerData data;
         (LayerType::ObjectLayer): ObjectLayerData data;
@@ -61,43 +61,34 @@ struct ObjectLayerData {
 };
 
 enum PropertyType : u8 {
-    Uint8,
-    Uint16,
-    Uint32,
-    Uint64,
-
-    Int8,
-    Int16,
-    Int32,
-    Int64,
-
+    Int,
+    Bool,
     Float,
-
     String,
-
-    Vector,
-    Vectoru32,
-    Vectori32,
+    Vector
+    Vectori,
+    Rect,
+    Recti
 };
 
 struct ActorProperty {
     PropertyType type;
-
+    
     match (type) {
         (PropertyType::Uint8): u8 data;
         (PropertyType::Uint16): u16 data;
         (PropertyType::Uint32): u32 data;
         (PropertyType::Uint64): u64 data;
-
+        
         (PropertyType::Int8): s8 data;
         (PropertyType::Int16): s16 data;
         (PropertyType::Int32): s32 data;
         (PropertyType::Int64): s64 data;
-
+        
         (PropertyType::Float): float data;
-
+        
         (PropertyType::String): char data[];
-
+        
         (PropertyType::Vector): Vector data;
         (PropertyType::Vectoru32): Vectoru32 data;
         (PropertyType::Vectori32): Vectors32 data;
@@ -106,7 +97,7 @@ struct ActorProperty {
 
 struct Actor {
     char name[];
-
+    
     ActorProperty properties[];
 };
 
