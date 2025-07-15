@@ -46,12 +46,6 @@ type TomlTileMapDocument = TomlDocument & {
 	layers: TomlTileLayer[];
 };
 
-class Vector {
-	x: number, y: number
-
-
-}
-
 let process = new Process();
 
 function getTempPath(): string {
@@ -145,6 +139,78 @@ function writeTilesCompressed(layer: TileLayer, data: number[]) {
 	}
 };
 
+let tomlMap: ScriptedMapFormat = {
+	name: "cog2d TOML Map",
+	extension: "toml",
+
+	write: function (map: TileMap, fileName: string): string | undefined {
+		let fileDat: TomlTileMapDocument = {
+			type: "tilemap",
+			version: 1,
+			tilesets: [],
+			layers: [],
+		};
+
+		let nextGid = 1;
+
+		let usedTilesets = map.usedTilesets();
+
+		for (let setIndex = 0; setIndex < usedTilesets.length; setIndex++) {
+			let activeSet = usedTilesets[setIndex];
+			let setData: TomlEmbeddedTileSet = {
+				firstgid: nextGid
+			}
+
+			if (tiled.project.property(SETTING_EMBED_TILESETS)) {
+				Object.assign(setData, getTilesetData(activeSet));
+			} else {
+				setData.source = getPathFileName(activeSet.fileName);
+			}
+
+			activeSet.setProperty("cog2d._firstgid", nextGid);
+			nextGid += activeSet.tileCount;
+
+			fileDat.tilesets.push(setData)
+
+			tiled.log(`Processed tileset '${setIndex}'\nResult: ${TOML.stringify(setData)}`);
+		}
+
+		for (let layerIndex = 0; layerIndex < map.layerCount; layerIndex++) {
+			let layer: Layer = map.layerAt(layerIndex);
+
+			if (!layer.isTileLayer) {
+				tiled.log(`Processed tilemap layer '${layerIndex}' with early return`)
+				continue;
+			}
+
+			let tilelayer: TileLayer = layer as TileLayer;
+
+			let data: TomlTileLayer = {
+				name: tilelayer.name,
+				type: "tilelayer",
+				width: tilelayer.width,
+				height: tilelayer.height,
+				data: []
+			};
+
+			if (tiled.project.property(SETTING_MAP_COMPRESS))
+				writeTilesCompressed(tilelayer, data.data);
+			else
+				writeTiles(tilelayer, data.data);
+
+			fileDat.layers.push(data);
+
+			tiled.log(`Processed tilemap layer '${layerIndex}'`)
+		}
+
+		let file = new TextFile(fileName, TextFile.WriteOnly);
+		file.write(TOML.stringify(fileDat));
+		file.commit();
+
+		return undefined;
+	},
+};
+
 type ObjectSize = 1 | 2 | 4;
 
 class BinaryFileStream {
@@ -176,7 +242,7 @@ class BinaryFileStream {
 	}
 
 	write_array_float(data: number[]) {
-		let buf = new ArrayBuffer(data.length * size);
+		let buf = new ArrayBuffer(data.length * 4);
 		let arr = new Float32Array(buf);
 		arr.set(data, 0);
 		this.file.write(buf);
@@ -212,30 +278,96 @@ function writeTileLayerBin(stream: BinaryFileStream, layer: TileLayer) {
 }
 
 enum PropertyType {
+	None,
 	Int,
 	Float,
 	Bool,
 	String,
-	Vector
+	Vector,
 	Vectori,
 	Rect,
-	Recti
+	Recti,
+	Color
 };
 
-function propTypeFromProperty(value: PropertyValue): PropertyType {
-	switch (value.typeName) {
-		case "number":
-			if (Number.isInteger(value.value))
-				return PropertyType.Int;
-			else
-				return PropertyType.Float;
+type Vector = {
+	x: number;
+	y: number;
+};
 
-		case "boolean":
-			return PropertyType.Bool;
+type Vectori = {
+	x: number;
+	y: number;
+};
 
-		case "string":
-			return PropertyType.String;
+type Rect = {
+	pos: Vector;
+	size: Vector;
+};
 
+type Recti = {
+	pos: Vectori;
+	size: Vectori;
+};
+
+class Color {
+	a!: number;
+	r!: number;
+	g!: number;
+	b!: number;
+
+	constructor(col: color) {
+		let str: string = col.toString();
+		if (!str.startsWith("#"))
+			return;
+
+		let off = 1;
+		this.a = 0xFF;
+
+		// Seven characters because one hashtag + six hexadecimal digits
+		if (str.length > 7) {
+			// This color has an explicit alpha value. (not 0xFF)
+			this.a = parseInt(str.substring(off, off + 2), 16);
+			off += 2;
+		}
+
+		this.r = parseInt(str.substring(off, off + 2), 16);
+		off += 2;
+
+		this.g = parseInt(str.substring(off, off + 2), 16);
+		off += 2;
+
+		this.b = parseInt(str.substring(off, off + 2), 16);
+	}
+}
+
+function propTypeFromProperty(value: TiledObjectPropertyValue): PropertyType {
+	switch (typeof value) {
+	case "number":
+		if (Number.isInteger(value))
+			return PropertyType.Int;
+		else
+			return PropertyType.Float;
+
+	case "boolean":
+		return PropertyType.Bool;
+
+	case "string":
+		return PropertyType.String;
+
+	case "object":
+		if (value.toString().startsWith("#"))
+			return PropertyType.Color;
+
+		let propval = value as PropertyValue;
+
+		if (!propval)
+			break;
+
+		if ((typeof propval.value) == "number")
+			return PropertyType.Int;
+
+		switch (propval.typeName) {
 		case "Vector":
 			return PropertyType.Vector;
 
@@ -247,63 +379,85 @@ function propTypeFromProperty(value: PropertyValue): PropertyType {
 
 		case "Recti":
 			return PropertyType.Recti;
-
-		default:
-			tiled.log("oops");
+		}
 	}
+
+	tiled.log("oops");
+	return PropertyType.None;
 }
 
-function writePropertyBin(stream: BinaryFileStream, value: PropertyValue) {
+function writePropertyBin(stream: BinaryFileStream, value: TiledObjectPropertyValue) {
 	let typeid = propTypeFromProperty(value);
 	stream.write_object(typeid, 1, true);
 
 	switch (typeid) {
 		case PropertyType.Int:
 		case PropertyType.Float:
-			stream.write_object(value.value as number, 4, false);
+			stream.write_object(value as number, 4, false);
 			break;
 
 		case PropertyType.Bool:
-			stream.write_object((value.value as boolean) ? 1 : 0, 1, true);
+			stream.write_object((value as boolean) ? 1 : 0, 1, true);
 			break;
 
 		case PropertyType.String:
-			stream.write_string(value.value as string);
+			stream.write_string(value as string);
 			break;
 
-		case PropertyType.Vector:
-			stream.write_array_float([(value as object).x, (value as object).y]);
+		case PropertyType.Color: {
+			let col = new Color(value as color);
+			stream.write_array([col.r, col.g, col.b, col.a], 1, true);
 			break;
+		}
 
-		case PropertyType.Vectori:
-			stream.write_array([(value as object).x, (value as object).y]);
+		case PropertyType.Vector: {
+			let p = value as PropertyValue;
+			let v = p.value as Vector;
+			stream.write_array_float([v.x, v.y]);
 			break;
+		}
 
-		case PropertyType.Rect:
-			stream.write_array([(value as object).x, (value as object).y]);
+		case PropertyType.Vectori: {
+			let p = value as PropertyValue;
+			let v = p.value as Vectori;
+			stream.write_array([v.x, v.y], 4, false);
 			break;
+		}
 
-		case PropertyType.Recti:
+		case PropertyType.Rect: {
+			let p = value as PropertyValue;
+			let r = p.value as Rect;
+			stream.write_array_float([r.pos.x, r.pos.y, r.size.x, r.size.y]);
+			break;
+		}
 
+		case PropertyType.Recti: {
+			let p = value as PropertyValue;
+			let r = p.value as Recti;
+			stream.write_array([r.pos.x, r.pos.y, r.size.x, r.size.y], 4, false);
+			break;
+		}
 	}
 }
 
 function writeObjectGroupBin(stream: BinaryFileStream, group: ObjectGroup) {
+	tiled.log(`Writing object group '${group.name}'`);
 	stream.write_object(1, 1, true);
 	stream.write_string(group.name);
 
 	for (let i = 0; i < group.objectCount; ++i) {
 		let obj = group.objectAt(i);
+		tiled.log(`Writing object '${obj.name}' of class '${obj.className}'`);
 		stream.write_string(obj.name);
 
 		// TODO: Handle superclasses
 		let props = obj.resolvedProperties();
 		let keys = Object.keys(props);
-		for (let i = 0; i < keys.length(); ++i) {
-			let key = keys[i];
-			let value = props[key] as PropertyValue;
+		for (let j = 0; j < keys.length; ++j) {
+			let key = keys[j];
+			let value = props[key];
 
-			if (value == null) {
+			if (value == undefined) {
 				tiled.log("Skipping " + key);
 				continue;
 			}
@@ -312,6 +466,7 @@ function writeObjectGroupBin(stream: BinaryFileStream, group: ObjectGroup) {
 		}
 		stream.write_object(0, 1, true);
 	}
+	stream.write_object(0, 1, true);
 }
 
 let binMap: ScriptedMapFormat = {
@@ -358,15 +513,13 @@ let binMap: ScriptedMapFormat = {
 		for (let layerIndex = 0; layerIndex < map.layerCount; layerIndex++) {
 			let layer: Layer = map.layerAt(layerIndex);
 
+			tiled.log(`Writing ${layer.name}`);
+
 			if (layer.isTileLayer) {
 				writeTileLayerBin(out, layer as TileLayer);
-			} else (layer.isObjectLayer) {
-
-			} else {
-
+			} else if (layer.isObjectLayer) {
+				writeObjectGroupBin(out, layer as ObjectGroup);
 			}
-
-
 		}
 
 		out.file.commit();
