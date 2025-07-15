@@ -1,5 +1,5 @@
---- build/index.js	2025-05-13 11:31:26.406066018 +0200
-+++ /home/tulpenkiste/.config/tiled/extensions/leveltest.js	2025-05-13 11:31:26.507198588 +0200
+--- dist/index.js	2025-05-13 11:31:26.406066018 +0200
++++ dist/index.js	2025-05-13 11:31:26.507198588 +0200
 @@ -60,9 +60,6 @@
    return codeblock;
  }
