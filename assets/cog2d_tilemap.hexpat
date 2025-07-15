@@ -65,7 +65,7 @@ enum PropertyType : u8 {
     Bool,
     Float,
     String,
-    Vector
+    Vector,
     Vectori,
     Rect,
     Recti
