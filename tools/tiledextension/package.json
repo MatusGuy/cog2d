@@ -6,7 +6,7 @@
 	"scripts": {
 		"patchjs": "run-script-os",
 		"patchjs:linux:darwin": "mkdir -p dist && cp build/index.js dist/index.js && patch dist/index.js < patching/dist.patch",
-		"patchjs:win32": "if not exist dist (md dist) && copy build\\index.js dist\\index.js && cd dist && git apply ..\\patching\\dist.patch",
+		"patchjs:win32": "if not exist dist (md dist) & cd dist && copy ..\\build\\index.js index.js && git apply ..\\patching\\dist.patch",
 		"build": "webpack && pnpm patchjs",
 		"extinstall": "run-script-os",
 		"extinstall:linux": "cp dist/index.js ~/.config/tiled/extensions/cog2d_tiled_extension.js",
