@@ -25,14 +25,28 @@ struct Vectors32 {
     s32 y;
 };
 
+struct Rect {
+    Vector pos;
+    Vector size;
+};
+
+struct Rects32 {
+    Vectors32 pos;
+    Vectors32 size;
+};
+
+struct Color {
+    u8 a, r, g, b;
+};
+
 struct TileSet {
     u16 firstgid;
     char source[];
 };
 
 enum LayerType : u8 {
-    TileLayer,
-    ObjectLayer
+    TileLayer = 0,
+    ObjectLayer = 1
 };
 
 using TileLayerData;
@@ -56,47 +70,39 @@ struct TileLayerData {
 using Actor;
 
 struct ObjectLayerData {
-    Vectoru32 size;
     Actor actors[];
 };
 
 enum PropertyType : u8 {
-    Int,
+    Int = 1,
     Bool,
     Float,
     String,
     Vector,
     Vectori,
     Rect,
-    Recti
+    Recti,
+    Color
 };
 
 struct ActorProperty {
     PropertyType type;
     
     match (type) {
-        (PropertyType::Uint8): u8 data;
-        (PropertyType::Uint16): u16 data;
-        (PropertyType::Uint32): u32 data;
-        (PropertyType::Uint64): u64 data;
-        
-        (PropertyType::Int8): s8 data;
-        (PropertyType::Int16): s16 data;
-        (PropertyType::Int32): s32 data;
-        (PropertyType::Int64): s64 data;
-        
+        (PropertyType::Int): s32 data;
         (PropertyType::Float): float data;
-        
         (PropertyType::String): char data[];
-        
         (PropertyType::Vector): Vector data;
-        (PropertyType::Vectoru32): Vectoru32 data;
-        (PropertyType::Vectori32): Vectors32 data;
+        (PropertyType::Vectori): Vectors32 data;
+        (PropertyType::Rect): Rect data;
+        (PropertyType::Recti): Rects32 data;
+        (PropertyType::Color): 
     }
 };
 
 struct Actor {
     char name[];
+    char classname[];
     
     ActorProperty properties[];
 };
@@ -107,7 +113,7 @@ struct Document {
     Vectoru16 tilesz;
     TileSet sets[while(std::mem::read_unsigned($, 2) != 0x0)];
     padding[2];
-    Layer layers[while($ < std::mem::size)];
+    Layer layers[while(!std::mem::eof())];
 };
 
 Document doc @ 0x00;

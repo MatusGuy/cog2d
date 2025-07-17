@@ -11,6 +11,7 @@
 
 namespace cog2d {
 
+// TODO: inherit iostream? compose of an iostream? something like that.
 class IoDevice
 {
 public:

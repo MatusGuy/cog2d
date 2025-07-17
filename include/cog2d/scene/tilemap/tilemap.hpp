@@ -42,8 +42,13 @@ public:
 	TileSetRef& get_tileset(TileId tileid);
 
 private:
+	/// @deprecated removing soon
 	void parse_toml(toml::table& table);
+
 	void parse_bin(IoDevice&& device);
+
+	std::unique_ptr<TileLayer> parse_tilelayer(IoDevice& device);
+	void parse_objects(IoDevice& device);
 };
 
 }

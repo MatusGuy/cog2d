@@ -161,42 +161,51 @@ void TileMap::parse_bin(IoDevice&& device)
 		std::uint8_t type;
 		device.read(type);
 
-		if (type != 0)
-			// This is an object layer. Implement later.
-			continue;
-
-		std::unique_ptr<TileLayer> layer = std::make_unique<TileLayer>();
-		layer->m_map = this;
-
 		// TODO: impl name
 		std::string name;
 		device.read(name);
 
-		device.read(layer->m_size);
-		//if constexpr (SDL_BYTEORDER == SDL_LIL_ENDIAN) {
-		//	layer->m_size.x = ntohl(layer->m_size.x);
-		//	layer->m_size.y = ntohl(layer->m_size.y);
-		//}
-
-		layer->m_tiles.reserve(layer->m_size.x * layer->m_size.y);
-
-		// slower than solution below???????
-		//device.read(layer->m_tiles.data(), sizeof(TileId), layer->m_tiles.capacity());
-
-		for (int i = 0; i < layer->m_tiles.capacity(); ++i) {
-			//TileId n = layer->m_tiles[i];
-			TileId n;
-
-			device.read(n);
-
-			//if constexpr (SDL_BYTEORDER == SDL_LIL_ENDIAN)
-			//	n = ntohs(n);
-
-			layer->m_tiles.push_back(n);
-		}
-
-		m_layers.push_back(std::move(layer));
+		if (type == 0)
+			m_layers.push_back(parse_tilelayer(device));
+		else
+			parse_objects(device);
 	}
+}
+
+std::unique_ptr<TileLayer> TileMap::parse_tilelayer(IoDevice& device)
+{
+	std::unique_ptr<TileLayer> layer = std::make_unique<TileLayer>();
+	layer->m_map = this;
+
+	device.read(layer->m_size);
+	//if constexpr (SDL_BYTEORDER == SDL_LIL_ENDIAN) {
+	//	layer->m_size.x = ntohl(layer->m_size.x);
+	//	layer->m_size.y = ntohl(layer->m_size.y);
+	//}
+
+	layer->m_tiles.reserve(layer->m_size.x * layer->m_size.y);
+
+	// slower than solution below???????
+	//device.read(layer->m_tiles.data(), sizeof(TileId), layer->m_tiles.capacity());
+
+	for (int i = 0; i < layer->m_tiles.capacity(); ++i) {
+		//TileId n = layer->m_tiles[i];
+		TileId n;
+
+		device.read(n);
+
+		//if constexpr (SDL_BYTEORDER == SDL_LIL_ENDIAN)
+		//	n = ntohs(n);
+
+		layer->m_tiles.push_back(n);
+	}
+
+	return std::move(layer);
+}
+
+void TileMap::parse_objects(IoDevice& device)
+{
+	// TODO: Make seperate parser class to put own object factory function
 }
 
 }  //namespace cog2d

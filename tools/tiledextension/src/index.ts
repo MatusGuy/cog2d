@@ -449,6 +449,7 @@ function writeObjectGroupBin(stream: BinaryFileStream, group: ObjectGroup) {
 		let obj = group.objectAt(i);
 		tiled.log(`Writing object '${obj.name}' of class '${obj.className}'`);
 		stream.write_string(obj.name);
+		stream.write_string(obj.className);
 
 		// TODO: Handle superclasses
 		let props = obj.resolvedProperties();

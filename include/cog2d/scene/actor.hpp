@@ -4,17 +4,31 @@
 #pragma once
 
 #include <memory>
+#include <variant>
 
 #include "cog2d/scene/collision/collisionsystem.hpp"
 #include "cog2d/scene/actorcomponents.hpp"
 #include "cog2d/util/typetraits.hpp"
+#include "cog2d/video/color.hpp"
 
 #define COG2D_GET_COMPONENT(comp) \
 	(static_cast<ActorComps::comp*>(m_comps[ActorComps::comp::type].get()))
 
 namespace cog2d {
 
+// TODO: Clang-format: This should be aligned with spaces, not tabs
+using PropertyRef = std::variant<std::int32_t*, bool*, float*, std::string*, Vector*,
+								 Vector_t<std::int32_t>*, Rect*, Rect_t<std::int32_t>*, Color*>;
+using PropertyRefs = std::vector<PropertyRef>;
+
 class ActorManager;
+class Actor;
+
+template<class A, class = BaseOf<A, Actor>, typename T>
+void set_property(A& actor, std::size_t idx, T value);
+
+template<class A, class = BaseOf<A, Actor>, typename T>
+const PropertyRef get_property(A& actor, std::size_t idx);
 
 /**
  * @brief A moving object on a scene
@@ -55,6 +69,10 @@ public:
 	virtual CollisionSystem::Response collision(Actor* other);
 
 	Vector viewport_pos();
+
+public:
+	static std::string classname() { return ""; }
+	static PropertyRefs properties() { return {}; }
 
 public:
 	// The following functions crash the program if the component does not exist.
