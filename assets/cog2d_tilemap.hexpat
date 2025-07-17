@@ -107,7 +107,7 @@ struct Document {
     Vectoru16 tilesz;
     TileSet sets[while(std::mem::read_unsigned($, 2) != 0x0)];
     padding[2];
-    Layer layers[];
+    Layer layers[while($ < std::mem::size)];
 };
 
 Document doc @ 0x00;
