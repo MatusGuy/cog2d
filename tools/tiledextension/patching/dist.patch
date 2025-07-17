@@ -110,6 +110,9 @@
            throw new TomlError("invalid unicode escape", {
              toml: str,
              ptr: tmp
+@@ -337,1 +331,1 @@
+-    return integersAsBigInt ? 0n : 0;
++    return integersAsBigInt ? BigInt(0) : 0;
 @@ -1030,4 +1024,4 @@
  })();
  
