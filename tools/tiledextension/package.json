@@ -26,6 +26,6 @@
 	},
 	"dependencies": {
 		"pnpm": "^10.13.1",
-		"smol-toml": "^1.3.4"
+		"smol-toml": "~1.3.4"
 	}
 }
