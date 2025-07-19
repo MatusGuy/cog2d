@@ -12,8 +12,13 @@
 
 namespace cog2d {
 
+template<class T>
+class Parser;
+
 class TileMap
 {
+	friend class Parser<TileMap>;
+
 public:
 	struct TileSetRef
 	{
@@ -35,8 +40,6 @@ public:
 public:
 	TileMap();
 
-	void load(std::filesystem::path path);
-
 	void draw();
 
 	TileSetRef& get_tileset(TileId tileid);
@@ -44,11 +47,6 @@ public:
 private:
 	/// @deprecated removing soon
 	void parse_toml(toml::table& table);
-
-	void parse_bin(IoDevice&& device);
-
-	std::unique_ptr<TileLayer> parse_tilelayer(IoDevice& device);
-	void parse_objects(IoDevice& device);
 };
 
-}
+}  //namespace cog2d

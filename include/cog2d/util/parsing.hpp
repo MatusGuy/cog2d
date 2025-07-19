@@ -11,7 +11,8 @@
 namespace toml {
 inline auto parse(cog2d::IoDevice& stream)
 {
-	return parse(*stream.stl_stream());
+	// Bitchy compiler wont accept anything but a reinterpret cast
+	return parse(reinterpret_cast<std::istream&>(*stream.stl_stream()));
 }
 }  //namespace toml
 
@@ -72,4 +73,20 @@ inline toml::array& get_as_table(toml::node& node, std::string_view key)
 
 }  //namespace toml_util
 
-}
+// TODO: Custom exception for parsing error
+template<class T>
+class Parser
+{
+	friend T;
+
+public:
+	/**
+	 * @brief parse
+	 * @throws parser exception
+	 * @param device
+	 * @param result
+	 */
+	virtual void parse(IoDevice& device, T& result) = 0;
+};
+
+}  //namespace cog2d
