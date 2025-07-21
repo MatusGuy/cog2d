@@ -12,7 +12,7 @@ class TileLayer;
 class BinTileMapParser : public Parser<TileMap>
 {
 public:
-	BinTileMapParser();
+	BinTileMapParser() {}
 
 	void parse(IoDevice& device, TileMap& result) override;
 };

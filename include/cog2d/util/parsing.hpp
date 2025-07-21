@@ -7,6 +7,7 @@
 
 #include "cog2d/filesystem/iodevice.hpp"
 #include "cog2d/util/fmt.hpp"
+#include "cog2d/util/typetraits.hpp"
 
 namespace toml {
 inline auto parse(cog2d::IoDevice& stream)
@@ -80,6 +81,9 @@ class Parser
 	friend T;
 
 public:
+	using ParserTarget = T;
+
+public:
 	/**
 	 * @brief parse
 	 * @throws parser exception
@@ -88,5 +92,13 @@ public:
 	 */
 	virtual void parse(IoDevice& device, T& result) = 0;
 };
+
+// these are some BAD function names
+template<class T, class = std::enable_if<is_instance_of_v<T, Parser>, T>>
+static void new_parse(IoDevice& device, typename T::ParserTarget& result)
+{
+	T parser;
+	parser.parse(device, result);
+}
 
 }  //namespace cog2d

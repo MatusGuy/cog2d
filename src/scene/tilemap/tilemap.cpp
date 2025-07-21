@@ -83,8 +83,6 @@ void TileMap::parse_toml(toml::table& data)
 
 		layer->m_tiles.reserve(layer->m_size.x * layer->m_size.y);
 
-		// HACK: Terrible, isn't it? Don't worry. The format will be replaced with binary soon
-		// anyway.
 		for (toml::array::iterator it = tiles.begin(); it != tiles.end(); ++it) {
 			layer->m_tiles.push_back(static_cast<TileId>(as<std::int64_t>(*it)));
 		}
