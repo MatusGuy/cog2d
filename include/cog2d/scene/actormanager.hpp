@@ -12,6 +12,7 @@
 #include "cog2d/util/currenton.hpp"
 #include "cog2d/scene/collision/collisionsystem.hpp"
 #include "cog2d/scene/actorcontainers.hpp"
+#include "cog2d/scene/actorfactory.hpp"
 
 namespace cog2d {
 
@@ -21,7 +22,7 @@ class ActorManager : public Currenton<ActorManager>
 	friend class Actor;
 
 public:
-	ActorManager();
+	ActorManager(ActorFactory* factory = nullptr);
 
 	template<class T, typename... Args>
 	T* create(Args&&... args)
@@ -38,6 +39,13 @@ public:
 
 	inline CollisionSystem& colsystem() { return m_collisionsystem; }
 
+	inline ActorFactory* factory() { return m_factory; }
+	inline void set_factory(ActorFactory* f)
+	{
+		m_factory = f;
+		f->m_actormanager = this;
+	}
+
 	void update();
 	void draw();
 
@@ -49,7 +57,8 @@ private:
 private:
 	Actors m_actors;
 	ActorRefs m_active_actors;
+	ActorFactory* m_factory;
 	CollisionSystem m_collisionsystem;
 };
 
-}
+}  //namespace cog2d

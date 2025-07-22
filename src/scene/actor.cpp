@@ -111,20 +111,18 @@ void Actor::apply_movement()
 	col().mov.y = 0;
 }
 
-template<class A, typename T>
-void set_property(A& actor, std::size_t idx, T value)
+template<typename T>
+void Actor::set_property_p(int idx, T& value)
 {
-	PropertyRefs properties = actor.properties();
-	PropertyRef& ref = properties[idx];
+	PropertyRef& ref = properties()[idx];
 
 	T* prop = std::get<T>(ref);
-	(*prop) = value;
-}
 
-template<class A>
-const PropertyRef get_property(A& actor, std::size_t idx)
-{
-	return actor.properties()[idx];
+	if (prop != nullptr)
+		// Woooahh!!! Calm down there buddy.
+		return;
+
+	(*prop) = value;
 }
 
 }  //namespace cog2d

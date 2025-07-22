@@ -9,26 +9,57 @@
 #include "cog2d/scene/collision/collisionsystem.hpp"
 #include "cog2d/scene/actorcomponents.hpp"
 #include "cog2d/util/typetraits.hpp"
+#include "cog2d/util/logger.hpp"
 #include "cog2d/video/color.hpp"
 
 #define COG2D_GET_COMPONENT(comp) \
 	(static_cast<ActorComps::comp*>(m_comps[ActorComps::comp::type].get()))
 
+#define COG2D_ACTOR(clname)                  \
+public:                                      \
+	static std::string classname_s()         \
+	{                                        \
+		return #clname;                      \
+	}                                        \
+	virtual std::string classname() override \
+	{                                        \
+		return classname_s();                \
+	}                                        \
+	                                         \
+private:
+
 namespace cog2d {
 
-// TODO: Clang-format: This should be aligned with spaces, not tabs
+enum PropertyType : std::uint8_t
+{
+	PROPTYPE_NONE,
+	PROPTYPE_INT,
+	PROPTYPE_BOOL,
+	PROPTYPE_FLOAT,
+	PROPTYPE_STRING,
+	PROPTYPE_VECTOR,
+	PROPTYPE_VECTORI,
+	PROPTYPE_RECT,
+	PROPTYPE_RECTI,
+	PROPTYPE_COLOR
+};
+
+// Make sure to add new types to this messy list
+template<typename T>
+inline constexpr bool is_property_value()
+{
+	return std::is_same_v<T, std::int32_t> || std::is_same_v<T, bool> || std::is_same_v<T, float> ||
+	       std::is_same_v<T, std::string> || std::is_same_v<T, Vector> ||
+	       std::is_same_v<T, Vector_t<std::int32_t>> || std::is_same_v<T, Rect> ||
+	       std::is_same_v<T, Rect_t<std::int32_t>> || std::is_same_v<T, Color>;
+}
+
 using PropertyRef = std::variant<std::int32_t*, bool*, float*, std::string*, Vector*,
-								 Vector_t<std::int32_t>*, Rect*, Rect_t<std::int32_t>*, Color*>;
+                                 Vector_t<std::int32_t>*, Rect*, Rect_t<std::int32_t>*, Color*>;
 using PropertyRefs = std::vector<PropertyRef>;
 
 class ActorManager;
 class Actor;
-
-template<class A, class = BaseOf<A, Actor>, typename T>
-void set_property(A& actor, std::size_t idx, T value);
-
-template<class A, class = BaseOf<A, Actor>, typename T>
-const PropertyRef get_property(A& actor, std::size_t idx);
 
 /**
  * @brief A moving object on a scene
@@ -71,8 +102,24 @@ public:
 	Vector viewport_pos();
 
 public:
-	static std::string classname() { return ""; }
-	static PropertyRefs properties() { return {}; }
+	static std::string classname_s() { return ""; }
+	virtual std::string classname() { return classname_s(); }
+
+	virtual PropertyRefs properties() { return {}; }
+
+	template<typename T, typename = std::enable_if<is_property_value<T>(), T>>
+	inline void set_property(int idx, T& value)
+	{
+		PropertyRef ref = properties().at(idx);
+
+		T* prop = std::get<T*>(ref);
+
+		if (prop == nullptr)
+			// TODO: Throw exception
+			return;
+
+		(*prop) = value;
+	}
 
 public:
 	// The following functions crash the program if the component does not exist.
@@ -103,6 +150,9 @@ private:
 	bool m_viewport_active;
 
 	void set_viewport_active(bool active);
+
+	template<typename T>
+	void set_property_p(int idx, T& value);
 };
 
 }  //namespace cog2d

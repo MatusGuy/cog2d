@@ -94,10 +94,10 @@ public:
 };
 
 // these are some BAD function names
-template<class T, class = std::enable_if<is_instance_of_v<T, Parser>, T>>
-static void new_parse(IoDevice& device, typename T::ParserTarget& result)
+template<class T, class = std::enable_if<is_instance_of_v<T, Parser>, T>, typename... Args>
+void new_parse(IoDevice& device, typename T::ParserTarget& result, Args&&... args)
 {
-	T parser;
+	T parser(std::forward<Args>(args)...);
 	parser.parse(device, result);
 }
 

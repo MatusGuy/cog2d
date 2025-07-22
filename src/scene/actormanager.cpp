@@ -9,10 +9,11 @@
 
 namespace cog2d {
 
-ActorManager::ActorManager()
-    : m_actors(),
-      m_active_actors(),
-      m_collisionsystem()
+ActorManager::ActorManager(ActorFactory* factory)
+	: m_actors(),
+	  m_active_actors(),
+	  m_factory(factory),
+	  m_collisionsystem()
 {
 	m_collisionsystem.m_manager = this;
 }
@@ -107,4 +108,4 @@ void ActorManager::notify_activity(Actor* actor)
 		}
 	}
 }
-}
+}  //namespace cog2d

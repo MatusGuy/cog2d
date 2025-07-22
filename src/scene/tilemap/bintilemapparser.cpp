@@ -6,6 +6,7 @@
 #include "cog2d/scene/tilemap/tilemap.hpp"
 #include "cog2d/filesystem/iodevice.hpp"
 #include "cog2d/assets/assetmanager.hpp"
+#include "cog2d/scene/actormanager.hpp"
 #include "cog2d/util/logger.hpp"
 
 namespace cog2d {
@@ -21,7 +22,7 @@ void BinTileMapParser::parse(IoDevice& device, TileMap& result)
 	header[3] = '\0';
 
 	if (std::strcmp(header, "C2M\0")) {
-		COG2D_LOG_ERROR("TileMap", fmt::format("Unrecognized header: \"{}\"", header));
+		COG2D_LOG_ERROR("BinTileMapParser", fmt::format("Unrecognized header: \"{}\"", header));
 		return;
 	}
 
@@ -49,7 +50,6 @@ void BinTileMapParser::parse(IoDevice& device, TileMap& result)
 		TileMap::TileSetRef set;
 		set.firstgid = firstgid;
 
-		// TODO: reading strings from iodevice utility
 		std::string name;
 		device.read(name);
 
@@ -71,8 +71,10 @@ void BinTileMapParser::parse(IoDevice& device, TileMap& result)
 			layer->m_map = &result;
 			new_parse<BinTileLayerParser>(device, *layer.get());
 			result.m_layers.push_back(std::move(layer));
+		} else if (type == 1) {
+			parse_object_group(device);
 		} else {
-			//parse_objects(device);
+			// bye
 			device.seek(0, IoDevice::SEEKPOS_END);
 		}
 	}
@@ -104,10 +106,66 @@ void BinTileLayerParser::parse(IoDevice& device, TileLayer& result)
 	}
 }
 
-/*
-void BinTileMapParser::parse(IoDevice& device, TileMap& result) {
+void BinTileMapParser::parse_object_group(IoDevice& device)
+{
+	ActorFactory* factory = m_actormanager.factory();
 
+	if (!factory) {
+		COG2D_LOG_WARN("BinTileMapParser", "The ActorManager has no factory.");
+		return;
+	}
+
+	while (true) {
+		std::string name;
+		device.read(name);
+
+		std::string classname;
+		device.read(classname);
+
+		Actor* actor = factory->create(classname);
+
+		// HACK: This is not enough. I need Protogent.
+		if (!actor)
+			break;
+
+		int idx = 0;
+		while (true) {
+			if (!parse_property(device, idx, *actor))
+				break;
+
+			++idx;
+		}
+	}
 }
-*/
+
+bool BinTileMapParser::parse_property(IoDevice& device, int idx, Actor& actor)
+{
+	PropertyType valtype;
+	device.read(valtype);
+
+#define COG2D_PARSE_PROPERTY(tid, t)  \
+	case tid: {                       \
+		t val;                        \
+		device.read(val);             \
+		actor.set_property(idx, val); \
+		break;                        \
+	}
+
+	switch (valtype) {
+	    COG2D_PARSE_PROPERTY(PROPTYPE_INT, std::int32_t)
+		COG2D_PARSE_PROPERTY(PROPTYPE_BOOL, bool)
+		COG2D_PARSE_PROPERTY(PROPTYPE_FLOAT, float)
+		COG2D_PARSE_PROPERTY(PROPTYPE_STRING, std::string)
+		COG2D_PARSE_PROPERTY(PROPTYPE_VECTOR, Vector)
+		COG2D_PARSE_PROPERTY(PROPTYPE_VECTORI, Vector_t<std::int32_t>)
+		COG2D_PARSE_PROPERTY(PROPTYPE_RECT, Rect)
+		COG2D_PARSE_PROPERTY(PROPTYPE_RECTI, Rect_t<std::int32_t>)
+		COG2D_PARSE_PROPERTY(PROPTYPE_COLOR, Color)
+	default:
+		return false;
+	}
+
+	return true;
+}
 
 }  //namespace cog2d

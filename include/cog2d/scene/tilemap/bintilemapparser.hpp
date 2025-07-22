@@ -8,13 +8,24 @@ namespace cog2d {
 
 class TileMap;
 class TileLayer;
+class ActorManager;
+class Actor;
 
 class BinTileMapParser : public Parser<TileMap>
 {
+	ActorManager& m_actormanager;
+
 public:
-	BinTileMapParser() {}
+	BinTileMapParser(ActorManager& actormanager)
+		: m_actormanager(actormanager)
+	{
+	}
 
 	void parse(IoDevice& device, TileMap& result) override;
+
+private:
+	void parse_object_group(IoDevice& device);
+	bool parse_property(IoDevice& device, int idx, Actor& actor);
 };
 
 class BinTileLayerParser : public Parser<TileLayer>
