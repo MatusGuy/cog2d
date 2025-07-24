@@ -2,7 +2,7 @@ project(COG2D_TILED_EXTENSION)
 
 find_program(PNPM_PATH pnpm)
 
-file(GLOB COG2D_TILED_EXTENSION_SRC CONFIGURE_DEPENDS src/*.ts)
+file(GLOB COG2D_TILED_EXTENSION_SRC src/*.ts)
 add_custom_target(cog2d_tiled_extension
 	COMMAND ${PNPM_PATH} build
 	WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"

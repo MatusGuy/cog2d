@@ -368,16 +368,16 @@ function propTypeFromProperty(value: TiledObjectPropertyValue): PropertyType {
 			return PropertyType.Int;
 
 		switch (propval.typeName) {
-		case "Vector":
+		case "cog2d.Vector":
 			return PropertyType.Vector;
 
-		case "Vectori":
+		case "cog2d.Vectori":
 			return PropertyType.Vectori;
 
-		case "Rect":
+		case "cog2d.Rect":
 			return PropertyType.Rect;
 
-		case "Recti":
+		case "cog2d.Recti":
 			return PropertyType.Recti;
 		}
 	}
@@ -386,7 +386,9 @@ function propTypeFromProperty(value: TiledObjectPropertyValue): PropertyType {
 	return PropertyType.None;
 }
 
-function writePropertyBin(stream: BinaryFileStream, value: TiledObjectPropertyValue) {
+function writePropertyBin(stream: BinaryFileStream, id: number, value: TiledObjectPropertyValue) {
+	stream.write_object(id, 1, true);
+
 	let typeid = propTypeFromProperty(value);
 	stream.write_object(typeid, 1, true);
 
@@ -440,6 +442,63 @@ function writePropertyBin(stream: BinaryFileStream, value: TiledObjectPropertyVa
 	}
 }
 
+/*
+// Because Tiled does not give resolved object properties on member objects
+function getResolvedObjectProperties(props: TiledObjectProperties): TiledObjectProperties {
+
+	let out = props;
+
+	let keys = Object.keys(out);
+	for (let i = 0; i < keys.length; ++i) {
+		let prop = out[keys[i]];
+
+		if (typeof prop != "object" || prop["values"] == undefined)
+			// This is not a PropertyValue.
+			continue;
+
+		let propval = prop as PropertyValue;
+		let proptype = tiled.project.findTypeByName(prop.typeName);
+
+		if (!proptype || !proptype.isClass)
+			continue;
+
+		let cl = proptype as ClassPropertyType;
+	}
+
+	return out;
+}
+*/
+
+function resolveSuperclassProperties(obj: any) {
+	let out: TiledObjectProperties = {};
+
+	// If I have to write another line of TypeScript... That's it. No more Marty.
+	let superclass = obj["cog2d.super"] as PropertyValue;
+	if (superclass != undefined)
+		Object.assign(out, resolveSuperclassProperties(superclass.value as any));
+
+	Object.assign(out, obj);
+
+	if (superclass != undefined)
+		delete out["cog2d.super"];
+
+	return out;
+}
+
+/// Resolves superclass properties
+function resolveObjectProperties(obj: MapObject): TiledObjectProperties {
+	let out: TiledObjectProperties = {};
+
+	// If I have to write another line of TypeScript... That's it. No more Marty.
+	let superclass = obj.resolvedProperties()["cog2d.super"] as PropertyValue;
+	if (superclass != undefined)
+		Object.assign(out, resolveSuperclassProperties(superclass.value as any));
+
+	Object.assign(out, obj.properties());
+
+	return out;
+}
+
 function writeObjectGroupBin(stream: BinaryFileStream, group: ObjectGroup) {
 	tiled.log(`Writing object group '${group.name}'`);
 	stream.write_object(1, 1, true);
@@ -451,19 +510,56 @@ function writeObjectGroupBin(stream: BinaryFileStream, group: ObjectGroup) {
 		stream.write_string(obj.name);
 		stream.write_string(obj.className);
 
-		// TODO: Handle superclasses
-		let props = obj.resolvedProperties();
+		let props = resolveObjectProperties(obj);
+		tiled.log(` Properties: ${JSON.stringify(props)}`);
+
+		if (props["skip"] as boolean) {
+			tiled.log(`Skipping '${obj.name}' as requested`);
+			continue;
+		}
+
+		let memberOrder = props["memberOrder"]?.toString().split("\n");
+		if (memberOrder == undefined) {
+			tiled.warn(`Skipping '${obj.name}' because it has no member order.\n` +
+					   `Is it even derived from cog2d.Actor?`, () => {});
+			continue;
+		}
+
+		// Increment this every time a cog2d-only property is written.
+		let startidx = 0;
+
+		let comps = props.components?.toString().split("\n");
+		if (comps) {
+			if (comps.find(comp => comp == "Geometry")) {
+				writePropertyBin(stream, startidx, {
+					value: { x: obj.pos.x, y: obj.pos.y },
+					typeId: 69420, // u can tell it doesnt matter what i put here
+					typeName: "cog2d.Vector"
+				});
+				++startidx;
+			}
+			// add more soon...
+		}
+
 		let keys = Object.keys(props);
 		for (let j = 0; j < keys.length; ++j) {
 			let key = keys[j];
+
 			let value = props[key];
 
 			if (value == undefined) {
-				tiled.log("Skipping " + key);
+				tiled.warn(` Skipping '${key}' because gotta love typescript!`, () => {});
 				continue;
 			}
 
-			writePropertyBin(stream, value);
+			let propid = memberOrder.findIndex(prop => prop == key);
+			if (propid == -1) {
+				tiled.log(` Skipping '${key}' because it is not specified in member order.`);
+				continue;
+			}
+
+			tiled.log(` Writing '${key}' with value ${value.toString()}`);
+			writePropertyBin(stream, startidx + propid, value);
 		}
 		stream.write_object(0, 1, true);
 	}

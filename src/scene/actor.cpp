@@ -104,6 +104,17 @@ Vector Actor::viewport_pos()
 	return bbox().pos - Viewport::get().get_camera()->m_pos;
 }
 
+PropertyRefs Actor::properties()
+{
+	PropertyRefs out;
+
+	if (has_component<ActorComps::Geometry>()) {
+		out.push_back(&bbox().pos);
+	}
+
+	return out;
+}
+
 void Actor::apply_movement()
 {
 	bbox().pos = get_dest().pos;

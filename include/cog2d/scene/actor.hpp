@@ -105,7 +105,7 @@ public:
 	static std::string classname_s() { return ""; }
 	virtual std::string classname() { return classname_s(); }
 
-	virtual PropertyRefs properties() { return {}; }
+	virtual PropertyRefs properties();
 
 	template<typename T, typename = std::enable_if<is_property_value<T>(), T>>
 	inline void set_property(int idx, T& value)

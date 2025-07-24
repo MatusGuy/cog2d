@@ -70,7 +70,8 @@ struct TileLayerData {
 using Actor;
 
 struct ObjectLayerData {
-    Actor actors[];
+    // FIXME
+    Actor actors[while(!std::mem::eof())];
 };
 
 enum PropertyType : u8 {
@@ -86,6 +87,7 @@ enum PropertyType : u8 {
 };
 
 struct ActorProperty {
+    u8 idx;
     PropertyType type;
     
     match (type) {
@@ -96,7 +98,7 @@ struct ActorProperty {
         (PropertyType::Vectori): Vectors32 data;
         (PropertyType::Rect): Rect data;
         (PropertyType::Recti): Rects32 data;
-        (PropertyType::Color): 
+        // TODO: Color
     }
 };
 
@@ -104,7 +106,8 @@ struct Actor {
     char name[];
     char classname[];
     
-    ActorProperty properties[];
+    ActorProperty properties[while(std::mem::read_unsigned($+1, 1) != 0x0)];
+    padding[2];
 };
 
 struct Document {
