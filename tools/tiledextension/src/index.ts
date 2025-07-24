@@ -387,7 +387,7 @@ function propTypeFromProperty(value: TiledObjectPropertyValue): PropertyType {
 }
 
 function writePropertyBin(stream: BinaryFileStream, id: number, value: TiledObjectPropertyValue) {
-	stream.write_object(id, 1, true);
+	stream.write_object(id + 1, 1, true);
 
 	let typeid = propTypeFromProperty(value);
 	stream.write_object(typeid, 1, true);
@@ -506,12 +506,8 @@ function writeObjectGroupBin(stream: BinaryFileStream, group: ObjectGroup) {
 
 	for (let i = 0; i < group.objectCount; ++i) {
 		let obj = group.objectAt(i);
-		tiled.log(`Writing object '${obj.name}' of class '${obj.className}'`);
-		stream.write_string(obj.name);
-		stream.write_string(obj.className);
 
 		let props = resolveObjectProperties(obj);
-		tiled.log(` Properties: ${JSON.stringify(props)}`);
 
 		if (props["skip"] as boolean) {
 			tiled.log(`Skipping '${obj.name}' as requested`);
@@ -524,6 +520,11 @@ function writeObjectGroupBin(stream: BinaryFileStream, group: ObjectGroup) {
 					   `Is it even derived from cog2d.Actor?`, () => {});
 			continue;
 		}
+
+		tiled.log(`Writing object '${obj.name}' of class '${obj.className}'`);
+		stream.write_string(obj.className);
+
+		tiled.log(` Properties: ${JSON.stringify(props)}`);
 
 		// Increment this every time a cog2d-only property is written.
 		let startidx = 0;

@@ -17,7 +17,7 @@ class BinTileMapParser : public Parser<TileMap>
 
 public:
 	BinTileMapParser(ActorManager& actormanager)
-		: m_actormanager(actormanager)
+	    : m_actormanager(actormanager)
 	{
 	}
 
@@ -25,7 +25,7 @@ public:
 
 private:
 	void parse_object_group(IoDevice& device);
-	bool parse_property(IoDevice& device, int idx, Actor& actor);
+	bool parse_property(IoDevice& device, Actor& actor);
 };
 
 class BinTileLayerParser : public Parser<TileLayer>

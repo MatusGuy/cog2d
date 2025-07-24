@@ -73,6 +73,7 @@ void BinTileMapParser::parse(IoDevice& device, TileMap& result)
 			result.m_layers.push_back(std::move(layer));
 		} else if (type == 1) {
 			parse_object_group(device);
+			COG2D_LOG_DEBUG("hi");
 		} else {
 			// bye
 			device.seek(0, IoDevice::SEEKPOS_END);
@@ -116,8 +117,12 @@ void BinTileMapParser::parse_object_group(IoDevice& device)
 	}
 
 	while (true) {
-		std::string name;
-		device.read(name);
+		std::uint8_t end;
+		device.read(end);
+		if (end == 0x0)
+			break;
+
+		device.seek(-1, IoDevice::SEEKPOS_CURSOR);
 
 		std::string classname;
 		device.read(classname);
@@ -128,18 +133,23 @@ void BinTileMapParser::parse_object_group(IoDevice& device)
 		if (!actor)
 			break;
 
-		int idx = 0;
 		while (true) {
-			if (!parse_property(device, idx, *actor))
+			if (!parse_property(device, *actor))
 				break;
-
-			++idx;
 		}
 	}
 }
 
-bool BinTileMapParser::parse_property(IoDevice& device, int idx, Actor& actor)
+bool BinTileMapParser::parse_property(IoDevice& device, Actor& actor)
 {
+	std::uint8_t idx;
+	device.read(idx);
+
+	if (idx == 0)
+		return false;
+
+	--idx;
+
 	PropertyType valtype;
 	device.read(valtype);
 
