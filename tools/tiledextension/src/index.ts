@@ -55,6 +55,27 @@ function getTempPath(): string {
 	}
 }
 
+function escapeRegExp(text: string): string {
+	return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function getDirPath(path: string): string {
+	const matches = path.match(/^.*\//);
+	return matches != null ? matches[0] : "";
+}
+
+function getAssetFilePath(path: string): string {
+	let r = new RegExp(`(${escapeRegExp(getDirPath(tiled.project.fileName))})(.*)$`, "");
+	const matches = path.match(r);
+	tiled.log(`Converting ${path} to ${matches}`);
+	return matches != null && matches.length > 1 ? matches[2] : "";
+}
+
+/// Replace source asset path with a path used in game
+function getRealAssetFilePath(path: string): string {
+	return path.replace(/src\/(?!.*src\/)/, "");
+}
+
 function getPathFileName(path: string): string {
 	const matches = path.match(/[^\\/]+$/);
 	return matches != null ? matches[0] : "";
@@ -66,14 +87,12 @@ function getPathBaseName(path: string): string {
 }
 
 function getTilesetData(tileset: Tileset): TomlTileSetData {
-	const imgpath = getPathFileName(tileset.imageFileName);
-
 	return {
 		tilewidth: tileset.tileWidth,
 		tileheight: tileset.tileHeight,
 		columns: tileset.columnCount,
 		imageheight: tileset.imageHeight,
-		image: imgpath,
+		image: getAssetFilePath(tileset.imageFileName),
 	};
 };
 
@@ -170,7 +189,7 @@ let tomlMap: ScriptedMapFormat = {
 			activeSet.setProperty("cog2d._firstgid", nextGid);
 			nextGid += activeSet.tileCount;
 
-			fileDat.tilesets.push(setData)
+			fileDat.tilesets.push(setData);
 
 			tiled.log(`Processed tileset '${setIndex}'\nResult: ${TOML.stringify(setData)}`);
 		}
@@ -601,7 +620,8 @@ let binMap: ScriptedMapFormat = {
 				return;
 			}
 
-			out.write_string(getPathBaseName(activeSet.fileName) + ".toml");
+			const abspath = `${getDirPath(activeSet.fileName)}${setName}.toml`;
+			out.write_string(getRealAssetFilePath(getAssetFilePath(abspath)));
 
 			activeSet.setProperty("cog2d._firstgid", nextGid);
 			nextGid += activeSet.tileCount;
@@ -708,7 +728,7 @@ tiled.extendMenu("Map", [
 
 tiled.activeAssetChanged.connect((asset: Asset) => {
 	// Only activate action for tilemaps
-	testAction.enabled = asset.isTileMap;
+	testAction.enabled = asset && asset.isTileMap;
 });
 
 // Setup Settings

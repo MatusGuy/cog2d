@@ -1,0 +1,127 @@
+[
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 1,
+        "members": [
+            {
+                "name": "components",
+                "type": "string",
+                "value": ""
+            },
+            {
+                "name": "memberOrder",
+                "type": "string",
+                "value": ""
+            },
+            {
+                "name": "skip",
+                "type": "bool",
+                "value": false
+            }
+        ],
+        "name": "cog2d.Actor",
+        "type": "class",
+        "useAs": [
+            "property",
+            "object",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 4,
+        "members": [
+            {
+                "name": "pos",
+                "propertyType": "cog2d.Vector",
+                "type": "class",
+                "value": {
+                }
+            },
+            {
+                "name": "size",
+                "propertyType": "cog2d.Vector",
+                "type": "class",
+                "value": {
+                }
+            }
+        ],
+        "name": "cog2d.Rect",
+        "type": "class",
+        "useAs": [
+            "property"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 5,
+        "members": [
+            {
+                "name": "pos",
+                "propertyType": "cog2d.Vectori",
+                "type": "class",
+                "value": {
+                }
+            },
+            {
+                "name": "size",
+                "propertyType": "cog2d.Vectori",
+                "type": "class",
+                "value": {
+                }
+            }
+        ],
+        "name": "cog2d.Recti",
+        "type": "class",
+        "useAs": [
+            "property"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 2,
+        "members": [
+            {
+                "name": "x",
+                "type": "float",
+                "value": 0
+            },
+            {
+                "name": "y",
+                "type": "float",
+                "value": 0
+            }
+        ],
+        "name": "cog2d.Vector",
+        "type": "class",
+        "useAs": [
+            "property"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 3,
+        "members": [
+            {
+                "name": "x",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "y",
+                "type": "int",
+                "value": 0
+            }
+        ],
+        "name": "cog2d.Vectori",
+        "type": "class",
+        "useAs": [
+            "property"
+        ]
+    }
+]
