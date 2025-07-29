@@ -51,11 +51,23 @@ public:
 	void update();
 	void draw();
 
-	template<class T, class = BaseOf<T, Actor>>
-	void allow_type_indexing();
+	template<class T, class = BaseOf<Actor, T>>
+	inline void allow_type_indexing()
+	{
+		m_actors_by_class_idx.insert({T::classidx_s(), {}});
+	}
 
-	template<class T, class = BaseOf<T, Actor>>
-	void allow_active_type_indexing();
+	template<class T, class = BaseOf<Actor, T>>
+	inline void allow_active_type_indexing()
+	{
+		m_active_actors_by_class_idx.insert({T::classidx_s(), {}});
+	}
+
+	template<class T, class = BaseOf<Actor, T>>
+	inline ActorRefs& get_active_actors_of_type()
+	{
+		return m_active_actors_by_class_idx[T::classidx_s()];
+	}
 
 private:
 	void notify_activity(Actor* actor);

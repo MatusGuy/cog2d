@@ -73,7 +73,6 @@ void BinTileMapParser::parse(IoDevice& device, TileMap& result)
 			result.m_layers.push_back(std::move(layer));
 		} else if (type == 1) {
 			parse_object_group(device);
-			COG2D_LOG_DEBUG("hi");
 		} else {
 			// bye
 			device.seek(0, IoDevice::SEEKPOS_END);

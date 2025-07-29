@@ -49,11 +49,25 @@ public:
 		return {std::floor(static_cast<float>(x)), std::floor(static_cast<float>(y))};
 	}
 
+	inline float magnitude() { return std::sqrt((x * x) + (y * y)); }
+	inline float length() { return magnitude(); }
+	inline Vector_t<T> normalized()
+	{
+		const float mag = magnitude();
+		return {x / mag, y / mag};
+	}
+
 	/// Average between two vectors
 	COG2D_NUMERIC_TEMPLATE(U)
 	inline Vector_t<T> avg(const Vector_t<U>& other)
 	{
 		return {(x + other.x) / 2, (y + other.y) / 2};
+	}
+
+	COG2D_NUMERIC_TEMPLATE(U)
+	inline float distance(const Vector_t<U>& other) const
+	{
+		return std::sqrt(std::pow(x * other.x, 2) + std::pow(y * other.y, 2));
 	}
 
 	COG2D_NUMERIC_TEMPLATE(U)

@@ -8,7 +8,8 @@
 #include <cstdint>
 
 #include "cog2d/input/inputmanager.hpp"
-#include "screen.hpp"
+#include "cog2d/screen.hpp"
+#include "cog2d/util/typetraits.hpp"
 
 namespace cog2d {
 
@@ -80,6 +81,12 @@ public:
 	void push_screen(std::unique_ptr<Screen> screen);
 	void pop_screen();
 
+	template<class T, class = BaseOf<T, Screen>>
+	inline T& get_screen_as()
+	{
+		return *static_cast<T*>(m_screen_stack.top().get());
+	}
+
 	virtual void init() = 0;
 	virtual bool event(SDL_Event* ev) = 0;
 
@@ -101,4 +108,4 @@ private:
 	void poll_sdl_events();
 };
 
-}
+}  //namespace cog2d

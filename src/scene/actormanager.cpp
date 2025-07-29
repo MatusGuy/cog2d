@@ -110,16 +110,4 @@ void ActorManager::notify_activity(Actor* actor)
 	}
 }
 
-template<class T, class>
-void ActorManager::allow_type_indexing()
-{
-	m_actors_by_class_idx.insert({T::classtype_s(), {}});
-}
-
-template<class T, class>
-void ActorManager::allow_active_type_indexing()
-{
-	m_active_actors_by_class_idx.insert({T::classtype_s(), {}});
-}
-
 }  //namespace cog2d
