@@ -15,18 +15,49 @@
 #define COG2D_GET_COMPONENT(comp) \
 	(static_cast<ActorComps::comp*>(m_comps[ActorComps::comp::type].get()))
 
-#define COG2D_ACTOR(clname)                  \
-public:                                      \
-	static std::string classname_s()         \
-	{                                        \
-		return #clname;                      \
-	}                                        \
-	virtual std::string classname() override \
-	{                                        \
-		return classname_s();                \
-	}                                        \
-	                                         \
+#ifndef COG2D_ACTOR_TYPES
+#define COG2D_ACTOR(clname)           \
+public:                               \
+	static std::string classname_s()  \
+    {                                 \
+	    return #clname;               \
+	}                                 \
+	std::string classname() override  \
+    {                                 \
+	    return classname_s();         \
+	}                                 \
+	static std::uint16_t classidx_s() \
+    {                                 \
+	    return 0;                     \
+	}                                 \
+	std::uint16_t classidx() override \
+    {                                 \
+	    return classidx_s();          \
+	}                                 \
+	                                  \
 private:
+#else
+#define COG2D_ACTOR(clname)                \
+public:                                    \
+	static std::string classname_s()       \
+    {                                      \
+	    return #clname;                    \
+	}                                      \
+	std::string classname() override       \
+    {                                      \
+	    return classname_s();              \
+	}                                      \
+	static std::uint16_t classidx_s()      \
+    {                                      \
+	    return ::cog2d::ActorType::clname; \
+	}                                      \
+	std::uint16_t classidx() override      \
+    {                                      \
+	    return classidx_s();               \
+	}                                      \
+	                                       \
+private:
+#endif
 
 namespace cog2d {
 
@@ -104,6 +135,8 @@ public:
 public:
 	static std::string classname_s() { return ""; }
 	virtual std::string classname() { return classname_s(); }
+	static std::uint16_t classidx_s() { return 0; }
+	virtual std::uint16_t classidx() { return classidx_s(); }
 
 	virtual PropertyRefs properties();
 

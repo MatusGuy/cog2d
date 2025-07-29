@@ -7,9 +7,7 @@ namespace cog2d {
 
 TileScene::TileScene()
 {
-
 }
-
 
 void TileScene::init()
 {
@@ -35,4 +33,4 @@ void TileScene::draw()
 	Scene::draw();
 }
 
-}
+}  //namespace cog2d

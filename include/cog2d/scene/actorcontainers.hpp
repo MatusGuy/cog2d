@@ -5,13 +5,13 @@
 
 #include <memory>
 #include <vector>
-#include <list>
+#include <forward_list>
 
 namespace cog2d {
 
 class Actor;
 
 using Actors = std::vector<std::unique_ptr<Actor>>;
-using ActorRefs = std::list<Actor*>;
+using ActorRefs = std::forward_list<Actor*>;
 
-}
+}  //namespace cog2d

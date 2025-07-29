@@ -8,11 +8,11 @@
 
 namespace cog2d {
 
-ActorRefsIterator::ActorRefsIterator(ActorRefs::iterator it, ActorRefs::iterator begin)
+ActorRefsIterator::ActorRefsIterator(ActorRefs::iterator it, ActorRefs& actors)
     : m_it(it),
       m_actor(*it),
-      m_begin(begin),
-      m_idx(std::distance(m_begin, m_it))
+      m_actors(actors),
+      m_idx(std::distance(actors.begin(), m_it))
 {
 }
 
@@ -21,13 +21,16 @@ ActorRefsIterator ActorRefsIterator::advance(difference_type n)
 	if (m_actor->is_active())
 		++m_it;
 	else {
-		m_it = std::next(m_begin, m_idx);
+		m_it = std::next(m_actors.begin(), m_idx);
 	}
 
+	if (m_it == m_actors.end())
+		return *this;
+
 	m_actor = *m_it;
-	m_idx = std::distance(m_begin, m_it);
+	m_idx = std::distance(m_actors.begin(), m_it);
 
 	return *this;
 }
 
-}
+}  //namespace cog2d

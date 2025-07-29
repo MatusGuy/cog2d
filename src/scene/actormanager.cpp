@@ -10,10 +10,10 @@
 namespace cog2d {
 
 ActorManager::ActorManager(ActorFactory* factory)
-	: m_actors(),
-	  m_active_actors(),
-	  m_factory(factory),
-	  m_collisionsystem()
+    : m_actors(),
+      m_active_actors(),
+      m_factory(factory),
+      m_collisionsystem()
 {
 	m_collisionsystem.m_manager = this;
 }
@@ -26,6 +26,10 @@ void ActorManager::add(std::unique_ptr<Actor> actor)
 	ptr->add_components();
 
 	m_actors.push_back(std::move(actor));
+	auto it = m_actors_by_class_idx.find(ptr->classidx());
+	if (it != m_actors_by_class_idx.end()) {
+		it->second.push_front(ptr);
+	}
 
 	ptr->init();
 
@@ -81,31 +85,41 @@ void ActorManager::notify_activity(Actor* actor)
 	}
 
 	if (actor->is_active()) {
-		m_active_actors.push_back(actor);
+		m_active_actors.push_front(actor);
 		if (actor->has_component<ActorComps::Collision>()) {
-			m_collisionsystem.m_actors.push_back(actor);
+			m_collisionsystem.m_actors.push_front(actor);
+		}
+
+		auto it = m_active_actors_by_class_idx.find(actor->classidx());
+		if (it != m_active_actors_by_class_idx.end()) {
+			it->second.push_front(actor);
 		}
 	} else {
 		// FIXME: theres no need to make this O(2n)...
 
-		ActorRefs::iterator it = std::find(m_active_actors.begin(), m_active_actors.end(), actor);
-		if (it == m_active_actors.end()) {
-			// Huh, weird.
-			return;
-		}
-
-		m_active_actors.erase(it);
+		m_active_actors.remove(actor);
 
 		if (actor->has_component<ActorComps::Collision>()) {
-			it = std::find(m_collisionsystem.m_actors.begin(), m_collisionsystem.m_actors.end(),
-			               actor);
-			if (it == m_collisionsystem.m_actors.end()) {
-				// Huh, weird.
-				return;
-			}
+			m_collisionsystem.m_actors.remove(actor);
+		}
 
-			m_collisionsystem.m_actors.erase(it);
+		auto it = m_active_actors_by_class_idx.find(actor->classidx());
+		if (it != m_active_actors_by_class_idx.end()) {
+			it->second.remove(actor);
 		}
 	}
 }
+
+template<class T, class>
+void ActorManager::allow_type_indexing()
+{
+	m_actors_by_class_idx.insert({T::classtype_s(), {}});
+}
+
+template<class T, class>
+void ActorManager::allow_active_type_indexing()
+{
+	m_active_actors_by_class_idx.insert({T::classtype_s(), {}});
+}
+
 }  //namespace cog2d

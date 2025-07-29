@@ -15,11 +15,17 @@ CollisionSystem::CollisionSystem()
 
 void CollisionSystem::update()
 {
-	ActorRefsIterator it_a(m_actors.begin(), m_actors.begin());
+#ifdef COG2D_DEBUG
+	// Collision shouldn't even be allowed in this case.
+	if (std::distance(m_actors.begin(), m_actors.end()) <= 1)
+		return;
+#endif
+
+	ActorRefsIterator it_a(m_actors.begin(), m_actors);
 	while (it_a.m_it != m_actors.end()) {
 		Actor* a = *it_a;
 
-		ActorRefsIterator it_b(std::next(m_actors.begin(), 1), m_actors.begin());
+		ActorRefsIterator it_b(std::next(m_actors.begin(), 1), m_actors);
 		while (it_b.m_it != m_actors.end()) {
 			Actor* b = *it_b;
 
@@ -111,4 +117,4 @@ void CollisionSystem::rect_rect(Actor* a, Actor* b)
 	}
 }
 
-}
+}  //namespace cog2d

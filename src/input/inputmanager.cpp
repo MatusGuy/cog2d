@@ -53,8 +53,9 @@ void InputManager::event(SDL_Event* ev)
 		SDL_JoyDeviceEvent jev = ev->jdevice;
 
 		for (int i = 0; i < m_controllers.size(); i++) {
-			auto jcontroller = dynamic_cast<JoypadController*>(m_controllers[i]);
-			if (jcontroller && jcontroller->m_device_id == jev.which) {
+			Controller* controller = m_controllers[i];
+			if (controller->get_type() == JoypadController::type() &&
+			    static_cast<JoypadController*>(controller)->m_device_id == jev.which) {
 				// joypad already exists
 				break;
 			}
@@ -70,8 +71,9 @@ void InputManager::event(SDL_Event* ev)
 		SDL_JoyDeviceEvent jev = ev->jdevice;
 
 		for (int i = 0; i < m_controllers.size(); i++) {
-			auto jcontroller = dynamic_cast<JoypadController*>(m_controllers[i]);
-			if (jcontroller && jcontroller->m_device_id == jev.which) {
+			Controller* controller = m_controllers[i];
+			if (controller->get_type() == JoypadController::type() &&
+			    static_cast<JoypadController*>(controller)->m_device_id == jev.which) {
 				m_controllers.erase(m_controllers.begin() + i);
 			}
 		}
@@ -84,4 +86,4 @@ void InputManager::event(SDL_Event* ev)
 	}
 }
 
-}
+}  //namespace cog2d

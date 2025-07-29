@@ -103,7 +103,7 @@ public:
 	}
 
 	COG2D_NUMERIC_TEMPLATE(U)
-	void operator*=(U& other)
+	void operator*=(U other)
 	{
 		x *= other;
 		y *= other;

@@ -7,6 +7,8 @@
 #include <memory>
 #include <list>
 #include <algorithm>
+#include <unordered_map>
+#include <forward_list>
 
 #include "cog2d/scene/actor.hpp"
 #include "cog2d/util/currenton.hpp"
@@ -49,6 +51,12 @@ public:
 	void update();
 	void draw();
 
+	template<class T, class = BaseOf<T, Actor>>
+	void allow_type_indexing();
+
+	template<class T, class = BaseOf<T, Actor>>
+	void allow_active_type_indexing();
+
 private:
 	void notify_activity(Actor* actor);
 
@@ -59,6 +67,9 @@ private:
 	ActorRefs m_active_actors;
 	ActorFactory* m_factory;
 	CollisionSystem m_collisionsystem;
+
+	std::unordered_map<std::uint16_t, ActorRefs> m_actors_by_class_idx;
+	std::unordered_map<std::uint16_t, ActorRefs> m_active_actors_by_class_idx;
 };
 
 }  //namespace cog2d

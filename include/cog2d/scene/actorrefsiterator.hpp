@@ -21,11 +21,11 @@ struct ActorRefsIterator
 
 	Actor* m_actor;
 	ActorRefs::iterator m_it;
-	ActorRefs::iterator m_begin;
+	ActorRefs& m_actors;
 	difference_type m_idx;
 
 public:
-	ActorRefsIterator(ActorRefs::iterator it, ActorRefs::iterator begin);
+	ActorRefsIterator(ActorRefs::iterator it, ActorRefs& actors);
 
 	ActorRefsIterator advance(difference_type n);
 
@@ -63,4 +63,4 @@ public:
 	reference operator*() { return *m_it; }
 };
 
-}
+}  //namespace cog2d
