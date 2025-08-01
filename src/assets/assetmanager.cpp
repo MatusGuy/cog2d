@@ -16,6 +16,7 @@ namespace cog2d {
 
 AssetManager::AssetManager()
     : pixmaps(),
+      pixmapfonts(),
       tilesets()
 {
 }

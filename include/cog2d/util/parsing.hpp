@@ -93,6 +93,19 @@ public:
 	virtual void parse(IoDevice& device, T& result) = 0;
 };
 
+template<class T>
+class TomlParser : public Parser<T>
+{
+public:
+	void parse(IoDevice& device, T& result) override
+	{
+		toml::table table = toml::parse(device);
+		parse_toml(table, result);
+	}
+
+	virtual void parse_toml(toml::table& data, T& result) = 0;
+};
+
 // these are some BAD function names
 template<class T, class = std::enable_if<is_instance_of_v<T, Parser>, T>, typename... Args>
 void new_parse(IoDevice& device, typename T::ParserTarget& result, Args&&... args)

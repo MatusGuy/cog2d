@@ -10,6 +10,7 @@
 
 #include "cog2d/video/graphicsengine.hpp"
 #include "cog2d/util/logger.hpp"
+#include "cog2d/video/font/tomlpixmapfontparser.hpp"
 
 namespace cog2d {
 
@@ -83,7 +84,14 @@ Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
 Asset<PixmapFont> PixmapFontCollection::load(std::string_view name, IoDevice& device)
 {
 	auto font = new PixmapFont();
-	font->load(std::move(device));
+
+	if (!device.is_open())
+		device.open(IoDevice::OPENMODE_READ);
+
+	new_parse<TomlPixmapFontParser>(device, *font);
+
+	device.close();
+
 	return add(name, std::unique_ptr<AssetType>(std::move(font)));
 }
 

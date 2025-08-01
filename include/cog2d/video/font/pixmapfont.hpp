@@ -10,17 +10,22 @@
 #include "cog2d/video/texture.hpp"
 #include "cog2d/video/color.hpp"
 #include "cog2d/video/font/font.hpp"
+#include "cog2d/util/parsing.hpp"
 
 namespace cog2d {
 
 class Surface;
+class TomlPixmapFontParser;
 
 class PixmapFont : public Font
 {
+	friend class TomlPixmapFontParser;
+
 public:
 	PixmapFont();
 
-	void load(IoDevice&& device);
+	void load(IoDevice& device);
+	void load(toml::table& doc);
 
 	int get_text_width(std::string_view text) override;
 	void write_text(Texture* texture, std::string_view text, const Vector& pos = {0, 0}) override;
@@ -44,8 +49,10 @@ private:
 
 	int m_horizontal_spacing;
 
+	void load_texture(IoDevice& device);
+
 private:
 	static Color get_pixel(Surface& surface, Vector_t<int> pos);
 };
 
-}
+}  //namespace cog2d
