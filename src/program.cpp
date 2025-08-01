@@ -14,6 +14,7 @@
 #include "cog2d/audio/audioengine.hpp"
 #include "cog2d/assets/assetmanager.hpp"
 #include "cog2d/config/config.hpp"
+#include "cog2d/video/font/pixmapfont.hpp"
 
 namespace cog2d {
 
@@ -41,6 +42,7 @@ int Program::run(int argc, char* argv[])
 	COG2D_USE_GRAPHICSENGINE;
 	COG2D_USE_INPUTMANAGER;
 	COG2D_USE_AUDIOENGINE;
+	COG2D_USE_ASSETMANAGER;
 
 	graphicsengine.init(m_settings);
 	if (!graphicsengine.get_error().empty()) {
@@ -79,6 +81,8 @@ int Program::run(int argc, char* argv[])
 			COG2D_LOG_DEBUG(fmt::format("FPS: {}, DT: {}", 1000 / m_delta_time, m_delta_time));
 			timer.start(1000);
 		}
+
+		update_fonts_gc();
 
 		std::unique_ptr<Screen>& screen = m_screen_stack.top();
 		screen->update();
@@ -165,4 +169,17 @@ void Program::poll_sdl_events()
 	}
 }
 
+void Program::update_fonts_gc()
+{
+	COG2D_USE_ASSETMANAGER;
+
+	// TODO: ttf fonts
+	const AssetRefs<PixmapFont>& pfonts = assetmanager.pixmapfonts.get_assets();
+	for (auto it = pfonts.begin(); it != pfonts.end(); ++it) {
+		AssetRef<PixmapFont> pfont = it->second;
+		std::shared_ptr<PixmapFont> pfont_ptr = pfont.lock();
+		pfont_ptr->m_cache.update_gc();
+	}
 }
+
+}  //namespace cog2d

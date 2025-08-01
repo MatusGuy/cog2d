@@ -106,6 +106,8 @@ private:
 private:
 	void init_sdl();
 	void poll_sdl_events();
+
+	void update_fonts_gc();
 };
 
 }  //namespace cog2d

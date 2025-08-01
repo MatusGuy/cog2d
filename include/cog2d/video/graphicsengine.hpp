@@ -12,7 +12,6 @@
 #include "cog2d/util/currenton.hpp"
 #include "cog2d/util/math/rect.hpp"
 #include "cog2d/video/color.hpp"
-#include "cog2d/video/font/font.hpp"
 #include "cog2d/video/texture.hpp"
 
 namespace cog2d {

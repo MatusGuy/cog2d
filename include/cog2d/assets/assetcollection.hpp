@@ -18,6 +18,9 @@
 namespace cog2d {
 
 template<class A>
+using AssetRefs = std::unordered_map<std::string, AssetRef<A>>;
+
+template<class A>
 class AssetCollection
 {
 public:
@@ -47,8 +50,10 @@ public:
 	void try_remove_key(std::string_view name, bool check = true);
 	void try_remove_asset(AssetRef<A> asset);
 
+	inline const AssetRefs<A>& get_assets() const { return m_assets; }
+
 protected:
-	std::unordered_map<std::string, AssetRef<A>> m_assets;
+	AssetRefs<A> m_assets;
 
 private:
 	static void reap_cache_entry();
