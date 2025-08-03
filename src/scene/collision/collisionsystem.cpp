@@ -15,12 +15,6 @@ CollisionSystem::CollisionSystem()
 
 void CollisionSystem::update()
 {
-#ifdef COG2D_DEBUG
-	// Collision shouldn't even be allowed in this case.
-	if (std::distance(m_actors.begin(), m_actors.end()) <= 1)
-		return;
-#endif
-
 	ActorRefsIterator it_a(m_actors.begin(), m_actors);
 	while (it_a.m_it != m_actors.end()) {
 		Actor* a = *it_a;

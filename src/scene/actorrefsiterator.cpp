@@ -10,10 +10,15 @@ namespace cog2d {
 
 ActorRefsIterator::ActorRefsIterator(ActorRefs::iterator it, ActorRefs& actors)
     : m_it(it),
-      m_actor(*it),
+      m_actor(nullptr),
       m_actors(actors),
-      m_idx(std::distance(actors.begin(), m_it))
+      m_idx(0)
 {
+	if (m_it == m_actors.end())
+		return;
+
+	m_actor = *m_it;
+	m_idx = std::distance(m_actors.begin(), m_it);
 }
 
 ActorRefsIterator ActorRefsIterator::advance(difference_type n)
