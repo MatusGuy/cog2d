@@ -147,6 +147,9 @@ public:
 	Rect_t<T> grown(T x, T y) { return {pos - Vector_t<T>(x, y), size + Vector_t<T>(x, y)}; }
 
 	inline Rect_t<T> grown(T value) { return grown(value, value); }
+
+	COG2D_NUMERIC_TEMPLATE(U)
+	Vector_t<U> middle() { return pos + (size / 2); }
 };
 using Rect = Rect_t<>;
 

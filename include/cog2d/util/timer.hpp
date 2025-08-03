@@ -16,6 +16,7 @@ public:
 
 	// TODO: timeframe/duration typedef
 	void start(std::uint32_t period);
+	inline void stop() { m_period = 0; }
 	bool check();
 
 	/** returns the period of the timer or 0 if it isn't started */
@@ -30,4 +31,4 @@ public:
 	std::uint32_t m_period;
 };
 
-}
+}  //namespace cog2d
