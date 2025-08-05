@@ -6,10 +6,12 @@
 #include <memory>
 #include <stack>
 #include <cstdint>
+#include <chrono>
 
 #include "cog2d/input/inputmanager.hpp"
 #include "cog2d/screen.hpp"
 #include "cog2d/util/typetraits.hpp"
+#include "cog2d/util/timing.hpp"
 
 namespace cog2d {
 
@@ -68,8 +70,8 @@ class Program : public Currenton<Program>
 public:
 	ProgramSettings* m_settings;
 
-	std::uint32_t m_prog_time;
-	std::uint32_t m_delta_time;
+	TimePoint m_prog_time;
+	Duration m_delta_time;
 
 public:
 	Program();

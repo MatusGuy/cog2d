@@ -35,15 +35,15 @@ bool FontCache::update_gc()
 {
 	COG2D_USE_PROGRAM;
 
-	static std::int32_t last_cleanup = 0;
-	if (last_cleanup == 0)
+	static TimePoint last_cleanup;
+	if (last_cleanup == TimePoint(Duration::zero()))
 		last_cleanup = program.m_prog_time;
 
 	// Make GC more aggressive when there are more strings (can happen with constant string updates)
-	std::int32_t GC_TIME = (1 + 15.0 / (int) (((m_strings.size()) / 32.f) + 1)) * 1000.f;
-	std::int32_t GC_INTERVAL = GC_TIME;
+	Duration GC_TIME((1 + 15 / static_cast<int>(((m_strings.size()) / 32.f) + 1)) * 1000);
+	Duration GC_INTERVAL = GC_TIME;
 	bool did_cleanup = false;
-	std::int32_t curr = program.m_prog_time;
+	TimePoint curr = program.m_prog_time;
 
 	if (last_cleanup >= curr - GC_INTERVAL) {
 		return false;

@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <memory>
 
+#include "cog2d/util/timing.hpp"
 #include "cog2d/video/texture.hpp"
 
 namespace cog2d {
@@ -18,7 +19,7 @@ public:
 	struct CacheEntry
 	{
 		std::unique_ptr<Texture> texture;
-		std::uint32_t last_use;
+		TimePoint last_use;
 	};
 
 public:

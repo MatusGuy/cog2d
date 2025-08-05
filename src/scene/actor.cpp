@@ -3,6 +3,8 @@
 
 #include "actor.hpp"
 
+#include <chrono>
+
 #include "cog2d/scene/actormanager.hpp"
 #include "cog2d/program.hpp"
 #include "cog2d/util/logger.hpp"
@@ -83,8 +85,11 @@ void Actor::set_viewport_active(bool active)
 
 void Actor::gravity()
 {
-	vel().x += accel().x * Program::get().m_delta_time;
-	vel().y += (accel().y + grav()) * Program::get().m_delta_time;
+	namespace ch = std::chrono;
+
+	const ch::duration<float> dt_sec = Program::get().m_delta_time;
+	vel().x += accel().x * dt_sec.count();
+	vel().y += (accel().y + grav()) * dt_sec.count();
 }
 
 Rect Actor::get_dest()

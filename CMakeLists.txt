@@ -38,7 +38,7 @@ add_library(cog2d STATIC ${COG2D_SRC})
 
 target_compile_features(cog2d PUBLIC cxx_std_${COG2D_CXX_STANDARD})
 
-target_compile_options(cog2d PUBLIC -fno-rtti)
+#target_compile_options(cog2d PUBLIC -fno-rtti)
 
 target_include_directories(cog2d SYSTEM PUBLIC ${PROJECT_SOURCE_DIR}/include)
 

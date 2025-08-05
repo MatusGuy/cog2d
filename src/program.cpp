@@ -67,19 +67,20 @@ int Program::run(int argc, char* argv[])
 	// have been initialized.
 	init();
 
-	std::uint32_t now = SDL_GetTicks();
+	TimePoint now = Clock::now();
 
 	Timer timer;
-	timer.start(1000);
+	timer.start(100ms);
 
 	while (m_keep_running) {
+		m_prog_time = Clock::now();
+
 		poll_sdl_events();
 
-		m_prog_time = SDL_GetTicks();
-
 		if (timer.check() && false) {
-			COG2D_LOG_DEBUG(fmt::format("FPS: {}, DT: {}", 1000 / m_delta_time, m_delta_time));
-			timer.start(1000);
+			if (m_delta_time != Duration::zero())
+				COG2D_LOG_DEBUG(fmt::format("FPS: {}, DT: {}", 1s / m_delta_time, m_delta_time));
+			timer.start(100ms);
 		}
 
 		update_fonts_gc();
@@ -91,7 +92,7 @@ int Program::run(int argc, char* argv[])
 		screen->draw();
 		graphicsengine.post_draw();
 
-		now = SDL_GetTicks();
+		now = Clock::now();
 		m_delta_time = now - m_prog_time;
 	}
 
