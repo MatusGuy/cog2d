@@ -6,6 +6,7 @@
 #include "cog2d/scene/actor.hpp"
 #include "cog2d/scene/actorrefsiterator.hpp"
 #include "cog2d/util/logger.hpp"
+#include "cog2d/util/timing.hpp"
 
 namespace cog2d {
 

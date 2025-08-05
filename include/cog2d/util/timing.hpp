@@ -32,4 +32,9 @@ using Clock = std::chrono::steady_clock;
 using Duration = Clock::duration;
 using TimePoint = Clock::time_point;
 
+constexpr std::uint32_t LOGICAL_FPS = 60;
+constexpr Duration LOGICAL_DT(std::nano::den / LOGICAL_FPS);
+
+float velocity_multiplier();
+
 }  //namespace cog2d

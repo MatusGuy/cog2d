@@ -42,19 +42,23 @@ void Actor::update()
 
 	COG2D_USE_VIEWPORT;
 
-	if (follow_camera())
-		bbox().pos += viewport.get_camera()->m_delta;
-
 	if (!has_component<ActorComps::Velocity>())
 		return;
 
 	if (has_component<ActorComps::Gravity>())
 		gravity();
 
-	if (has_component<ActorComps::Collision>())
+	if (has_component<ActorComps::Collision>()) {
 		col().mov = vel();
-	else
-		bbox().pos += vel();
+		if (follow_camera())
+			col().mov += viewport.get_camera()->m_delta;
+
+		col().mov *= velocity_multiplier();
+	} else {
+		bbox().pos += vel() * velocity_multiplier();
+		if (follow_camera())
+			bbox().pos += viewport.get_camera()->m_delta * velocity_multiplier();
+	}
 }
 
 void Actor::set_active(bool active)
@@ -95,6 +99,7 @@ void Actor::gravity()
 Rect Actor::get_dest()
 {
 	Rect rect = bbox();
+	// FIXME: Something's not right.
 	rect.pos += col().mov;
 	return rect;
 }
