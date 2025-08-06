@@ -77,7 +77,7 @@ int Program::run(int argc, char* argv[])
 
 		poll_sdl_events();
 
-		if (timer.check() && true) {
+		if (timer.check() && false) {
 			if (m_delta_time != Duration::zero())
 				COG2D_LOG_DEBUG(fmt::format("FPS: {}, DT: {}", 1s / m_delta_time, m_delta_time));
 			timer.start(100ms);

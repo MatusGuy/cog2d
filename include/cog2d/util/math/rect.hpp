@@ -149,7 +149,10 @@ public:
 	inline Rect_t<T> grown(T value) { return grown(value, value); }
 
 	COG2D_NUMERIC_TEMPLATE(U)
-	Vector_t<U> middle() { return pos + (size / 2); }
+	inline Vector_t<U> middle() { return pos + (size / 2); }
+
+	//COG2D_NUMERIC_TEMPLATE(U)
+	inline Vector_t<T> moved(Vector_t<T> off) { return {pos + off, size + off}; }
 };
 using Rect = Rect_t<>;
 

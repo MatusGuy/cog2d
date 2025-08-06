@@ -10,6 +10,7 @@ class TileMap;
 class TileLayer;
 class ActorManager;
 class Actor;
+class CollisionSystem;
 
 class BinTileMapParser : public Parser<TileMap>
 {

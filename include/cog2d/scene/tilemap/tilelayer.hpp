@@ -7,17 +7,32 @@
 #include <vector>
 
 #include "cog2d/scene/tilemap/cameratilelayeriterator.hpp"
-#include "cog2d/util/math/vector.hpp"
+#include "cog2d/util/math/rect.hpp"
 
 namespace cog2d {
 class TileSet;
 class TileMap;
 
+template<class T>
+class Parser;
+
 class TileLayer
 {
+	friend class Parser<TileLayer>;
+
+public:
+	enum Type : std::uint8_t
+	{
+		TILELAYER_NORMAL,
+		TILELAYER_COLLISION,
+
+		TILELAYER_COUNT
+	};
+
 public:
 	TileIds m_tiles;
 	Vector_t<int> m_size;
+	Type m_type;
 
 	TileMap* m_map;
 
@@ -32,6 +47,17 @@ public:
 
 	CameraTileLayerIterator cambegin();
 	CameraTileLayerIterator camend();
+
+	Rect_t<int> get_tiles_overlapping(const Rect& rect);
+
+	inline int get_tile_index(const Vector_t<int>& pos) { return get_tile_index(pos, m_size); }
+	inline Vector_t<int> get_tile_pos(int i) { return get_tile_pos(i); }
+
+	inline TileId get_tile_id(Vector_t<int> pos)
+	{
+		return get_tile_id(get_tile_index(pos, m_size));
+	}
+	TileId get_tile_id(int idx);
 };
 
-}
+}  //namespace cog2d

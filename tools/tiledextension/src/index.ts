@@ -280,22 +280,6 @@ class BinaryFileStream {
 	}
 }
 
-function writeTileLayerBin(stream: BinaryFileStream, layer: TileLayer) {
-	stream.write_object(0, 1, true);
-	stream.write_string(layer.name);
-	stream.write_object(layer.width, 4, true);
-	stream.write_object(layer.height, 4, true);
-
-	let tiles: number[] = [];
-	let compress = tiled.project.property(SETTING_MAP_COMPRESS) as boolean;
-	if (compress)
-		writeTilesCompressed(layer, tiles);
-	else
-		writeTiles(layer, tiles);
-
-	stream.write_array(tiles, 2, !compress);
-}
-
 enum PropertyType {
 	None,
 	Int,
@@ -505,7 +489,7 @@ function resolveSuperclassProperties(obj: any) {
 }
 
 /// Resolves superclass properties
-function resolveObjectProperties(obj: MapObject): TiledObjectProperties {
+function resolveObjectProperties(obj: TiledObject): TiledObjectProperties {
 	let out: TiledObjectProperties = {};
 
 	// If I have to write another line of TypeScript... That's it. No more Marty.
@@ -521,7 +505,6 @@ function resolveObjectProperties(obj: MapObject): TiledObjectProperties {
 function writeObjectGroupBin(stream: BinaryFileStream, group: ObjectGroup) {
 	tiled.log(`Writing object group '${group.name}'`);
 	stream.write_object(1, 1, true);
-	stream.write_string(group.name);
 
 	for (let i = 0; i < group.objectCount; ++i) {
 		let obj = group.objectAt(i);
@@ -586,6 +569,29 @@ function writeObjectGroupBin(stream: BinaryFileStream, group: ObjectGroup) {
 	stream.write_object(0, 1, true);
 }
 
+function writeTileLayerBin(stream: BinaryFileStream, layer: TileLayer) {
+	tiled.log(`Writing tilelayer '${layer.name}'`);
+	stream.write_object(0, 1, true);
+
+	let layerprops = resolveObjectProperties(layer);
+	tiled.log(` Properties: ${JSON.stringify(layerprops)}`);
+
+	let typeidx = layerprops["typeIndex"] as number;
+	stream.write_object(typeidx == undefined ? 0 : typeidx, 1, true);
+
+	stream.write_object(layer.width, 4, true);
+	stream.write_object(layer.height, 4, true);
+
+	let tiles: number[] = [];
+	let compress = tiled.project.property(SETTING_MAP_COMPRESS) as boolean;
+	if (compress)
+		writeTilesCompressed(layer, tiles);
+	else
+		writeTiles(layer, tiles);
+
+	stream.write_array(tiles, 2, !compress);
+}
+
 let binMap: ScriptedMapFormat = {
 	name: "cog2d Binary Map",
 	extension: "dat",
@@ -609,6 +615,11 @@ let binMap: ScriptedMapFormat = {
 
 		for (let setIndex = 0; setIndex < usedTilesets.length; setIndex++) {
 			let activeSet = usedTilesets[setIndex];
+
+			// TODO: Customizable thru editor
+			if (activeSet.name == "collision")
+				continue;
+
 			out.write_object(nextGid, 2, true);
 
 			let setName = getPathBaseName(activeSet.fileName);

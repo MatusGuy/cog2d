@@ -9,11 +9,13 @@
 #include "cog2d/util/math/rect.hpp"
 #include "cog2d/util/currenton.hpp"
 #include "cog2d/scene/actorcontainers.hpp"
+#include "cog2d/scene/tilemap/tilelayer.hpp"
 
 namespace cog2d {
 
 class CollisionBody;
 class ActorManager;
+class TileLayer;
 
 class CollisionSystem
 {
@@ -36,12 +38,21 @@ public:
 	std::vector<Group> m_groups;
 	ActorRefs m_actors;
 
+	// TODO: multiple collision tilelayers?? Ehhhhhhhhhhh
+	// FIXME: should this be owned by the tilemap??
+	std::unique_ptr<TileLayer> m_tilelayer;
+
 public:
 	CollisionSystem();
 
 	void update();
 
 	void rect_rect(Actor* a, Actor* b);
+
+	void rect_tile(Actor* a, TileId tileid, const Rect& tilerect);
+	void rect_tilerect(Actor* a, const Rect& tilerect);
+
+	Rect_t<int> get_tiles_overlapping(const Rect& rect);
 };
 
-}
+}  //namespace cog2d

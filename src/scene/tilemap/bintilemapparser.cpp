@@ -62,15 +62,29 @@ void BinTileMapParser::parse(IoDevice& device, TileMap& result)
 		std::uint8_t type;
 		device.read(type);
 
-		// TODO: impl name
+		/*
+		// ~TODO~: impl name
 		std::string name;
 		device.read(name);
+		*/
 
 		if (type == 0) {
 			auto layer = std::make_unique<TileLayer>();
 			layer->m_map = &result;
 			new_parse<BinTileLayerParser>(device, *layer.get());
-			result.m_layers.push_back(std::move(layer));
+
+			switch (layer->m_type) {
+			default:
+				// What?? Ok...
+			case TileLayer::TILELAYER_NORMAL:
+				result.m_layers.push_back(std::move(layer));
+				break;
+
+			case TileLayer::TILELAYER_COLLISION:
+				m_actormanager.colsystem().m_tilelayer = std::move(layer);
+				break;
+			}
+
 		} else if (type == 1) {
 			parse_object_group(device);
 		} else {
@@ -82,6 +96,7 @@ void BinTileMapParser::parse(IoDevice& device, TileMap& result)
 
 void BinTileLayerParser::parse(IoDevice& device, TileLayer& result)
 {
+	device.read(result.m_type);
 	device.read(result.m_size);
 	//if constexpr (SDL_BYTEORDER == SDL_LIL_ENDIAN) {
 	//	layer->m_size.x = ntohl(layer->m_size.x);

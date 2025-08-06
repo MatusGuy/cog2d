@@ -7,6 +7,7 @@
 #include "cog2d/scene/actorrefsiterator.hpp"
 #include "cog2d/util/logger.hpp"
 #include "cog2d/util/timing.hpp"
+#include "cog2d/scene/tilemap/tilemap.hpp"
 
 namespace cog2d {
 
@@ -16,6 +17,33 @@ CollisionSystem::CollisionSystem()
 
 void CollisionSystem::update()
 {
+	ActorRefsIterator it(m_actors.begin(), m_actors);
+	if (m_tilelayer) {
+		while (it.m_it != m_actors.end()) {
+			Actor* a = *it;
+
+			Rect_t<int> tiles = m_tilelayer->get_tiles_overlapping(a->get_dest());
+			Vector_t<int> tilepos = tiles.pos;
+			const Vector_t<std::uint16_t> tilesz = m_tilelayer->m_map->m_tile_sz;
+			//COG2D_LOG_DEBUG(fmt::format("{}", tiles));
+			for (; tilepos.x <= tiles.get_right(); ++tilepos.x) {
+				for (; tilepos.y <= tiles.get_bottom(); ++tilepos.y) {
+					Rect tilerect(tilepos * static_cast<Vector>(tilesz),
+					              static_cast<Vector>(tilesz));
+
+					//COG2D_LOG_DEBUG(fmt::format("{}", a->classidx()));
+					COG2D_LOG_DEBUG(fmt::format("{}, {}", tilepos,
+					                            m_tilelayer->get_tile_id(tilepos)));
+					//COG2D_LOG_DEBUG(fmt::format("{}, {}", tilepos, tilerect));
+
+					rect_tile(a, m_tilelayer->get_tile_id(tilepos), tilerect);
+				}
+			}
+
+			++it;
+		}
+	}
+
 	ActorRefsIterator it_a(m_actors.begin(), m_actors);
 	while (it_a.m_it != m_actors.end()) {
 		Actor* a = *it_a;
@@ -109,6 +137,61 @@ void CollisionSystem::rect_rect(Actor* a, Actor* b)
 			col_a.mov.y += avg.y;
 			col_b.mov.y += avg.y;
 		}
+	}
+}
+
+void CollisionSystem::rect_tile(Actor* a, TileId tileid, const Rect& tilerect)
+{
+	switch (tileid) {
+	case 0:
+		break;
+
+	case 1:
+	default:
+		rect_tilerect(a, tilerect);
+		break;
+	}
+}
+
+void CollisionSystem::rect_tilerect(Actor* a, const Rect& tilerect)
+{
+	Rect d1 = a->get_dest();
+	Rect d2 = tilerect;
+
+	if (!d1.overlaps(d2))
+		return;
+
+	/*
+	CollisionSystem::Response resp1 = a->collision(b);
+	CollisionSystem::Response resp2 = b->collision(a);
+	if (resp1 == COLRESP_REJECT || resp2 == COLRESP_REJECT)
+		return;
+	*/
+
+	Vector& mov = a->col().mov;
+
+	float itop = d1.get_bottom() - d2.get_top();
+	float ibottom = d2.get_bottom() - d1.get_top();
+	float ileft = d1.get_right() - d2.get_left();
+	float iright = d2.get_right() - d1.get_left();
+
+	bool move_horiz;
+	float vert_penetration = std::min(itop, ibottom);
+	float horiz_penetration = std::min(ileft, iright);
+	if (vert_penetration < horiz_penetration) {
+		if (itop > ibottom) {
+			mov.y += vert_penetration;
+		} else {
+			mov.y -= vert_penetration;
+		}
+		move_horiz = false;
+	} else {
+		if (ileft > iright) {
+			mov.x += horiz_penetration;
+		} else {
+			mov.x -= horiz_penetration;
+		}
+		move_horiz = true;
 	}
 }
 

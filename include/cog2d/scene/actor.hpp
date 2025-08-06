@@ -53,7 +53,7 @@ public:                                    \
 	}                                      \
 	std::uint16_t classidx() override      \
     {                                      \
-	    return classidx_s();               \
+	    return ::cog2d::ActorType::clname; \
 	}                                      \
 	                                       \
 private:
