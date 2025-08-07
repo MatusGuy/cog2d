@@ -8,6 +8,7 @@
 #include "cog2d/util/logger.hpp"
 #include "cog2d/util/timing.hpp"
 #include "cog2d/scene/tilemap/tilemap.hpp"
+#include "cog2d/scene/collision/collision.hpp"
 
 namespace cog2d {
 
@@ -26,18 +27,19 @@ void CollisionSystem::update()
 			Vector_t<int> tilepos = tiles.pos;
 			const Vector_t<std::uint16_t> tilesz = m_tilelayer->m_map->m_tile_sz;
 			//COG2D_LOG_DEBUG(fmt::format("{}", tiles));
-			for (; tilepos.x <= tiles.get_right(); ++tilepos.x) {
-				for (; tilepos.y <= tiles.get_bottom(); ++tilepos.y) {
+			for (; tilepos.x < tiles.get_right(); ++tilepos.x) {
+				for (; tilepos.y < tiles.get_bottom(); ++tilepos.y) {
 					Rect tilerect(tilepos * static_cast<Vector>(tilesz),
 					              static_cast<Vector>(tilesz));
 
 					//COG2D_LOG_DEBUG(fmt::format("{}", a->classidx()));
-					COG2D_LOG_DEBUG(fmt::format("{}, {}", tilepos,
-					                            m_tilelayer->get_tile_id(tilepos)));
+					//COG2D_LOG_DEBUG(fmt::format("{}, {}", tilepos,
+					//                            m_tilelayer->get_tile_id(tilepos)));
 					//COG2D_LOG_DEBUG(fmt::format("{}, {}", tilepos, tilerect));
 
 					rect_tile(a, m_tilelayer->get_tile_id(tilepos), tilerect);
 				}
+				tilepos.y = tiles.pos.y;
 			}
 
 			++it;
@@ -100,29 +102,9 @@ void CollisionSystem::rect_rect(Actor* a, Actor* b)
 
 	Vector& mov = target->col().mov;
 
-	float itop = d1.get_bottom() - d2.get_top();
-	float ibottom = d2.get_bottom() - d1.get_top();
-	float ileft = d1.get_right() - d2.get_left();
-	float iright = d2.get_right() - d1.get_left();
+	CollideInfo<Vector::type> info = Collision::rect_rect<Vector::type>(d1, d2);
 
-	bool move_horiz;
-	float vert_penetration = std::min(itop, ibottom);
-	float horiz_penetration = std::min(ileft, iright);
-	if (vert_penetration < horiz_penetration) {
-		if (itop > ibottom) {
-			mov.y += vert_penetration;
-		} else {
-			mov.y -= vert_penetration;
-		}
-		move_horiz = false;
-	} else {
-		if (ileft > iright) {
-			mov.x += horiz_penetration;
-		} else {
-			mov.x -= horiz_penetration;
-		}
-		move_horiz = true;
-	}
+	info.apply(mov);
 
 	if (!col_a.heavy && !col_b.heavy) {
 		Vector avg = oldmov1.avg(oldmov2);
@@ -130,7 +112,7 @@ void CollisionSystem::rect_rect(Actor* a, Actor* b)
 		//a->m_mov += avg;
 
 		// if (!b->m_static)
-		if (move_horiz) {
+		if (info.left || info.right) {
 			col_a.mov.x += avg.x;
 			col_b.mov.x += avg.x;
 		} else {
@@ -170,29 +152,8 @@ void CollisionSystem::rect_tilerect(Actor* a, const Rect& tilerect)
 
 	Vector& mov = a->col().mov;
 
-	float itop = d1.get_bottom() - d2.get_top();
-	float ibottom = d2.get_bottom() - d1.get_top();
-	float ileft = d1.get_right() - d2.get_left();
-	float iright = d2.get_right() - d1.get_left();
-
-	bool move_horiz;
-	float vert_penetration = std::min(itop, ibottom);
-	float horiz_penetration = std::min(ileft, iright);
-	if (vert_penetration < horiz_penetration) {
-		if (itop > ibottom) {
-			mov.y += vert_penetration;
-		} else {
-			mov.y -= vert_penetration;
-		}
-		move_horiz = false;
-	} else {
-		if (ileft > iright) {
-			mov.x += horiz_penetration;
-		} else {
-			mov.x -= horiz_penetration;
-		}
-		move_horiz = true;
-	}
+	CollideInfo<Vector::type> info = Collision::rect_rect<Vector::type>(d1, tilerect);
+	info.apply(mov);
 }
 
 }  //namespace cog2d

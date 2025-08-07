@@ -25,6 +25,9 @@ COG2D_NUMERIC_TEMPLATE(T)
 class Vector_t
 {
 public:
+	using type = T;
+
+public:
 	T x = 0;
 	T y = 0;
 

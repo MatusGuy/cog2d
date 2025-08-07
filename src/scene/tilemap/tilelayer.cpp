@@ -100,7 +100,7 @@ Rect_t<int> TileLayer::get_tiles_overlapping(const Rect& rect)
 	int t_top = std::max<int>(0, std::floor(rect.get_top() / m_map->m_tile_sz.y));
 	int t_bottom = std::min<int>(m_size.y, std::ceil(rect.get_bottom() / m_map->m_tile_sz.y));
 	return {Vector_t<int>(t_left, t_top),
-		    Vector_t<int>(t_right, t_bottom) - (static_cast<Vector>(rect.pos) / m_map->m_tile_sz)};
+		    Vector_t<int>(t_right, t_bottom) - Vector_t<int>(t_left, t_top)};
 }
 
 TileId TileLayer::get_tile_id(int idx)
