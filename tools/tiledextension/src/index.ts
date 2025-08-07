@@ -119,6 +119,10 @@ tiled.registerTilesetFormat("c2tomlset", tomlSet);
 
 function getTileId(layer: TileLayer, x: number, y: number): number {
 	const tile = layer.tileAt(x, y);
+	if (layer.className != "") {
+		return tile ? tile.id + 1 : 0;
+	}
+
 	const firstgid = tile != null ? tile.tileset.property("cog2d._firstgid") as number : 0;
 	return tile != null ? tile.id + firstgid : 0;
 }
