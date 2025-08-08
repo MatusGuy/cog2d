@@ -10,6 +10,7 @@
 #include "cog2d/util/currenton.hpp"
 #include "cog2d/scene/actorcontainers.hpp"
 #include "cog2d/scene/tilemap/tilelayer.hpp"
+#include "cog2d/scene/collision/collision.hpp"
 
 namespace cog2d {
 
@@ -49,8 +50,8 @@ public:
 
 	void rect_rect(Actor* a, Actor* b);
 
-	void rect_tile(Actor* a, TileId tileid, const Rect& tilerect);
-	void rect_tilerect(Actor* a, const Rect& tilerect);
+	CollideInfo<Vector::type> rect_tile(Actor* a, TileId tileid, const Rect& tilerect);
+	CollideInfo<Vector::type> rect_tilerect(Actor* a, const Rect& tilerect);
 
 	Rect_t<int> get_tiles_overlapping(const Rect& rect);
 };

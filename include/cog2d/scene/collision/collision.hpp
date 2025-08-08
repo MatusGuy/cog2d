@@ -3,10 +3,11 @@
 #pragma once
 
 #include "cog2d/util/math/rect.hpp"
+#include "cog2d/util/logger.hpp"
 
 namespace cog2d {
 
-template<typename T>
+COG2D_NUMERIC_TEMPLATE(T)
 struct CollideInfo
 {
 	inline bool is_colliding() const { return left || right || top || bottom; }
@@ -25,22 +26,22 @@ struct CollideInfo
 	void apply(Vector_t<T>& mov)
 	{
 		if (left)
-			mov.x -= left_constraint;
+			mov.x += left_constraint;
 		/*else*/ if (right)
-			mov.x += right_constraint;
+			mov.x -= right_constraint;
 
 		if (top)
-			mov.y -= top_constraint;
+			mov.y += top_constraint;
 		/*else*/ if (bottom)
-			mov.y += bottom_constraint;
+			mov.y -= bottom_constraint;
 	}
 
 	void merge(CollideInfo<T> other)
 	{
 		left_constraint = std::max(left_constraint, other.left_constraint);
-		right_constraint = std::min(right_constraint, other.right_constraint);
+		right_constraint = std::max(right_constraint, other.right_constraint);
 		top_constraint = std::max(top_constraint, other.top_constraint);
-		bottom_constraint = std::min(bottom_constraint, other.bottom_constraint);
+		bottom_constraint = std::max(bottom_constraint, other.bottom_constraint);
 
 		left |= other.left;
 		right |= other.right;
@@ -69,7 +70,8 @@ CollideInfo<T> rect_rect(Rect_t<T> r1, Rect_t<T> r2)
 	if (!r1.overlaps(r2))
 		return {};
 
-	CollideInfo<T> out{ileft, iright, itop, ibottom};
+	//CollideInfo<T> out{ileft, iright, itop, ibottom};
+	CollideInfo<T> out{iright, ileft, ibottom, itop};
 	if (std::min(itop, ibottom) < std::min(ileft, iright)) {
 		if (itop < ibottom)
 			out.bottom = true;
@@ -77,10 +79,15 @@ CollideInfo<T> rect_rect(Rect_t<T> r1, Rect_t<T> r2)
 			out.top = true;
 	} else {
 		if (ileft < iright)
-			out.left = true;
-		else
 			out.right = true;
+		else
+			out.left = true;
 	}
+	COG2D_LOG_DEBUG(fmt::
+	                    format("ileft: {}, iright: {}, itop: {}, ibottom: {}\n"
+	                           "left: {}, right: {}, top: {}, bottom: {}",
+	                           ileft, iright, itop, ibottom, out.left, out.right, out.top,
+	                           out.bottom));
 	return out;
 }
 

@@ -19,13 +19,15 @@ CollisionSystem::CollisionSystem()
 void CollisionSystem::update()
 {
 	ActorRefsIterator it(m_actors.begin(), m_actors);
-	if (m_tilelayer) {
+	if (m_tilelayer && true) {
 		while (it.m_it != m_actors.end()) {
 			Actor* a = *it;
 
+			//Vector mov = a->col().mov;
 			Rect_t<int> tiles = m_tilelayer->get_tiles_overlapping(a->get_dest());
 			Vector_t<int> tilepos = tiles.pos;
 			const Vector_t<std::uint16_t> tilesz = m_tilelayer->m_map->m_tile_sz;
+			CollideInfo<Vector::type> collideinfo;
 			//COG2D_LOG_DEBUG(fmt::format("{}", tiles));
 			for (; tilepos.x < tiles.get_right(); ++tilepos.x) {
 				for (; tilepos.y < tiles.get_bottom(); ++tilepos.y) {
@@ -37,10 +39,16 @@ void CollisionSystem::update()
 					//                            m_tilelayer->get_tile_id(tilepos)));
 					//COG2D_LOG_DEBUG(fmt::format("{}, {}", tilepos, tilerect));
 
-					rect_tile(a, m_tilelayer->get_tile_id(tilepos), tilerect);
+					CollideInfo<Vector::type>
+					    collideinfo2 = rect_tile(a, m_tilelayer->get_tile_id(tilepos), tilerect);
+					//collideinfo.merge(collideinfo2);
+					//collideinfo2.apply(mov);
+					collideinfo2.apply(a->col().mov);
 				}
 				tilepos.y = tiles.pos.y;
 			}
+			//collideinfo.apply(a->col().mov);
+			//a->col().mov = mov;
 
 			++it;
 		}
@@ -122,26 +130,25 @@ void CollisionSystem::rect_rect(Actor* a, Actor* b)
 	}
 }
 
-void CollisionSystem::rect_tile(Actor* a, TileId tileid, const Rect& tilerect)
+CollideInfo<Vector::type> CollisionSystem::rect_tile(Actor* a, TileId tileid, const Rect& tilerect)
 {
 	switch (tileid) {
 	case 0:
-		break;
+		return {};
 
 	case 1:
 	default:
-		rect_tilerect(a, tilerect);
-		break;
+		return rect_tilerect(a, tilerect);
 	}
 }
 
-void CollisionSystem::rect_tilerect(Actor* a, const Rect& tilerect)
+CollideInfo<Vector::type> CollisionSystem::rect_tilerect(Actor* a, const Rect& tilerect)
 {
 	Rect d1 = a->get_dest();
 	Rect d2 = tilerect;
 
 	if (!d1.overlaps(d2))
-		return;
+		return {};
 
 	/*
 	CollisionSystem::Response resp1 = a->collision(b);
@@ -153,7 +160,7 @@ void CollisionSystem::rect_tilerect(Actor* a, const Rect& tilerect)
 	Vector& mov = a->col().mov;
 
 	CollideInfo<Vector::type> info = Collision::rect_rect<Vector::type>(d1, tilerect);
-	info.apply(mov);
+	return info;
 }
 
 }  //namespace cog2d
