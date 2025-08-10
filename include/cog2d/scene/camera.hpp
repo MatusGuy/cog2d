@@ -22,9 +22,9 @@ public:
 public:
 	Camera();
 
-	virtual void pre_update();
+	void pre_update();
 	virtual void update() {}
-	virtual void post_update();
+	void post_update();
 };
 
-}
+}  //namespace cog2d

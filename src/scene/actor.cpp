@@ -55,9 +55,11 @@ void Actor::update()
 
 		col().mov *= velocity_multiplier();
 	} else {
-		bbox().pos += vel() * velocity_multiplier();
+		Vector inc = vel();
 		if (follow_camera())
-			bbox().pos += viewport.get_camera()->m_delta * velocity_multiplier();
+			inc += viewport.get_camera()->m_delta;
+
+		bbox().pos += inc * velocity_multiplier();
 	}
 }
 
