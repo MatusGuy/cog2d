@@ -481,12 +481,12 @@ function resolveSuperclassProperties(obj: any) {
 
 	// If I have to write another line of TypeScript... That's it. No more Marty.
 	let superclass = obj["cog2d.super"] as PropertyValue;
-	if (superclass != undefined)
+	if (superclass != undefined && typeof superclass.value === "object")
 		Object.assign(out, resolveSuperclassProperties(superclass.value as any));
 
 	Object.assign(out, obj);
 
-	if (superclass != undefined)
+	if (superclass != undefined && typeof superclass.value === "object")
 		delete out["cog2d.super"];
 
 	return out;
@@ -498,12 +498,36 @@ function resolveObjectProperties(obj: TiledObject): TiledObjectProperties {
 
 	// If I have to write another line of TypeScript... That's it. No more Marty.
 	let superclass = obj.resolvedProperties()["cog2d.super"] as PropertyValue;
-	if (superclass != undefined)
+	if (superclass !== undefined && typeof superclass.value === "object")
 		Object.assign(out, resolveSuperclassProperties(superclass.value as any));
 
 	Object.assign(out, obj.properties());
 
 	return out;
+}
+
+function isOfType(obj: MapObject, typename: string): boolean {
+	let superclass = obj.resolvedProperties()["cog2d.super"] as PropertyValue;
+	if (superclass !== undefined && typeof superclass.value === "object") {
+		if (superclass.typeName === typename)
+			return true;
+
+		return isOfTypeFromProperties(obj.resolvedProperties(), typename);
+	}
+
+	return obj.className === typename;
+}
+
+function isOfTypeFromProperties(obj: any, typename: string): boolean {
+	let superclass = obj["cog2d.super"] as PropertyValue;
+	if (superclass !== undefined && typeof superclass.value === "object") {
+		if (superclass.typeName === typename)
+			return true;
+
+		return isOfTypeFromProperties(superclass, typename);
+	}
+
+	return false;
 }
 
 function writeObjectGroupBin(stream: BinaryFileStream, group: ObjectGroup) {
@@ -520,8 +544,7 @@ function writeObjectGroupBin(stream: BinaryFileStream, group: ObjectGroup) {
 			continue;
 		}
 
-		let memberOrder = props["memberOrder"]?.toString().split("\n");
-		if (memberOrder == undefined) {
+		if (!isOfType(obj, "cog2d.Actor")) {
 			tiled.warn(`Skipping '${obj.name}' because it has no member order.\n` +
 					   `Is it even derived from cog2d.Actor?`, () => {});
 			continue;
@@ -548,8 +571,9 @@ function writeObjectGroupBin(stream: BinaryFileStream, group: ObjectGroup) {
 			// add more soon...
 		}
 
+		let memberOrder = props["memberOrder"]?.toString().split("\n");
 		let keys = Object.keys(props);
-		for (let j = 0; j < keys.length; ++j) {
+		for (let j = 0; j < keys.length && memberOrder !== undefined; ++j) {
 			let key = keys[j];
 
 			let value = props[key];
