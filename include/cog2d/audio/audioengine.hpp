@@ -29,4 +29,4 @@ private:
 	std::string m_error;
 };
 
-}
+}  //namespace cog2d

@@ -90,6 +90,7 @@ public:
 	 * @param device
 	 * @param result
 	 */
+	// FIXME: virtual?? really??
 	virtual void parse(IoDevice& device, T& result) = 0;
 };
 

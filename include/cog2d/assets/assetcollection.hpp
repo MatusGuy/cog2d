@@ -44,6 +44,7 @@ public:
 		return load(assetname, file);
 	}
 
+	// FIXME: virtual?? really??
 	virtual Asset<A> load(std::string_view name, IoDevice& device) = 0;
 
 	Asset<A> add(std::string_view name, std::unique_ptr<A> asset);

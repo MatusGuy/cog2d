@@ -14,7 +14,7 @@ AudioEngine::AudioEngine()
 
 void AudioEngine::init()
 {
-	if (!Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096)) {
+	if (!Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096)) {
 		m_error = SDL_GetError();
 	}
 }
@@ -43,4 +43,4 @@ void AudioEngine::play_music(Mix_Music* music, int loops)
 	}
 }
 
-}
+}  //namespace cog2d
