@@ -115,4 +115,11 @@ void new_parse(IoDevice& device, typename T::ParserTarget& result, Args&&... arg
 	parser.parse(device, result);
 }
 
+template<class T, class = std::enable_if<is_instance_of_v<T, Parser>, T>>
+void new_parse(IoDevice& device, typename T::ParserTarget& result)
+{
+	T parser;
+	parser.parse(device, result);
+}
+
 }  //namespace cog2d

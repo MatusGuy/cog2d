@@ -11,6 +11,7 @@
 #include "cog2d/video/texture.hpp"
 #include "cog2d/video/font/pixmapfont.hpp"
 #include "cog2d/scene/tilemap/tileset.hpp"
+#include "cog2d/audio/musictrack.hpp"
 
 #include "cog2d/assets/asset.hpp"
 #include "cog2d/util/parsing.hpp"
@@ -77,6 +78,12 @@ class TileSetCollection : public AssetCollection<TileSet>
 public:
 	Asset<TileSet> load(std::string_view name, IoDevice& device) override;
 	Asset<TileSet> load(std::string_view name, toml::table& data);
+};
+
+class MusicTrackCollection : public AssetCollection<MusicTrack>
+{
+public:
+	Asset<MusicTrack> load(std::string_view name, IoDevice& device) override;
 };
 
 }  //namespace cog2d

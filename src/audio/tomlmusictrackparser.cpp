@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 #include "tomlmusictrackparser.hpp"
 
+#include <iostream>
+
 #include <cog2d/filesystem/assetfile.hpp>
 #include <cog2d/audio/musictrack.hpp>
 
@@ -15,9 +17,7 @@ void TomlMusicTrackParser::parse_toml(toml::table& data, MusicTrack& result)
 {
 	using namespace toml_util;
 
-	AssetFile source(get_as<std::string>(data, "source"));
-	Mix_Music* music = Mix_LoadMUS_RW(source.to_sdl(), true);
-	result.m_music.reset(music);
+	result.load(std::make_unique<AssetFile>(get_as<std::string>(data, "source")));
 
 	toml::array* sections = data.get_as<toml::array>("sections");
 	if (sections) {
@@ -43,23 +43,16 @@ void TomlMusicTrackParser::parse_section(toml::table& data, MusicTrackSection& r
 	using MusicTimestamp = std::chrono::time_point<Clock, MusicDuration>;
 
 	toml::value<double>* val = data.get_as<double>("start");
-	result.start = std::chrono::time_point_cast<Duration, Clock, MusicDuration>(MusicTimestamp{
-	    MusicDuration(val ? val->get() : 0.0)});
+	result.start = val ? val->get() : 0.0;
 
 	val = data.get_as<double>("bpm");
 	result.bpm = val ? val->get() : 0.0;
 
 	val = data.get_as<double>("loop_start");
-	result.loop_start = val ? std::chrono::time_point_cast<Duration, Clock,
-	                                                       MusicDuration>(MusicTimestamp{
-	                              MusicDuration(val->get())})
-	                        : TimePoint{Duration::zero()};
+	result.loop_start = val ? val->get() : 0.0;
 
-	val = data.get_as<double>("loop_end");
-	result.loop_end = val ? std::chrono::time_point_cast<Duration, Clock,
-	                                                     MusicDuration>(MusicTimestamp{
-	                            MusicDuration(get_as<double>(data, "loop_end"))})
-	                      : TimePoint::max();
+	val = data.get_as<double>("end");
+	result.end = val ? val->get() : -1.0;
 }
 
 }  //namespace cog2d

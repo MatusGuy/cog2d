@@ -28,8 +28,8 @@ void GraphicsEngine::init(ProgramSettings* settings)
 	SDL_SetRenderDrawBlendMode(m_renderer, settings->blend_mode);
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, settings->scale_quality.data());
-	//SDL_SetHint(SDL_HINT_RENDER_VSYNC, settings->vsync ? "1" : "0");
-	//SDL_SetHint(SDL_HINT_RENDER_BATCHING, settings->batching ? "1" : "0");
+	SDL_SetHint(SDL_HINT_RENDER_VSYNC, settings->vsync ? "1" : "0");
+	SDL_SetHint(SDL_HINT_RENDER_BATCHING, settings->batching ? "1" : "0");
 
 	SDL_Rect viewport = {0, 0, settings->lwidth, settings->lheight};
 	SDL_RenderSetViewport(m_renderer, &viewport);

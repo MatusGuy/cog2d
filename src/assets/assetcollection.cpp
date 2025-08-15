@@ -11,6 +11,7 @@
 #include "cog2d/video/graphicsengine.hpp"
 #include "cog2d/util/logger.hpp"
 #include "cog2d/video/font/tomlpixmapfontparser.hpp"
+#include "cog2d/audio/tomlmusictrackparser.hpp"
 
 namespace cog2d {
 
@@ -112,6 +113,15 @@ Asset<TileSet> TileSetCollection::load(std::string_view name, toml::table& data)
 	std::unique_ptr<TileSet> set = std::make_unique<TileSet>();
 	set->load(data);
 	return add(name, std::move(set));
+}
+
+Asset<MusicTrack> MusicTrackCollection::load(std::string_view name, IoDevice& device)
+{
+	std::unique_ptr<MusicTrack> track = std::make_unique<MusicTrack>();
+	device.open(IoDevice::OPENMODE_READ);
+	new_parse<TomlMusicTrackParser>(device, *track.get());
+	device.close();
+	return add(name, std::move(track));
 }
 
 }  //namespace cog2d

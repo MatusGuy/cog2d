@@ -20,6 +20,7 @@ public:
 	PixmapCollection pixmaps;
 	PixmapFontCollection pixmapfonts;
 	TileSetCollection tilesets;
+	MusicTrackCollection musictracks;
 
 public:
 	AssetManager();

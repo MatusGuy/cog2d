@@ -53,7 +53,7 @@ void Actor::update()
 		if (follow_camera())
 			col().mov += viewport.get_camera()->m_delta;
 
-		col().mov *= velocity_multiplier();
+		//col().mov *= ;
 	} else {
 		Vector inc = vel();
 		if (follow_camera())
@@ -102,7 +102,7 @@ Rect Actor::get_dest()
 {
 	Rect rect = bbox();
 	// FIXME: Something's not right.
-	rect.pos += col().mov;
+	rect.pos += col().mov * velocity_multiplier();
 	return rect;
 }
 

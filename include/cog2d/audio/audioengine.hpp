@@ -8,6 +8,7 @@
 #include <SDL2/SDL_mixer.h>
 
 #include "cog2d/util/currenton.hpp"
+#include "cog2d/util/timing.hpp"
 
 namespace cog2d {
 
@@ -22,6 +23,13 @@ public:
 
 	void play_sfx(Mix_Chunk* sfx, int loops = 0);
 	void play_music(Mix_Music* music, int loops = 0);
+
+	inline void pause_music() { Mix_PauseMusic(); }
+	inline void stop_music() { Mix_HaltMusic(); }
+	inline bool is_music_playing() { Mix_PlayingMusic() != 0; }
+
+	inline void set_music_position(double position) { Mix_SetMusicPosition(position); }
+	inline double music_position(Mix_Music* music) { return Mix_GetMusicPosition(music); }
 
 	inline std::string get_error() { return m_error; }
 

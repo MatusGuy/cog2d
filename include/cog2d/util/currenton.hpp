@@ -3,7 +3,7 @@
 
 #pragma once
 
-#define COG2D_USING(c, n) cog2d::c& n = cog2d::c::get()
+#define COG2D_USING(c, n) ::cog2d::c& n = ::cog2d::c::get()
 
 namespace cog2d {
 
@@ -46,4 +46,4 @@ public:                                       \
 		return *CLASS::s_instance;            \
 	}
 
-}
+}  //namespace cog2d

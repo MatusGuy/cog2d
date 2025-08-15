@@ -6,6 +6,7 @@
 #include <SDL_mixer.h>
 
 #include "cog2d/util/timing.hpp"
+#include "cog2d/filesystem/iodevice.hpp"
 
 namespace cog2d {
 
@@ -14,10 +15,10 @@ class Parser;
 
 struct MusicTrackSection
 {
+	double start = 0;
 	float bpm;
-	TimePoint start;
-	TimePoint loop_start;
-	TimePoint loop_end;
+	double loop_start = 0;
+	double end;
 };
 
 struct MusicTrackMetadata
@@ -32,10 +33,19 @@ class MusicTrack
 
 public:
 	std::unique_ptr<Mix_Music, decltype(&Mix_FreeMusic)> m_music;
+	std::unique_ptr<IoDevice> m_device;
 	MusicTrackMetadata m_metadata;
 
 public:
 	MusicTrack();
+	~MusicTrack();
+
+	void load(std::unique_ptr<IoDevice> device);
+
+	inline MusicTrackSection* section(std::size_t sec)
+	{
+		return sec < m_metadata.sections.size() ? &m_metadata.sections[sec] : nullptr;
+	}
 };
 
 }  //namespace cog2d

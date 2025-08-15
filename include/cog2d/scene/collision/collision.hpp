@@ -60,13 +60,6 @@ CollideInfo<T> rect_rect(Rect_t<T> r1, Rect_t<T> r2)
 	T ileft = r1.get_right() - r2.get_left();
 	T iright = r2.get_right() - r1.get_left();
 
-	/*
-	if (!(r1.get_left() < r2.get_right() && r2.get_left() < r1.get_right() &&
-		  r1.get_top() < r2.get_bottom() && r2.get_top() < r1.get_bottom())) {
-		return {};
-	}
-	*/
-
 	if (!r1.overlaps(r2))
 		return {};
 
@@ -83,11 +76,6 @@ CollideInfo<T> rect_rect(Rect_t<T> r1, Rect_t<T> r2)
 		else
 			out.left = true;
 	}
-	COG2D_LOG_DEBUG(fmt::
-	                    format("ileft: {}, iright: {}, itop: {}, ibottom: {}\n"
-	                           "left: {}, right: {}, top: {}, bottom: {}",
-	                           ileft, iright, itop, ibottom, out.left, out.right, out.top,
-	                           out.bottom));
 	return out;
 }
 

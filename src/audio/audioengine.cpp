@@ -36,10 +36,12 @@ void AudioEngine::play_sfx(Mix_Chunk* sfx, int loops)
 
 void AudioEngine::play_music(Mix_Music* music, int loops)
 {
+	stop_music();
 	if (Mix_PlayMusic(music, loops) == -1) {
 		m_error = SDL_GetError();
 
-		Mix_FreeMusic(music);
+		// FIXME: Holy shit! Don't do this!
+		//Mix_FreeMusic(music);
 	}
 }
 

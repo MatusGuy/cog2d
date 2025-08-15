@@ -12,6 +12,7 @@
 #include "cog2d/util/timer.hpp"
 #include "cog2d/video/graphicsengine.hpp"
 #include "cog2d/audio/audioengine.hpp"
+#include "cog2d/audio/musicplayer.hpp"
 #include "cog2d/assets/assetmanager.hpp"
 #include "cog2d/config/config.hpp"
 #include "cog2d/video/font/pixmapfont.hpp"
@@ -36,6 +37,7 @@ int Program::run(int argc, char* argv[])
 	GraphicsEngine::s_current = new GraphicsEngine;
 	InputManager::s_current = new InputManager;
 	AudioEngine::s_current = new AudioEngine;
+	MusicPlayer::s_current = new MusicPlayer;
 	AssetManager::s_current = new AssetManager;
 	Config::s_current = new Config;
 
@@ -85,6 +87,7 @@ int Program::run(int argc, char* argv[])
 		}
 
 		update_fonts_gc();
+		MusicPlayer::get().update();
 
 		std::unique_ptr<Screen>& screen = m_screen_stack.top();
 		screen->update();
