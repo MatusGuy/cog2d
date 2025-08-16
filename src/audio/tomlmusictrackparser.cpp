@@ -26,7 +26,7 @@ void TomlMusicTrackParser::parse_toml(toml::table& data, MusicTrack& result)
 
 		for (toml::array::iterator it = sections->begin(); it != sections->end(); ++it) {
 			MusicTrackSection section;
-			parse_section(data, section);
+			parse_section(as_table(*it), section);
 			result.m_metadata.sections.push_back(section);
 		}
 	} else {

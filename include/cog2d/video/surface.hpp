@@ -7,6 +7,7 @@
 
 namespace cog2d {
 
+// TODO: should this really be dependent on sdl surface?? I mean it doesn't matter but......
 class Surface
 {
 public:
@@ -25,4 +26,4 @@ private:
 	SDL_Surface* m_surface;
 };
 
-}
+}  //namespace cog2d

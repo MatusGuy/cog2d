@@ -3,9 +3,6 @@
 
 #pragma once
 
-#include <filesystem>
-#include <SDL2/SDL.h>
-
 #include "cog2d/util/math/vector.hpp"
 
 namespace cog2d {
@@ -16,20 +13,20 @@ class Surface;
 class Texture
 {
 public:
-	SDL_Texture* m_texture;
-	Vector m_size;
+	void* m_data;
+	Vector_t<int> m_size;
 
 public:
 	static Texture* from_surface(Surface& surface);
 
 public:
-	Texture(SDL_Texture* tex = nullptr);
+	Texture(void* tex);
 	~Texture();
 
-	inline SDL_Texture* to_sdl() { return m_texture; }
+	inline void* data() { return m_data; }
 
 	inline Vector get_size() { return m_size; }
-	Vector query_size();
+	virtual Vector_t<int> query_size();
 };
 
-}
+}  //namespace cog2d

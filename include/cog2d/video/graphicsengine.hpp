@@ -13,57 +13,56 @@
 #include "cog2d/util/math/rect.hpp"
 #include "cog2d/video/color.hpp"
 #include "cog2d/video/texture.hpp"
+#include "cog2d/util/backend.hpp"
 
 namespace cog2d {
 
 struct ProgramSettings;
 
+#define COG2D_GRAPHICS_BACKEND(_t, _n) COG2D_BACKEND(GRAPHICS, _t, _n)
 #define COG2D_USE_GRAPHICSENGINE COG2D_USING(GraphicsEngine, graphicsengine)
-class GraphicsEngine : public Currenton<GraphicsEngine>
+class GraphicsEngine : public Currenton<GraphicsEngine>, public Backend
 {
-private:
-	SDL_Window* m_window = nullptr;
-	SDL_Renderer* m_renderer = nullptr;
-	SDL_Texture* m_proxy = nullptr;
+public:
+	enum Flip
+	{
+		FLIP_NONE = 0x0,
+		FLIP_HORIZONTAL = 0x1,
+		FLIP_VERTICAL = 0x2
+	};
 
-	std::string m_error = "";
-
+protected:
 	Vector_t<int> m_logical_size;
-
 	std::stack<Texture*> m_target_stack;
-	std::stack<Color> m_color_stack;
 
 public:
-	void init(ProgramSettings* settings);
-	void deinit();
+	virtual void init(ProgramSettings* settings) = 0;
+	virtual void deinit() = 0;
 
-	void pre_draw();
-	void post_draw();
+	virtual void pre_draw() = 0;
+	virtual void post_draw() = 0;
 
-	void draw_rect(Rect rect, bool filled = false, Color color = 0xFFFFFFFF);
-	void draw_circle(Vector center, float radius, bool filled = false, Color color = 0xFFFFFFFF);
-	void draw_line(Vector a, Vector b, Color color = 0xFFFFFFFF);
-	void draw_point(Vector point, Color color = 0xFFFFFFFF);
+	virtual void draw_rect(Rect rect, bool filled = false, Color color = 0xFFFFFFFF) = 0;
+	virtual void draw_circle(Vector center, float radius, bool filled = false,
+	                         Color color = 0xFFFFFFFF) = 0;
+	virtual void draw_line(Vector a, Vector b, Color color = 0xFFFFFFFF) = 0;
+	virtual void draw_point(Vector point, Color color = 0xFFFFFFFF) = 0;
 
-	// TODO: what if center really should be {-1, -1}?? Uhh.......
+	virtual void draw_texture(Texture* tex, Rect_t<int> src, Rect dest, Color color, Flip flip,
+	                          float angle, Vector center) = 0;
+	void draw_texture(Texture* tex, Rect dest, Color color, Flip flip, float angle, Vector center);
+	void draw_texture(Texture* tex, Vector pos, Color color, Flip flip, float angle, Vector center);
 	void draw_texture(Texture* tex, Rect_t<int> src, Rect dest, Color color = 0xFFFFFFFF,
-	                  float angle = 0.f, Vector center = {-1, -1},
-	                  SDL_RendererFlip flip = SDL_FLIP_NONE);
-	void draw_texture(Texture* tex, Rect dest, Color color = 0xFFFFFFFF, float angle = 0,
-	                  Vector center = {-1, -1}, SDL_RendererFlip flip = SDL_FLIP_NONE);
-	void draw_texture(Texture* tex, Vector pos, Color color = 0xFFFFFFFF, float angle = 0,
-	                  Vector center = {-1, -1}, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	                  Flip flip = FLIP_NONE, float angle = 0.f);
+	void draw_texture(Texture* tex, Rect dest, Color color = 0xFFFFFFFF, Flip flip = FLIP_NONE,
+	                  float angle = 0.f);
+	void draw_texture(Texture* tex, Vector pos, Color color = 0xFFFFFFFF, Flip flip = FLIP_NONE,
+	                  float angle = 0.f);
 
-	inline SDL_Window* get_window() { return m_window; }
-	inline SDL_Renderer* get_renderer() { return m_renderer; }
-
-	Color get_current_color();
-
-	inline const std::string& get_error() { return m_error; }
 	inline const Vector_t<int>& get_logical_size() { return m_logical_size; }
 
-	void push_target(Texture* tex);
-	void pop_target();
+	virtual void push_target(Texture* tex);
+	virtual void pop_target();
 	inline Texture* get_target() { return m_target_stack.top(); }
 };
 
