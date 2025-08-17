@@ -13,6 +13,8 @@ namespace cog2d {
 
 void SDL2GraphicsEngine::init(ProgramSettings* settings)
 {
+	m_pixmap_backend = Backend::PIXMAP_SDL2_IMAGE;
+
 	int init = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
 	if (init != 0) {
 		COG2D_LOG_FATAL("SDL2GraphicsEngine",

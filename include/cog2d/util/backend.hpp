@@ -44,10 +44,15 @@ public:
 		GRAPHICS_SDL2
 	};
 
+	enum Pixmap : std::uint8_t
+	{
+		PIXMAP_SDL2_IMAGE
+	};
+
 public:
-	virtual std::uint8_t type();
-	virtual std::string name();
-	virtual std::string display_name();
+	virtual std::uint8_t type() { return 0; }
+	virtual std::string name() { return ""; }
+	virtual std::string display_name() { return ""; }
 };
 
 }  //namespace cog2d

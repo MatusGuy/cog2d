@@ -43,12 +43,16 @@ Texture* Texture::create(const Vector_t<int>& size)
 	};
 }
 
+Texture* Texture::from_pixmap(IoDevice& device)
+{
+	Surface surface = Surface::from_pixmap(device);
+	return Texture::from_surface(surface);
+}
+
 Texture::Texture(void* tex)
     : m_data(tex),
       m_size()
 {
-	if (m_data)
-		m_size = query_size();
 }
 
 Texture::Texture(const Vector_t<int>& size)

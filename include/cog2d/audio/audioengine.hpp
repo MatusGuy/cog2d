@@ -26,7 +26,7 @@ public:
 
 	inline void pause_music() { Mix_PauseMusic(); }
 	inline void stop_music() { Mix_HaltMusic(); }
-	inline bool is_music_playing() { Mix_PlayingMusic() != 0; }
+	inline bool is_music_playing() { return Mix_PlayingMusic() != 0; }
 
 	inline void set_music_position(double position) { Mix_SetMusicPosition(position); }
 	inline double music_position(Mix_Music* music) { return Mix_GetMusicPosition(music); }

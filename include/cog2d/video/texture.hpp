@@ -19,17 +19,25 @@ public:
 public:
 	static Texture* from_surface(Surface& surface);
 	static Texture* create(const Vector_t<int>& size);
+	static Texture* from_pixmap(IoDevice& device);
 
 public:
 	Texture(void* tex);
-	virtual ~Texture() = 0;
+	virtual ~Texture() {}
 
 	inline void* data() { return m_data; }
 
-	inline Vector size() { return m_size; }
-	virtual Vector_t<int> query_size();
+	inline Vector_t<int> size()
+	{
+		if (m_data != nullptr && m_size.x == 0 && m_size.y == 0)
+			m_size = query_size();
 
-private:
+		return m_size;
+	}
+
+	virtual Vector_t<int> query_size() = 0;
+
+protected:
 	Texture(const Vector_t<int>& size);
 	virtual bool construct() = 0;
 };

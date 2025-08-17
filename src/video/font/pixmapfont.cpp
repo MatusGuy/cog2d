@@ -131,7 +131,7 @@ std::unique_ptr<Texture> PixmapFont::create_text(std::string_view text)
 
 	int width = get_text_width(text);
 
-	auto texture = std::make_unique<Texture>(Texture::create({width, m_glyph_height}));
+	auto texture = std::unique_ptr<Texture>(Texture::create({width, m_glyph_height}));
 	write_text(texture.get(), text);
 	return std::move(texture);
 }

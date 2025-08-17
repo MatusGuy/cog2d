@@ -69,7 +69,7 @@ Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
 	if (!device.is_open())
 		device.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
 
-	SDL_Texture* texture = IMG_LoadTexture_RW(graphicsengine.get_renderer(), device.to_sdl(), 1);
+	Texture* texture = Texture::from_pixmap(device);
 
 	if (!texture) {
 		COG2D_LOG_ERROR("PixmapCollection",
@@ -79,7 +79,7 @@ Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
 
 	device.close();
 
-	return add(name, std::make_unique<Texture>(texture));
+	return add(name, std::unique_ptr<Texture>(texture));
 }
 
 Asset<PixmapFont> PixmapFontCollection::load(std::string_view name, IoDevice& device)

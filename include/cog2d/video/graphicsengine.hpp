@@ -36,6 +36,8 @@ protected:
 	std::stack<Texture*> m_target_stack;
 
 public:
+	Backend::Pixmap m_pixmap_backend;
+
 	virtual void init(ProgramSettings* settings) = 0;
 	virtual void deinit() = 0;
 

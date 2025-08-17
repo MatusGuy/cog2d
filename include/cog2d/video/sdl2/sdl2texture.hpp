@@ -19,13 +19,17 @@ public:
 	    : Texture(static_cast<void*>(tex))
 	{
 	}
+	SDL2Texture(const Vector_t<int> size)
+	    : Texture(size)
+	{
+	}
 	~SDL2Texture();
 
 	inline SDL_Texture* to_sdl() { return static_cast<SDL_Texture*>(data()); }
 
 	Vector_t<int> query_size() override;
 
-private:
+protected:
 	bool construct() override;
 };
 
