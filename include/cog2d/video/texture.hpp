@@ -18,15 +18,20 @@ public:
 
 public:
 	static Texture* from_surface(Surface& surface);
+	static Texture* create(const Vector_t<int>& size);
 
 public:
 	Texture(void* tex);
-	~Texture();
+	virtual ~Texture() = 0;
 
 	inline void* data() { return m_data; }
 
-	inline Vector get_size() { return m_size; }
+	inline Vector size() { return m_size; }
 	virtual Vector_t<int> query_size();
+
+private:
+	Texture(const Vector_t<int>& size);
+	virtual bool construct() = 0;
 };
 
 }  //namespace cog2d

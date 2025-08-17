@@ -5,6 +5,9 @@
 
 #include "cog2d/video/graphicsengine.hpp"
 #include "cog2d/video/surface.hpp"
+#include "cog2d/util/logger.hpp"
+
+#include "cog2d/video/sdl2/sdl2graphicsengine.hpp"
 
 namespace cog2d {
 
@@ -13,8 +16,30 @@ Texture* Texture::from_surface(Surface& surface)
 	COG2D_USE_GRAPHICSENGINE;
 	switch (graphicsengine.type()) {
 	case Backend::GRAPHICS_SDL2:
-		return new Texture(SDL_CreateTextureFromSurface(graphicsengine.get_renderer(),
-		                                                surface.to_sdl()));
+		return new SDL2Texture(SDL_CreateTextureFromSurface(static_cast<
+		                                                        SDL2GraphicsEngine&>(graphicsengine)
+		                                                        .get_renderer(),
+		                                                    surface.to_sdl()));
+	default:
+		return nullptr;
+	};
+}
+
+Texture* Texture::create(const Vector_t<int>& size)
+{
+	COG2D_USE_GRAPHICSENGINE;
+	switch (graphicsengine.type()) {
+	case Backend::GRAPHICS_SDL2: {
+		Texture* tex = new SDL2Texture(size);
+		if (!tex->construct()) {
+			COG2D_LOG_FATAL("SDL2Texture",
+			                fmt::format("Failed to create texture with size {}", tex->size()));
+			return nullptr;
+		}
+		return tex;
+	}
+	default:
+		return nullptr;
 	};
 }
 
@@ -24,6 +49,12 @@ Texture::Texture(void* tex)
 {
 	if (m_data)
 		m_size = query_size();
+}
+
+Texture::Texture(const Vector_t<int>& size)
+    : m_data(nullptr),
+      m_size(size)
+{
 }
 
 }  //namespace cog2d

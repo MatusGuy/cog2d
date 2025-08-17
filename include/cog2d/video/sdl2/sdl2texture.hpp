@@ -15,9 +15,18 @@ class Surface;
 class SDL2Texture : public Texture
 {
 public:
+	SDL2Texture(SDL_Texture* tex)
+	    : Texture(static_cast<void*>(tex))
+	{
+	}
 	~SDL2Texture();
 
+	inline SDL_Texture* to_sdl() { return static_cast<SDL_Texture*>(data()); }
+
 	Vector_t<int> query_size() override;
+
+private:
+	bool construct() override;
 };
 
 }  //namespace cog2d

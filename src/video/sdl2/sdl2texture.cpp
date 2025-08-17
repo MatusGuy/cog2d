@@ -3,7 +3,7 @@
 
 #include "sdl2texture.hpp"
 
-#include "cog2d/video/graphicsengine.hpp"
+#include "cog2d/video/sdl2/sdl2graphicsengine.hpp"
 #include "cog2d/video/surface.hpp"
 
 namespace cog2d {
@@ -11,7 +11,7 @@ namespace cog2d {
 SDL2Texture::~SDL2Texture()
 {
 	if (m_data) {
-		SDL_DestroyTexture(static_cast<SDL_Texture*>(m_data));
+		SDL_DestroyTexture(to_sdl());
 		m_data = nullptr;
 	}
 }
@@ -19,8 +19,21 @@ SDL2Texture::~SDL2Texture()
 Vector_t<int> SDL2Texture::query_size()
 {
 	Vector_t<int> sz;
-	SDL_QueryTexture(static_cast<SDL_Texture*>(m_data), NULL, NULL, &sz.x, &sz.y);
+	SDL_QueryTexture(to_sdl(), NULL, NULL, &sz.x, &sz.y);
 	return sz;
+}
+
+bool SDL2Texture::construct()
+{
+	COG2D_USE_GRAPHICSENGINE;
+	m_data = SDL_CreateTexture(static_cast<SDL2GraphicsEngine&>(graphicsengine).get_renderer(),
+	                           SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, m_size.x,
+	                           m_size.y);
+
+	if (!m_data)
+		return false;
+
+	return true;
 }
 
 }  //namespace cog2d

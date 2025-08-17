@@ -130,11 +130,8 @@ std::unique_ptr<Texture> PixmapFont::create_text(std::string_view text)
 	COG2D_USE_GRAPHICSENGINE;
 
 	int width = get_text_width(text);
-	SDL_Texture* stexture = SDL_CreateTexture(graphicsengine.get_renderer(),
-	                                          SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
-	                                          width, m_glyph_height);
 
-	auto texture = std::make_unique<Texture>(stexture);
+	auto texture = std::make_unique<Texture>(Texture::create({width, m_glyph_height}));
 	write_text(texture.get(), text);
 	return std::move(texture);
 }

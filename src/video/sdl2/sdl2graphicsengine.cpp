@@ -7,6 +7,7 @@
 
 #include "cog2d/program.hpp"
 #include "cog2d/util/logger.hpp"
+#include "cog2d/video/sdl2/sdl2texture.hpp"
 
 namespace cog2d {
 
@@ -207,15 +208,15 @@ void SDL2GraphicsEngine::draw_texture(Texture* tex, Rect_t<int> src, Rect dest, 
 #ifdef COG2D_GRAPHICS_USE_INT
 	SDL_Point scenter = center.to_sdl_point();
 	if (scenter.x < 0)
-		scenter.x = tex->get_size().x / 2;
+		scenter.x = tex->size().x / 2;
 
 	if (scenter.y < 0)
-		scenter.y = tex->get_size().y / 2;
+		scenter.y = tex->size().y / 2;
 
 	SDL_Rect ssrc = src.to_sdl_rect();
 	SDL_Rect sdest = dest.to_sdl_rect();
-	SDL_RenderCopyEx(m_renderer, tex->to_sdl(), &ssrc, &sdest, static_cast<float>(angle), &scenter,
-	                 flip);
+	SDL_RenderCopyEx(m_renderer, static_cast<SDL2Texture*>(tex)->to_sdl(), &ssrc, &sdest,
+	                 static_cast<float>(angle), &scenter, static_cast<SDL_RendererFlip>(flip));
 #else
 	SDL_FPoint scenter = center.to_sdl_fpoint();
 	if (scenter.x < 0) {
@@ -228,8 +229,8 @@ void SDL2GraphicsEngine::draw_texture(Texture* tex, Rect_t<int> src, Rect dest, 
 
 	SDL_Rect ssrc = src.to_sdl_rect();
 	SDL_FRect sdest = dest.to_sdl_frect();
-	SDL_RenderCopyExF(m_renderer, tex->to_sdl(), &ssrc, &sdest, static_cast<float>(angle), &scenter,
-	                  flip);
+	SDL_RenderCopyExF(m_renderer, static_cast<SDL2Texture*>(tex)->to_sdl(), &ssrc, &sdest,
+	                  static_cast<float>(angle), &scenter, flip);
 #endif
 }
 
@@ -245,7 +246,7 @@ void SDL2GraphicsEngine::push_target(Texture* tex)
 	GraphicsEngine::push_target(tex);
 	SDL_SetRenderTarget(get_renderer(), m_target_stack.empty()
 	                                        ? nullptr
-	                                        : static_cast<SDL_Texture*>(get_target()->data()));
+	                                        : static_cast<SDL2Texture*>(get_target())->to_sdl());
 }
 
 void SDL2GraphicsEngine::pop_target()
@@ -253,6 +254,6 @@ void SDL2GraphicsEngine::pop_target()
 	GraphicsEngine::pop_target();
 	SDL_SetRenderTarget(get_renderer(), m_target_stack.empty()
 	                                        ? nullptr
-	                                        : static_cast<SDL_Texture*>(get_target()->data()));
+	                                        : static_cast<SDL2Texture*>(get_target())->to_sdl());
 }
 }  //namespace cog2d

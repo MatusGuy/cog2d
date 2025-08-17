@@ -11,6 +11,8 @@
 
 #include "cog2d/video/graphicsengine.hpp"
 
+#include "cog2d/video/sdl2/sdl2texture.hpp"
+
 namespace cog2d {
 
 struct ProgramSettings;

@@ -39,12 +39,13 @@ void TtfFont::write_text(Texture* texture, std::string_view text, const Vector& 
 	COG2D_USE_GRAPHICSENGINE;
 
 	Surface textsurface = TTF_RenderUTF8_Solid(m_font, text.data(), Color(0xFFFFFFFF));
-	Texture texttexture = SDL_CreateTextureFromSurface(graphicsengine.get_renderer(),
-	                                                   textsurface.to_sdl());
+	Texture* texttexture = Texture::from_surface(textsurface);
 
 	SDL_SetRenderTarget(graphicsengine.get_renderer(), texture->to_sdl());
-	graphicsengine.draw_texture(&texttexture, pos);
+	graphicsengine.draw_texture(texttexture, pos);
 	SDL_SetRenderTarget(graphicsengine.get_renderer(), nullptr);
+
+	delete texttexture;
 }
 
 std::unique_ptr<Texture> TtfFont::create_text(std::string_view text)
@@ -59,4 +60,4 @@ std::unique_ptr<Texture> TtfFont::create_text(std::string_view text)
 	return std::make_unique<Texture>(texttexture);
 }
 
-}
+}  //namespace cog2d
