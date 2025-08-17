@@ -37,6 +37,7 @@ protected:
 
 public:
 	Backend::Pixmap m_pixmap_backend;
+	Backend::Ttf m_ttf_backend;
 
 	virtual void init(ProgramSettings* settings) = 0;
 	virtual void deinit() = 0;

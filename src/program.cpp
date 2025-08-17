@@ -134,7 +134,7 @@ void Program::push_screen(std::unique_ptr<Screen> screen)
 
 void Program::init_sdl()
 {
-	int errcode = SDL_Init(SDL_INIT_EVERYTHING);
+	int errcode = SDL_Init(SDL_INIT_EVENTS | SDL_INIT_TIMER | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO);
 	if (errcode != 0) {
 		std::stringstream stream;
 		stream << SDL_GetError() << " (" << errcode << ")";

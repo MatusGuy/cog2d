@@ -11,12 +11,13 @@
 
 namespace cog2d {
 
-class TtfFont : public Font
+#define COG2D_TTF_BACKEND(_t, _n) COG2D_BACKEND(TTF, _t, _n)
+class SDL2TtfFont : public Font
 {
 public:
-	TtfFont(const std::string& path, int ptsz);
-	TtfFont(TTF_Font* font);
-	~TtfFont();
+	SDL2TtfFont(const std::string& path, int ptsz);
+	SDL2TtfFont(TTF_Font* font);
+	~SDL2TtfFont();
 
 	int get_text_width(std::string_view text) override;
 	void write_text(Texture* texture, std::string_view text, const Vector& pos) override;
@@ -28,4 +29,4 @@ private:
 	TTF_Font* m_font;
 };
 
-}
+}  //namespace cog2d

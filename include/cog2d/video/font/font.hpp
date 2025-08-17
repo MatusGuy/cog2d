@@ -17,6 +17,9 @@ class Texture;
 class Font
 {
 public:
+	static Font* create_ttf_font(IoDevice& device, int ptsize);
+
+public:
 	FontCache m_cache;
 
 public:

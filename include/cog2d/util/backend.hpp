@@ -49,6 +49,11 @@ public:
 		PIXMAP_SDL2_IMAGE
 	};
 
+	enum Ttf : std::uint8_t
+	{
+		TTF_SDL2_TTF
+	};
+
 public:
 	virtual std::uint8_t type() { return 0; }
 	virtual std::string name() { return ""; }
