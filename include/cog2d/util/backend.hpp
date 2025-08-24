@@ -54,6 +54,11 @@ public:
 		TTF_SDL2_TTF
 	};
 
+	enum AudioEngine : std::uint8_t
+	{
+		AUDIO_SDL2
+	};
+
 public:
 	virtual std::uint8_t type() { return 0; }
 	virtual std::string name() { return ""; }

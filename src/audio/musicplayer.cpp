@@ -20,25 +20,26 @@ void MusicPlayer::set_track(MusicTrack* track)
 void MusicPlayer::start()
 {
 	COG2D_USE_AUDIOENGINE;
-	audioengine.play_music(m_track->m_music.get());
+	//audioengine.play_music(m_track->m_music.get());
 }
 
 void MusicPlayer::pause()
 {
 	COG2D_USE_AUDIOENGINE;
-	audioengine.pause_music();
+	//audioengine.pause_music();
 }
 
 void MusicPlayer::stop()
 {
 	COG2D_USE_AUDIOENGINE;
-	audioengine.stop_music();
+	//audioengine.stop_music();
 }
 
 bool MusicPlayer::is_playing()
 {
 	COG2D_USE_AUDIOENGINE;
-	return audioengine.is_music_playing();
+	//return audioengine.is_music_playing();
+	return false;
 }
 
 void MusicPlayer::update()
@@ -51,17 +52,19 @@ void MusicPlayer::update()
 	if (m_current_section->end < 0.0)
 		return;
 
+	/*
 	double curpos = audioengine.music_position(m_track->m_music.get());
 	if (curpos >= m_current_section->end) {
 		if (m_current_section == m_next_section) {
 			audioengine.set_music_position(m_current_section->start +
-			                               m_current_section->loop_start);
+										   m_current_section->loop_start);
 			return;
 		}
 
 		audioengine.set_music_position(m_next_section->start);
 		m_current_section = m_next_section;
 	}
+	*/
 }
 
 void MusicPlayer::queue_section(std::size_t section)

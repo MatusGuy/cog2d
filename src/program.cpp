@@ -17,6 +17,7 @@
 #include "cog2d/config/config.hpp"
 #include "cog2d/video/font/pixmapfont.hpp"
 #include "cog2d/video/sdl2/sdl2graphicsengine.hpp"
+#include "cog2d/audio/sdl2/sdl2audioengine.hpp"
 
 namespace cog2d {
 
@@ -37,7 +38,7 @@ int Program::run(int argc, char* argv[])
 
 	GraphicsEngine::s_current = new SDL2GraphicsEngine;
 	InputManager::s_current = new InputManager;
-	AudioEngine::s_current = new AudioEngine;
+	AudioEngine::s_current = new SDL2AudioEngine;
 	MusicPlayer::s_current = new MusicPlayer;
 	AssetManager::s_current = new AssetManager;
 	Config::s_current = new Config;
@@ -49,10 +50,7 @@ int Program::run(int argc, char* argv[])
 
 	graphicsengine.init(m_settings);
 
-	audioengine.init();
-	if (!audioengine.get_error().empty()) {
-		COG2D_LOG_FATAL("SDL", audioengine.get_error());
-	}
+	audioengine.init(m_settings);
 
 	if (register_actions()) {
 		InputManager::get().init();

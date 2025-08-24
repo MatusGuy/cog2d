@@ -5,36 +5,52 @@
 
 #include <string>
 
-#include <SDL2/SDL_mixer.h>
-
 #include "cog2d/util/currenton.hpp"
 #include "cog2d/util/timing.hpp"
+#include "cog2d/util/backend.hpp"
+
+struct SDL_AudioSpec;
 
 namespace cog2d {
 
+struct ProgramSettings;
+
+enum AudioFormat
+{
+	AUDIOFORMAT_U8,
+	AUDIOFORMAT_S8,
+	AUDIOFORMAT_U16_LE,
+	AUDIOFORMAT_S16_LE,
+	AUDIOFORMAT_U16_BE,
+	AUDIOFORMAT_S16_BE
+};
+
+struct AudioSpec
+{
+	std::uint32_t samplerate;
+	std::uint8_t channels;
+	AudioFormat format;
+};
+
+typedef void (*AudioBufferCallback)(void* buffer, std::size_t size, const AudioSpec& spec);
+
+#define COG2D_AUDIO_BACKEND(_t, _n) COG2D_BACKEND(AUDIO, _t, _n)
 #define COG2D_USE_AUDIOENGINE COG2D_USING(AudioEngine, audioengine)
-class AudioEngine : public Currenton<AudioEngine>
+class AudioEngine : public Currenton<AudioEngine>, public Backend
 {
 public:
-	AudioEngine();
+	AudioEngine() {}
 
-	void init();
-	void deinit();
+	virtual void init(ProgramSettings* settings) = 0;
+	virtual void deinit() = 0;
 
-	void play_sfx(Mix_Chunk* sfx, int loops = 0);
-	void play_music(Mix_Music* music, int loops = 0);
+	virtual AudioSpec spec() = 0;
 
-	inline void pause_music() { Mix_PauseMusic(); }
-	inline void stop_music() { Mix_HaltMusic(); }
-	inline bool is_music_playing() { return Mix_PlayingMusic() != 0; }
+	// Break comment in case of emergency
+	//virtual void update() {}
 
-	inline void set_music_position(double position) { Mix_SetMusicPosition(position); }
-	inline double music_position(Mix_Music* music) { return Mix_GetMusicPosition(music); }
-
-	inline std::string get_error() { return m_error; }
-
-private:
-	std::string m_error;
+public:
+	std::vector<AudioBufferCallback> m_callbacks;
 };
 
 }  //namespace cog2d
