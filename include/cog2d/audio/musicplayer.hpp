@@ -17,21 +17,10 @@ class MusicPlayer : public Currenton<MusicPlayer>
 public:
 	MusicPlayer();
 
+	void init();
+	void deinit();
+
 	void set_track(MusicTrack* track);
-	void start();
-
-	inline void play(MusicTrack* track)
-	{
-		set_track(track);
-		start();
-	}
-
-	void pause();
-	void stop();
-
-	bool is_playing();
-
-	void update();
 
 	void queue_section(std::size_t section);
 	void queue_section(MusicTrackSection* section);
@@ -39,6 +28,10 @@ public:
 	inline MusicTrackSection* next_section() { return m_next_section; }
 
 	inline MusicTrack* track() { return m_track; }
+
+private:
+	void feed_buffer(void* buffer, std::size_t size, const AudioSpec& engine_spec,
+	                 AudioSpec& buffer_spec);
 
 private:
 	MusicTrack* m_track;

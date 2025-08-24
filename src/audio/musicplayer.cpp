@@ -2,11 +2,26 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 #include "musicplayer.hpp"
 
+#include <functional>
+#include <cstring>
+
 #include "cog2d/audio/musictrack.hpp"
 
 namespace cog2d {
 
 MusicPlayer::MusicPlayer()
+{
+}
+
+void MusicPlayer::init()
+{
+	using namespace std::placeholders;
+
+	COG2D_USE_AUDIOENGINE;
+	audioengine.m_callbacks.push_back(std::bind(&MusicPlayer::feed_buffer, this, _1, _2, _3, _4));
+}
+
+void MusicPlayer::deinit()
 {
 }
 
@@ -17,56 +32,6 @@ void MusicPlayer::set_track(MusicTrack* track)
 	m_next_section = m_current_section;
 }
 
-void MusicPlayer::start()
-{
-	COG2D_USE_AUDIOENGINE;
-	//audioengine.play_music(m_track->m_music.get());
-}
-
-void MusicPlayer::pause()
-{
-	COG2D_USE_AUDIOENGINE;
-	//audioengine.pause_music();
-}
-
-void MusicPlayer::stop()
-{
-	COG2D_USE_AUDIOENGINE;
-	//audioengine.stop_music();
-}
-
-bool MusicPlayer::is_playing()
-{
-	COG2D_USE_AUDIOENGINE;
-	//return audioengine.is_music_playing();
-	return false;
-}
-
-void MusicPlayer::update()
-{
-	COG2D_USE_AUDIOENGINE;
-
-	if (!m_track)
-		return;
-
-	if (m_current_section->end < 0.0)
-		return;
-
-	/*
-	double curpos = audioengine.music_position(m_track->m_music.get());
-	if (curpos >= m_current_section->end) {
-		if (m_current_section == m_next_section) {
-			audioengine.set_music_position(m_current_section->start +
-										   m_current_section->loop_start);
-			return;
-		}
-
-		audioengine.set_music_position(m_next_section->start);
-		m_current_section = m_next_section;
-	}
-	*/
-}
-
 void MusicPlayer::queue_section(std::size_t section)
 {
 	queue_section(m_track->section(section));
@@ -75,6 +40,12 @@ void MusicPlayer::queue_section(std::size_t section)
 void MusicPlayer::queue_section(MusicTrackSection* section)
 {
 	m_next_section = section;
+}
+
+void MusicPlayer::feed_buffer(void* buffer, std::size_t size, const AudioSpec& engine_spec,
+                              AudioSpec& buffer_spec)
+{
+	std::memset(buffer, 0xFF00, size);
 }
 
 }  //namespace cog2d

@@ -4,6 +4,7 @@
 #pragma once
 
 #include <string>
+#include <functional>
 
 #include "cog2d/util/currenton.hpp"
 #include "cog2d/util/timing.hpp"
@@ -32,7 +33,8 @@ struct AudioSpec
 	AudioFormat format;
 };
 
-typedef void (*AudioBufferCallback)(void* buffer, std::size_t size, const AudioSpec& spec);
+using AudioBufferCallback = std::function<
+    void(void* buffer, std::size_t size, const AudioSpec& engine_spec, AudioSpec& buffer_spec)>;
 
 #define COG2D_AUDIO_BACKEND(_t, _n) COG2D_BACKEND(AUDIO, _t, _n)
 #define COG2D_USE_AUDIOENGINE COG2D_USING(AudioEngine, audioengine)

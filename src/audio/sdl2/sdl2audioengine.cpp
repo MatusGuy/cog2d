@@ -68,8 +68,14 @@ void SDL2AudioEngine::init(ProgramSettings* settings)
 {
 	m_spec.callback = &SDL2AudioEngine::feed_buffer_callback;
 	m_spec.userdata = static_cast<void*>(this);
+	m_spec.freq = 44100;
+	m_spec.format = AUDIO_S16;
+	m_spec.samples = 1024;
+	m_spec.channels = 2;
 
 	m_dev = SDL_OpenAudioDevice(nullptr, false, &m_spec, &m_spec, 0x0);
+
+	SDL_PauseAudioDevice(m_dev, false);
 }
 
 void SDL2AudioEngine::deinit()
@@ -88,7 +94,8 @@ void SDL2AudioEngine::feed_buffer_callback(void* userdata, std::uint8_t* stream,
 		buf = static_cast<void*>(new std::uint8_t[len]);
 
 		AudioBufferCallback callback = engine->m_callbacks[i];
-		callback(buf, len, engine->spec());
+		AudioSpec bufspec;
+		callback(buf, len, engine->spec(), bufspec);
 	}
 
 	// mix all buffers into one delicious output buffer
@@ -97,6 +104,7 @@ void SDL2AudioEngine::feed_buffer_callback(void* userdata, std::uint8_t* stream,
 
 void SDL2AudioEngine::mix_buffers(void* out, void** buffers, std::size_t count, std::size_t size)
 {
+	/*
 	// FIXME: this needs volume compensation
 	// FIXME: handle different formats
 	for (std::size_t i = 0; i < size; ++i) {
@@ -105,6 +113,12 @@ void SDL2AudioEngine::mix_buffers(void* out, void** buffers, std::size_t count, 
 		for (std::size_t buf = 0; buf < count; ++i) {
 			outbyte += *static_cast<std::int16_t*>(buffers[buf] + i);
 		}
+	}
+	*/
+	for (std::size_t buf = 0; buf < count; ++buf) {
+		SDL_MixAudioFormat(static_cast<std::uint8_t*>(out),
+		                   static_cast<std::uint8_t*>(buffers[buf]), AUDIO_S16, size,
+		                   SDL_MIX_MAXVOLUME);
 	}
 }
 

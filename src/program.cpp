@@ -51,6 +51,7 @@ int Program::run(int argc, char* argv[])
 	graphicsengine.init(m_settings);
 
 	audioengine.init(m_settings);
+	MusicPlayer::get().init();
 
 	if (register_actions()) {
 		InputManager::get().init();
@@ -83,7 +84,7 @@ int Program::run(int argc, char* argv[])
 		}
 
 		update_fonts_gc();
-		MusicPlayer::get().update();
+		//MusicPlayer::get().update();
 
 		std::unique_ptr<Screen>& screen = m_screen_stack.top();
 		screen->update();
