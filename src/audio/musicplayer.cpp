@@ -45,7 +45,14 @@ void MusicPlayer::queue_section(MusicTrackSection* section)
 void MusicPlayer::feed_buffer(void* buffer, std::size_t size, const AudioSpec& engine_spec,
                               AudioSpec& buffer_spec)
 {
-	std::memset(buffer, 0xFF00, size);
+	if (m_track == nullptr)
+		return;
+
+	buffer_spec = m_track->m_spec;
+
+	std::memcpy(buffer, m_track->m_music + (m_track_pos * buffer_spec.channels * sizeof(short)),
+	            size);
+	m_track_pos += size / buffer_spec.channels / sizeof(short);
 }
 
 }  //namespace cog2d

@@ -14,6 +14,8 @@ class MusicTrack;
 #define COG2D_USE_MUSICPLAYER COG2D_USING(MusicPlayer, musicplayer)
 class MusicPlayer : public Currenton<MusicPlayer>
 {
+	friend class MusicTrack;
+
 public:
 	MusicPlayer();
 
@@ -37,6 +39,9 @@ private:
 	MusicTrack* m_track;
 	MusicTrackSection* m_current_section;
 	MusicTrackSection* m_next_section;
+
+	/// in sample frames
+	std::size_t m_track_pos = 0;
 };
 
 }  //namespace cog2d

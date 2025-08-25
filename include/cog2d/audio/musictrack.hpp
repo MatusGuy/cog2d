@@ -7,8 +7,11 @@
 
 #include "cog2d/util/timing.hpp"
 #include "cog2d/filesystem/iodevice.hpp"
+#include "cog2d/audio/audioengine.hpp"
 
 namespace cog2d {
+
+class MusicPlayer;
 
 template<class T>
 class Parser;
@@ -30,9 +33,12 @@ struct MusicTrackMetadata
 class MusicTrack
 {
 	friend class Parser<MusicTrack>;
+	friend class MusicPlayer;
 
 public:
-	std::unique_ptr<Mix_Music, decltype(&Mix_FreeMusic)> m_music;
+	void* m_music;
+	std::size_t m_size;
+	AudioSpec m_spec;
 	std::unique_ptr<IoDevice> m_device;
 	MusicTrackMetadata m_metadata;
 

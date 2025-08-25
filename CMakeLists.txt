@@ -123,6 +123,10 @@ else()
 	target_link_libraries(cog2d PUBLIC tomlplusplus::tomlplusplus)
 endif()
 
+## external ##
+add_subdirectory(external/qoa)
+target_link_libraries(cog2d PUBLIC qoa)
+
 # Preprocessor definitions #
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	target_compile_definitions(cog2d PUBLIC COG2D_DEBUG)

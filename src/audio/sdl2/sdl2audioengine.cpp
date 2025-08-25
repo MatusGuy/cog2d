@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 #include "sdl2audioengine.hpp"
 
+#include <cstring>
+
 namespace cog2d {
 
 AudioFormat AudioFormat_from_sdl(SDL_AudioFormat format)
@@ -100,6 +102,11 @@ void SDL2AudioEngine::feed_buffer_callback(void* userdata, std::uint8_t* stream,
 
 	// mix all buffers into one delicious output buffer
 	mix_buffers(static_cast<void*>(stream), buffers, engine->m_callbacks.size(), len);
+
+	for (std::size_t i = 0; i < engine->m_callbacks.size(); ++i) {
+		delete[] buffers[i];
+	}
+	delete[] buffers;
 }
 
 void SDL2AudioEngine::mix_buffers(void* out, void** buffers, std::size_t count, std::size_t size)
@@ -115,6 +122,11 @@ void SDL2AudioEngine::mix_buffers(void* out, void** buffers, std::size_t count, 
 		}
 	}
 	*/
+	if (count == 1) {
+		std::memcpy(out, buffers[0], size);
+		return;
+	}
+
 	for (std::size_t buf = 0; buf < count; ++buf) {
 		SDL_MixAudioFormat(static_cast<std::uint8_t*>(out),
 		                   static_cast<std::uint8_t*>(buffers[buf]), AUDIO_S16, size,
