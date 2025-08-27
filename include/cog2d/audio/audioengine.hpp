@@ -33,6 +33,11 @@ struct AudioSpec
 	AudioFormat format;
 };
 
+struct MixerSource
+{
+
+};
+
 using AudioBufferCallback = std::function<
     void(void* buffer, std::size_t size, const AudioSpec& engine_spec, AudioSpec& buffer_spec)>;
 

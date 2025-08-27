@@ -16,6 +16,11 @@ class MusicPlayer;
 template<class T>
 class Parser;
 
+enum MusicType
+{
+	MUSIC_QOA
+};
+
 struct MusicTrackSection
 {
 	double start = 0;
@@ -36,8 +41,8 @@ class MusicTrack
 	friend class MusicPlayer;
 
 public:
-	void* m_music;
-	std::size_t m_size;
+	void* m_data;
+	MusicType m_type;
 	AudioSpec m_spec;
 	std::unique_ptr<IoDevice> m_device;
 	MusicTrackMetadata m_metadata;
@@ -52,6 +57,12 @@ public:
 	{
 		return sec < m_metadata.sections.size() ? &m_metadata.sections[sec] : nullptr;
 	}
+
+	std::size_t buffer(void* chunk, std::size_t chunk_size);
+	void seek(std::size_t sample_frame);
+
+private:
+	std::size_t buffer_qoa(void* chunk, std::size_t chunk_size);
 };
 
 }  //namespace cog2d

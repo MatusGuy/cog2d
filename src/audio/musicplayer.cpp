@@ -50,9 +50,8 @@ void MusicPlayer::feed_buffer(void* buffer, std::size_t size, const AudioSpec& e
 
 	buffer_spec = m_track->m_spec;
 
-	std::memcpy(buffer, m_track->m_music + (m_track_pos * buffer_spec.channels * sizeof(short)),
-	            size);
-	m_track_pos += size / buffer_spec.channels / sizeof(short);
+	std::size_t samples = m_track->buffer(buffer, size);
+	m_track_pos += samples;
 }
 
 }  //namespace cog2d
