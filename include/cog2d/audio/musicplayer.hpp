@@ -12,12 +12,15 @@ struct MusicTrackSection;
 class MusicTrack;
 
 #define COG2D_USE_MUSICPLAYER COG2D_USING(MusicPlayer, musicplayer)
-class MusicPlayer : public Currenton<MusicPlayer>
+class MusicPlayer : public Currenton<MusicPlayer>, public MixerSource
 {
+public:
 	friend class MusicTrack;
 
 public:
 	MusicPlayer();
+
+	bool buffer(void* buf, std::size_t samples) override;
 
 	void init();
 	void deinit();
@@ -30,10 +33,6 @@ public:
 	inline MusicTrackSection* next_section() { return m_next_section; }
 
 	inline MusicTrack* track() { return m_track; }
-
-private:
-	void feed_buffer(void* buffer, std::size_t size, const AudioSpec& engine_spec,
-	                 AudioSpec& buffer_spec);
 
 private:
 	MusicTrack* m_track;

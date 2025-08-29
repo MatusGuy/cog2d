@@ -62,6 +62,22 @@ AudioSpec AudioSpec_from_sdl(const SDL_AudioSpec& spec)
 	return {spec.freq, spec.channels, AudioFormat_from_sdl(spec.format)};
 }
 
+struct SDLMixerSourceData
+{
+	std::unique_ptr<SDL_AudioStream, decltype(&SDL_FreeAudioStream)> stream;
+	void* buffer;
+	std::size_t buffersize;
+
+	SDLMixerSourceData(SDL_AudioStream* _stream, std::size_t _buffersize)
+	    : stream(_stream, &SDL_FreeAudioStream),
+	      buffersize(_buffersize),
+	      buffer(new std::uint8_t[_buffersize])
+	{
+	}
+
+	~SDLMixerSourceData() { delete[] buffer; }
+};
+
 SDL2AudioEngine::SDL2AudioEngine()
 {
 }
@@ -82,28 +98,59 @@ void SDL2AudioEngine::init(ProgramSettings* settings)
 
 void SDL2AudioEngine::deinit()
 {
+	for (std::unique_ptr<MixerSource>& source : m_sources) {
+		delete static_cast<SDLMixerSourceData*>(source->userdata());
+	}
+
 	SDL_CloseAudioDevice(m_dev);
+}
+
+void SDL2AudioEngine::add_source(std::unique_ptr<MixerSource> source)
+{
+	refresh_source(source.get());
+	AudioEngine::add_source(std::move(source));
+}
+
+void SDL2AudioEngine::refresh_source(MixerSource* source)
+{
+	if (source->userdata() != nullptr) {
+		delete static_cast<SDLMixerSourceData*>(source->userdata());
+	}
+
+	auto data = new SDLMixerSourceData(SDL_NewAudioStream(AudioFormat_to_sdl(source->spec().format),
+	                                                      source->spec().channels,
+	                                                      source->spec().samplerate, m_spec.format,
+	                                                      m_spec.channels, m_spec.freq),
+	                                   m_spec.samples * source->spec().channels * sizeof(short));
+
+	source->set_userdata(static_cast<void*>(data));
 }
 
 void SDL2AudioEngine::feed_buffer_callback(void* userdata, std::uint8_t* stream, int len)
 {
 	auto engine = static_cast<SDL2AudioEngine*>(userdata);
 
-	// TODO: proper channel count. not to be confused with audio channel outputs (mono, stereo, ...)
-	void** buffers = new void*[engine->m_callbacks.size()];
-	for (std::size_t i = 0; i < engine->m_callbacks.size(); ++i) {
+	void** buffers = new void*[engine->m_sources.size()];
+	for (std::size_t i = 0; i < engine->m_sources.size(); ++i) {
 		void*& buf = buffers[i];
 		buf = static_cast<void*>(new std::uint8_t[len]);
 
-		AudioBufferCallback callback = engine->m_callbacks[i];
-		AudioSpec bufspec;
-		callback(buf, len, engine->spec(), bufspec);
+		MixerSource* source = engine->m_sources[i].get();
+		auto mixerdata = static_cast<SDLMixerSourceData*>(source->userdata());
+		if (!source->buffer(mixerdata->buffer, engine->m_spec.samples))
+			continue;
+
+		SDL_AudioStreamPut(mixerdata->stream.get(), mixerdata->buffer, mixerdata->buffersize);
+		SDL_AudioStreamFlush(mixerdata->stream.get());
+		SDL_AudioStreamGet(mixerdata->stream.get(), buf, len);
+		SDL_AudioStreamClear(mixerdata->stream.get());
+
 	}
 
 	// mix all buffers into one delicious output buffer
-	mix_buffers(static_cast<void*>(stream), buffers, engine->m_callbacks.size(), len);
+	mix_buffers(static_cast<void*>(stream), buffers, engine->m_sources.size(), len);
 
-	for (std::size_t i = 0; i < engine->m_callbacks.size(); ++i) {
+	for (std::size_t i = 0; i < engine->m_sources.size(); ++i) {
 		delete[] buffers[i];
 	}
 	delete[] buffers;
