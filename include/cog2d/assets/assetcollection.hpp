@@ -12,6 +12,7 @@
 #include "cog2d/video/font/pixmapfont.hpp"
 #include "cog2d/scene/tilemap/tileset.hpp"
 #include "cog2d/audio/musictrack.hpp"
+#include "cog2d/audio/soundeffect.hpp"
 
 #include "cog2d/assets/asset.hpp"
 #include "cog2d/util/parsing.hpp"
@@ -48,7 +49,7 @@ public:
 	// FIXME: virtual?? really??
 	virtual Asset<A> load(std::string_view name, IoDevice& device) = 0;
 
-	Asset<A> add(std::string_view name, std::unique_ptr<A> asset);
+	Asset<A> add(std::string_view name, A* asset);
 	void try_remove_key(std::string_view name, bool check = true);
 	void try_remove_asset(AssetRef<A> asset);
 
@@ -84,6 +85,12 @@ class MusicTrackCollection : public AssetCollection<MusicTrack>
 {
 public:
 	Asset<MusicTrack> load(std::string_view name, IoDevice& device) override;
+};
+
+class SoundEffectCollection : public AssetCollection<SoundEffect>
+{
+public:
+	Asset<SoundEffect> load(std::string_view name, IoDevice& device) override;
 };
 
 }  //namespace cog2d

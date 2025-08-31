@@ -20,7 +20,7 @@ void MusicPlayer::init()
 	m_track = nullptr;
 
 	COG2D_USE_AUDIOENGINE;
-	audioengine.add_source(std::unique_ptr<MixerSource>(this));
+	audioengine.add_source(this);
 }
 
 void MusicPlayer::deinit()

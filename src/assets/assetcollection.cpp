@@ -16,9 +16,9 @@
 namespace cog2d {
 
 template<class A>
-Asset<A> AssetCollection<A>::add(std::string_view name, std::unique_ptr<A> asset)
+Asset<A> AssetCollection<A>::add(std::string_view name, A* asset)
 {
-	Asset<A> ptr(std::shared_ptr<A>(asset.release()), this);
+	Asset<A> ptr(std::shared_ptr<A>(asset), this);
 	m_assets.insert({std::string(name), AssetRef<A>(ptr)});
 	return ptr;
 }
@@ -79,12 +79,12 @@ Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
 
 	device.close();
 
-	return add(name, std::unique_ptr<Texture>(texture));
+	return add(name, texture);
 }
 
 Asset<PixmapFont> PixmapFontCollection::load(std::string_view name, IoDevice& device)
 {
-	auto font = new PixmapFont();
+	auto font = new PixmapFont;
 
 	if (!device.is_open())
 		device.open(IoDevice::OPENMODE_READ);
@@ -93,7 +93,7 @@ Asset<PixmapFont> PixmapFontCollection::load(std::string_view name, IoDevice& de
 
 	device.close();
 
-	return add(name, std::unique_ptr<AssetType>(std::move(font)));
+	return add(name, font);
 }
 
 Asset<TileSet> TileSetCollection::load(std::string_view name, IoDevice& device)
@@ -110,18 +110,26 @@ Asset<TileSet> TileSetCollection::load(std::string_view name, IoDevice& device)
 
 Asset<TileSet> TileSetCollection::load(std::string_view name, toml::table& data)
 {
-	std::unique_ptr<TileSet> set = std::make_unique<TileSet>();
+	TileSet* set = new TileSet;
 	set->load(data);
-	return add(name, std::move(set));
+	return add(name, set);
 }
 
 Asset<MusicTrack> MusicTrackCollection::load(std::string_view name, IoDevice& device)
 {
-	std::unique_ptr<MusicTrack> track = std::make_unique<MusicTrack>();
+	MusicTrack* track = new MusicTrack;
 	device.open(IoDevice::OPENMODE_READ);
-	new_parse<TomlMusicTrackParser>(device, *track.get());
+	new_parse<TomlMusicTrackParser>(device, *track);
 	device.close();
-	return add(name, std::move(track));
+	return add(name, track);
+}
+
+Asset<SoundEffect> SoundEffectCollection::load(std::string_view name, IoDevice& device)
+{
+	SoundEffect* sound = new SoundEffect;
+	sound->load(device);
+	AudioEngine::get().add_source(sound);
+	return add(name, sound);
 }
 
 }  //namespace cog2d

@@ -21,6 +21,7 @@ public:
 	PixmapFontCollection pixmapfonts;
 	TileSetCollection tilesets;
 	MusicTrackCollection musictracks;
+	SoundEffectCollection sounds;
 
 public:
 	AssetManager();

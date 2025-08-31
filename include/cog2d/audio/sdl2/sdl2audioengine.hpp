@@ -23,7 +23,7 @@ public:
 	void init(ProgramSettings* settings) override;
 	void deinit() override;
 
-	void add_source(std::unique_ptr<MixerSource> source) override;
+	void add_source(MixerSource* source) override;
 	void refresh_source(MixerSource* source) override;
 
 	AudioSpec spec() override { return AudioSpec_from_sdl(m_spec); }
