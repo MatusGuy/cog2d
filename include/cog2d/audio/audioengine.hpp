@@ -38,7 +38,7 @@ struct AudioSpec
 
 class MixerSource
 {
-protected:
+public:
 	friend class AudioEngine;
 
 public:
@@ -50,6 +50,8 @@ public:
 
 	inline void* userdata() { return m_userdata; }
 	inline void set_userdata(void* data) { m_userdata = data; }
+
+	inline AudioEngine* engine() { return m_engine; }
 
 protected:
 	AudioSpec m_spec;

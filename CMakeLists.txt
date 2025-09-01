@@ -75,17 +75,13 @@ else()
 	)
 endif()
 
-## SDL2_mixer ##
+## OpenAL ##
 if(COG2D_USE_PKGCONFIG)
-	pkg_check_modules(SDL2_mixer REQUIRED IMPORTED_TARGET SDL2_mixer)
-	target_link_libraries(cog2d PUBLIC PkgConfig::SDL2_mixer)
+	pkg_check_modules(OpenAL REQUIRED IMPORTED_TARGET openal)
+	target_link_libraries(cog2d PUBLIC PkgConfig::OpenAL)
 else()
-	find_package(SDL2_mixer REQUIRED)
-	target_link_libraries(cog2d
-		PUBLIC
-		$<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,
-		     SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>
-	)
+	find_package(OpenAL REQUIRED)
+	target_link_libraries(cog2d PUBLIC OpenAL::OpenAL)
 endif()
 
 ## SDL2_ttf ##

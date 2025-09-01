@@ -18,6 +18,7 @@
 #include "cog2d/video/font/pixmapfont.hpp"
 #include "cog2d/video/sdl2/sdl2graphicsengine.hpp"
 #include "cog2d/audio/sdl2/sdl2audioengine.hpp"
+#include "cog2d/audio/alsoft/alsoftaudioengine.hpp"
 
 namespace cog2d {
 
@@ -38,7 +39,7 @@ int Program::run(int argc, char* argv[])
 
 	GraphicsEngine::s_current = new SDL2GraphicsEngine;
 	InputManager::s_current = new InputManager;
-	AudioEngine::s_current = new SDL2AudioEngine;
+	AudioEngine::s_current = new AlSoftAudioEngine;
 	MusicPlayer::s_current = new MusicPlayer;
 	AssetManager::s_current = new AssetManager;
 	Config::s_current = new Config;

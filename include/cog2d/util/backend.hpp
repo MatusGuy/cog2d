@@ -56,7 +56,8 @@ public:
 
 	enum AudioEngine : std::uint8_t
 	{
-		AUDIO_SDL2
+		AUDIO_SDL2,
+		AUDIO_ALSOFT
 	};
 
 public:
