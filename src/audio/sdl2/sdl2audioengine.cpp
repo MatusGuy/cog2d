@@ -4,6 +4,8 @@
 
 #include <cstring>
 
+#include "cog2d/util/logger.hpp"
+
 namespace cog2d {
 
 AudioFormat AudioFormat_from_sdl(SDL_AudioFormat format)
@@ -131,18 +133,24 @@ void SDL2AudioEngine::feed_buffer_callback(void* userdata, std::uint8_t* stream,
 	auto engine = static_cast<SDL2AudioEngine*>(userdata);
 
 	void** buffers = new void*[engine->m_sources.size()];
+	//COG2D_LOG_DEBUG(fmt::format("{}", engine->m_sources.size()));
 	for (std::size_t i = 0; i < engine->m_sources.size(); ++i) {
 		void*& buf = buffers[i];
 		buf = static_cast<void*>(new std::uint8_t[len]);
 
 		MixerSource* source = engine->m_sources[i];
 		auto mixerdata = static_cast<SDLMixerSourceData*>(source->userdata());
-		if (!source->buffer(mixerdata->buffer, engine->m_spec.samples))
+		if (!source->buffer(mixerdata->buffer, engine->m_spec.samples)) {
+			// Make sure the buffer is completely muted if the source has no audio to buffer.
+			std::memset(buf, 0, len);
 			continue;
+		}
 
 		SDL_AudioStreamPut(mixerdata->stream.get(), mixerdata->buffer, mixerdata->buffersize);
 		SDL_AudioStreamFlush(mixerdata->stream.get());
 		SDL_AudioStreamGet(mixerdata->stream.get(), buf, len);
+		if (i == 1)
+			COG2D_LOG_DEBUG(fmt::format("on: {}", ((uint16_t*) buf)[0]));
 		SDL_AudioStreamClear(mixerdata->stream.get());
 	}
 

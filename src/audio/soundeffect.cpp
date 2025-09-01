@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include "cog2d/audio/sdl2/sdl2audioengine.hpp"
+#include "cog2d/util/logger.hpp"
 
 namespace cog2d {
 
@@ -28,15 +29,20 @@ void SoundEffect::load(IoDevice& device)
 	SDL_AudioSpec spec;
 	SDL_LoadWAV_RW(device.to_sdl(), true, &spec, &m_data, &m_size);
 	m_spec = AudioSpec_from_sdl(spec);
+	m_pos = m_size / m_spec.channels / sizeof(short);
 }
 
 bool SoundEffect::buffer(void* buf, std::size_t samples)
 {
-	if (!is_playing())
+	if (!is_playing()) {
+		//COG2D_LOG_DEBUG(fmt::format("{} {}", m_pos * m_spec.channels * sizeof(short), m_size));
+		//std::memset(buf, 0, samples * m_spec.channels * sizeof(short));
 		return false;
+	}
 
-	std::memcpy(buf, m_data + (m_pos * m_spec.channels * sizeof(short)),
-	            samples * m_spec.channels * sizeof(short));
+	std::size_t cpysz = std::min(samples * m_spec.channels * sizeof(short),
+	                             m_size - (m_pos * m_spec.channels * sizeof(short)));
+	std::memcpy(buf, m_data + (m_pos * m_spec.channels * sizeof(short)), cpysz);
 
 	m_pos += samples;
 	return true;
