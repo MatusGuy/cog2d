@@ -33,7 +33,8 @@ struct AudioSpec
 	std::uint32_t samplerate = 0;
 	std::uint8_t channels = 0;
 	AudioFormat format;
-	inline bool is_valid() { return channels == 0 || samplerate == 0; }
+
+	inline bool valid() const { return channels != 0 && samplerate != 0; }
 };
 
 class MixerSource

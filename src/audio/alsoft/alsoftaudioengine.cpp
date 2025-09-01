@@ -51,8 +51,8 @@ AudioFormat AudioFormat_from_al(ALenum value)
 
 struct AlSoftMixerData
 {
-	ALuint buffer;
-	ALuint source;
+	ALuint buffer = 0;
+	ALuint source = 0;
 };
 
 AlSoftAudioEngine::AlSoftAudioEngine()
@@ -80,27 +80,36 @@ void AlSoftAudioEngine::deinit()
 void AlSoftAudioEngine::add_source(MixerSource* source)
 {
 	auto mixerdata = new AlSoftMixerData;
+	source->set_userdata(mixerdata);
 
 	alGenBuffers(1, &mixerdata->buffer);
-	alBufferCallbackSOFT(mixerdata->buffer,
-	                     AudioFormat_to_al(source->spec().format, source->spec().channels),
-	                     source->spec().samplerate, &feed_buffer_callback,
-	                     static_cast<ALvoid*>(source));
-
 	alGenSources(1, &mixerdata->source);
-	alSourcef(mixerdata->source, AL_PITCH, 1);
-	alSourcef(mixerdata->source, AL_GAIN, 1.0f);
-	alSource3f(mixerdata->source, AL_POSITION, 0, 0, 0);
-	alSource3f(mixerdata->source, AL_VELOCITY, 0, 0, 0);
-	alSourcei(mixerdata->source, AL_LOOPING, AL_FALSE);
-
-	source->set_userdata(mixerdata);
+	refresh_source(source);
 
 	AudioEngine::add_source(source);
 }
 
 void AlSoftAudioEngine::refresh_source(MixerSource* source)
 {
+	AlSoftMixerData* mixerdata = static_cast<AlSoftMixerData*>(source->userdata());
+	if (!source->spec().valid() || mixerdata == nullptr)
+		return;
+
+	COG2D_LOG_DEBUG(fmt::format("{}", mixerdata->buffer));
+	alBufferCallbackSOFT(mixerdata->buffer,
+	                     AudioFormat_to_al(source->spec().format, source->spec().channels),
+	                     source->spec().samplerate, &feed_buffer_callback,
+	                     static_cast<ALvoid*>(source));
+
+	alSourcef(mixerdata->source, AL_PITCH, 1);
+	alSourcef(mixerdata->source, AL_GAIN, 1.0f);
+	alSource3f(mixerdata->source, AL_POSITION, 0, 0, 0);
+	alSource3f(mixerdata->source, AL_VELOCITY, 0, 0, 0);
+	alSourcei(mixerdata->source, AL_LOOPING, AL_FALSE);
+	alSourcei(mixerdata->source, AL_BUFFER, mixerdata->buffer);
+
+	alSourceStop(mixerdata->source);
+	alSourcePlay(mixerdata->source);
 }
 
 void AlSoftAudioEngine::remove_source(MixerSource* source)
@@ -124,12 +133,12 @@ AudioSpec AlSoftAudioEngine::spec()
 ALsizei AlSoftAudioEngine::feed_buffer_callback(ALvoid* userptr, ALvoid* data,
                                                 ALsizei size) noexcept
 {
-	MixerSource* source = static_cast<MixerSource*>(source);
+	MixerSource* source = static_cast<MixerSource*>(userptr);
 	AlSoftAudioEngine* engine = static_cast<AlSoftAudioEngine*>(source->engine());
 
 	COG2D_LOG_DEBUG(fmt::format("buffer -- size: {}", size));
 
-	return 0;
+	return size;
 }
 
 }  //namespace cog2d

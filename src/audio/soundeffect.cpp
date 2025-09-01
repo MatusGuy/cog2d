@@ -29,7 +29,7 @@ void SoundEffect::load(IoDevice& device)
 	SDL_AudioSpec spec;
 	SDL_LoadWAV_RW(device.to_sdl(), true, &spec, &m_data, &m_size);
 	m_spec = AudioSpec_from_sdl(spec);
-	m_pos = m_size / m_spec.channels / sizeof(short);
+	//m_pos = m_size / m_spec.channels / sizeof(short);
 }
 
 bool SoundEffect::buffer(void* buf, std::size_t samples)

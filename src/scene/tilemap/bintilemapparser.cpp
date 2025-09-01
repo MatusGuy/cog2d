@@ -68,7 +68,7 @@ void BinTileMapParser::parse(IoDevice& device, TileMap& result)
 		device.read(name);
 		*/
 
-		COG2D_LOG_DEBUG(fmt::format("{:x}", device.tell()));
+		//COG2D_LOG_DEBUG(fmt::format("{:x}", device.tell()));
 		if (type == 0) {
 			auto layer = std::make_unique<TileLayer>();
 			layer->m_map = &result;
