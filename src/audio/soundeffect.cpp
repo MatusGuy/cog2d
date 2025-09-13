@@ -40,9 +40,9 @@ bool SoundEffect::buffer(void* buf, std::size_t samples)
 		return false;
 	}
 
-	std::size_t cpysz = std::min(samples * m_spec.channels * sizeof(short),
-	                             m_size - (m_pos * m_spec.channels * sizeof(short)));
-	std::memcpy(buf, m_data + (m_pos * m_spec.channels * sizeof(short)), cpysz);
+	std::size_t cpysz = std::min(m_spec.samples_to_bytes(samples),
+	                             m_size - m_spec.samples_to_bytes(m_pos));
+	std::memcpy(buf, m_data + m_spec.samples_to_bytes(m_pos), cpysz);
 
 	m_pos += samples;
 	return true;
@@ -50,7 +50,7 @@ bool SoundEffect::buffer(void* buf, std::size_t samples)
 
 bool SoundEffect::is_playing()
 {
-	return m_pos * m_spec.channels * sizeof(short) < m_size;
+	return m_spec.samples_to_bytes(m_pos) < m_size;
 }
 
 void SoundEffect::play()

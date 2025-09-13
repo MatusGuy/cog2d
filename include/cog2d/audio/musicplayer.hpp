@@ -35,11 +35,17 @@ public:
 	inline MusicTrack* track() { return m_track; }
 
 private:
+	struct MusicQoaBuffer;
+	void load_qoa(MusicTrack* track);
+	void buffer_qoa(MusicQoaBuffer* buf, unsigned char* out, std::size_t size);
+
+private:
 	MusicTrack* m_track;
 	MusicTrackSection* m_current_section;
 	MusicTrackSection* m_next_section;
 
 	/// in sample frames
+	void* m_buffer_data = nullptr;
 	std::size_t m_track_pos = 0;
 };
 

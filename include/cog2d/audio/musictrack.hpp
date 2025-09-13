@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <SDL_mixer.h>
+#include <qoa.h>
 
 #include "cog2d/util/timing.hpp"
 #include "cog2d/filesystem/iodevice.hpp"
@@ -62,6 +63,15 @@ public:
 	void seek(std::size_t sample_frame);
 
 private:
+	struct MusicQoaData
+	{
+		unsigned char* qoa_data;
+		std::size_t qoa_size;
+		qoa_desc desc;
+
+		~MusicQoaData() { delete[] qoa_data; }
+	};
+
 	std::size_t buffer_qoa(void* chunk, std::size_t chunk_size);
 };
 

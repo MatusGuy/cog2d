@@ -35,6 +35,28 @@ struct AudioSpec
 	AudioFormat format;
 
 	inline bool valid() const { return channels != 0 && samplerate != 0; }
+	inline std::uint8_t size() const
+	{
+		switch (format) {
+		case AUDIOFORMAT_U8:
+		case AUDIOFORMAT_S8:
+			return 1;
+
+		case AUDIOFORMAT_U16_LE:
+		case AUDIOFORMAT_S16_LE:
+		case AUDIOFORMAT_U16_BE:
+		case AUDIOFORMAT_S16_BE:
+			return 2;
+
+		default:
+			return 0;
+		}
+	}
+
+	inline std::size_t samples_to_bytes(std::uint32_t sample_frames) const
+	{
+		return sample_frames * channels * size();
+	}
 };
 
 class MixerSource

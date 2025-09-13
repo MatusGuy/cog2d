@@ -128,7 +128,7 @@ Asset<SoundEffect> SoundEffectCollection::load(std::string_view name, IoDevice& 
 {
 	SoundEffect* sound = new SoundEffect;
 	sound->load(device);
-	AudioEngine::get().add_source(sound);
+	//AudioEngine::get().add_source(sound);
 	return add(name, sound);
 }
 
