@@ -37,6 +37,14 @@ void MusicPlayer::deinit()
 
 struct MusicPlayer::MusicQoaBuffer
 {
+	enum State : std::uint8_t
+	{
+		STATE_PLAYING,
+		STATE_LOOP_PENDING
+	};
+	State state = STATE_PLAYING;
+	std::uint32_t pending_track_pos = 0;
+
 	MusicTrack::MusicQoaData* music_data;
 
 	/// current position in the qoa file
@@ -50,12 +58,12 @@ struct MusicPlayer::MusicQoaBuffer
 	Buffer<> frame;
 
 	static void decode_frame(MusicQoaBuffer* buf);
-	void buffer(unsigned char* out, std::size_t size);
+	void seek(std::uint32_t sample_frame);
 
 	MusicQoaBuffer(MusicTrack::MusicQoaData* data)
 	    : music_data(data),
 	      qoa_data(data->qoa_data, data->qoa_size),
-	      ready_frame(data->desc.channels * 20 * 256 * sizeof(short)),
+	      ready_frame(data->desc.channels * QOA_FRAME_LEN * sizeof(short)),
 	      frame(ready_frame.size)
 	//decode_thread(decode_frame, this),
 	{
@@ -79,24 +87,50 @@ void MusicPlayer::load_qoa(MusicTrack* track)
 	m_buffer_data = buf;
 }
 
-void MusicPlayer::MusicQoaBuffer::buffer(unsigned char* out, std::size_t size)
+void MusicPlayer::buffer_qoa(MusicQoaBuffer* buf, unsigned char* out, std::size_t size)
 {
-	assert(size <= frame.size);
+	assert(size <= buf->frame.size);
 
-	//COG2D_LOG_DEBUG(fmt::format("{}, {}, {}, {}", frame.pos, frame.size, size, frame.pos + size));
-	std::size_t readsz = frame.read(out, size);
-	if (readsz < size) {
-		frame.pos = 0;
-		frame.swap(ready_frame);
-		std::thread decode_thread(decode_frame, this);
-		decode_thread.detach();
-		COG2D_LOG_DEBUG(fmt::format("{} {} {}", (unsigned long long) frame.ptr(),
-		                            (unsigned long long) frame.data + frame.size,
-		                            std::min(size - readsz, frame.size - frame.pos)));
-		//COG2D_LOG_DEBUG(fmt::format("{} {} {}", (std::size_t) out, (std::size_t) out + size,
-		//                            (std::size_t) out + readsz));
-		frame.read(out + readsz, size - readsz);
+	std::size_t readsz = buf->frame.read(out, size);
+
+	if (buf->state == MusicQoaBuffer::STATE_PLAYING)
+		m_track_pos += readsz / m_spec.channels / m_spec.size();
+
+	if (readsz >= size)
+		// Haven't reached the end of the buffer yet.
+		return;
+
+	switch (buf->state) {
+	case MusicQoaBuffer::STATE_PLAYING: {
+		const std::uint32_t tracksample = m_track_pos + (readsz / m_spec.channels / m_spec.size());
+		if ((tracksample / static_cast<double>(m_spec.samplerate)) >= m_current_section->end) {
+			buf->state = MusicQoaBuffer::STATE_LOOP_PENDING;
+			buf->pending_track_pos = m_current_section->loop_start;
+			buf->seek(buf->pending_track_pos);
+		}
+		break;
 	}
+
+	case MusicQoaBuffer::STATE_LOOP_PENDING:
+		m_track_pos = buf->pending_track_pos;
+		buf->state = MusicQoaBuffer::STATE_PLAYING;
+		break;
+
+	default:
+		break;
+	}
+
+	buf->frame.pos = 0;
+	buf->frame.swap(buf->ready_frame);
+	std::thread decode_thread(MusicQoaBuffer::decode_frame, buf);
+	decode_thread.detach();
+	buf->frame.read(out + readsz, size - readsz);
+	m_track_pos += (size - readsz) / m_spec.channels / m_spec.size();
+}
+
+void MusicPlayer::MusicQoaBuffer::seek(std::uint32_t sample_frame)
+{
+	qoa_data.pos = std::floor(sample_frame / QOA_FRAME_LEN) * qoa_max_frame_size(&music_data->desc);
 }
 
 void MusicPlayer::MusicQoaBuffer::decode_frame(MusicQoaBuffer* buf)
@@ -116,15 +150,18 @@ bool MusicPlayer::buffer(void* buf, std::size_t samples)
 
 	switch (m_track->m_type) {
 	case MUSIC_QOA:
-		static_cast<MusicQoaBuffer*>(m_buffer_data)
-		    ->buffer(static_cast<unsigned char*>(buf), m_spec.samples_to_bytes(samples));
+		buffer_qoa(static_cast<MusicQoaBuffer*>(m_buffer_data), static_cast<unsigned char*>(buf),
+		           m_spec.samples_to_bytes(samples));
 		break;
 
 	default:
 		break;
 	}
 
-	m_track_pos += samples;
+	COG2D_LOG_DEBUG(fmt::format("{} {}", m_track_pos / static_cast<double>(m_spec.samplerate),
+	                            m_current_section->end));
+
+	//m_track_pos += samples;
 	return true;
 }
 

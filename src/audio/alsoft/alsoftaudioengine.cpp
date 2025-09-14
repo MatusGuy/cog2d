@@ -95,7 +95,6 @@ void AlSoftAudioEngine::refresh_source(MixerSource* source)
 	if (!source->spec().valid() || mixerdata == nullptr)
 		return;
 
-	COG2D_LOG_DEBUG(fmt::format("{}", mixerdata->buffer));
 	alBufferi(mixerdata->buffer, AL_SIZE, 1024 * source->spec().channels * source->spec().format);
 	alBufferCallbackSOFT(mixerdata->buffer,
 	                     AudioFormat_to_al(source->spec().format, source->spec().channels),
@@ -136,8 +135,6 @@ ALsizei AlSoftAudioEngine::feed_buffer_callback(ALvoid* userptr, ALvoid* data,
 {
 	MixerSource* source = static_cast<MixerSource*>(userptr);
 	AlSoftAudioEngine* engine = static_cast<AlSoftAudioEngine*>(source->engine());
-
-	COG2D_LOG_DEBUG(fmt::format("buffer -- size: {}", size));
 
 	source->buffer(data, size / source->spec().channels / sizeof(short));
 
