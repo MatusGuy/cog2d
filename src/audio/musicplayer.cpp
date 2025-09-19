@@ -40,9 +40,9 @@ struct MusicPlayer::MusicQoaBuffer
 	enum State : std::uint8_t
 	{
 		STATE_PLAYING,
-		STATE_LOOP_PENDING
+		STATE_LOOPING
 	};
-	State state = STATE_PLAYING;
+	State loop_state = STATE_PLAYING;
 	std::uint32_t pending_track_pos = 0;
 
 	MusicTrack::MusicQoaData* music_data;
@@ -57,26 +57,32 @@ struct MusicPlayer::MusicQoaBuffer
 	/// currently playing decoded qoa frame
 	Buffer<> frame;
 
-	static void decode_frame(MusicQoaBuffer* buf);
+	/// first frame the music loop
+	Buffer<> loop_start_frame;
+
+	static void decode_frame(MusicPlayer* music);
 	void seek(std::uint32_t sample_frame);
+	void queue_section(MusicTrackSection* section);
 
 	MusicQoaBuffer(MusicTrack::MusicQoaData* data)
 	    : music_data(data),
 	      qoa_data(data->qoa_data, data->qoa_size),
 	      ready_frame(data->desc.channels * QOA_FRAME_LEN * sizeof(short)),
-	      frame(ready_frame.size)
+	      frame(ready_frame.size),
+	      loop_start_frame(ready_frame.size)
 	//decode_thread(decode_frame, this),
 	{
 	}
 };
 
-void MusicPlayer::load_qoa(MusicTrack* track)
+void MusicPlayer::load_qoa()
 {
-	auto data = static_cast<MusicTrack::MusicQoaData*>(track->m_data);
+	auto data = static_cast<MusicTrack::MusicQoaData*>(track()->m_data);
 	auto buf = new MusicQoaBuffer(data);
 
 	unsigned int readsz, readlen;
 
+	buf->qoa_data.seek(0);
 	readsz = qoa_decode_frame(buf->qoa_data.ptr(), buf->frame.size, &data->desc,
 	                          (short*) buf->frame.data, &readlen);
 	buf->qoa_data.seek(buf->qoa_data.pos + readsz);
@@ -89,40 +95,23 @@ void MusicPlayer::load_qoa(MusicTrack* track)
 
 void MusicPlayer::buffer_qoa(MusicQoaBuffer* buf, unsigned char* out, std::size_t size)
 {
-	assert(size <= buf->frame.size);
+#ifndef NDEBUG
+	COG2D_LOG_DEBUG(fmt::format("{}, {}", size, buf->frame.size));
+	if (buf->loop_state == MusicQoaBuffer::STATE_PLAYING)
+		assert(size <= buf->frame.size);
+#endif
 
 	std::size_t readsz = buf->frame.read(out, size);
 
-	if (buf->state == MusicQoaBuffer::STATE_PLAYING)
+	if (buf->loop_state == MusicQoaBuffer::STATE_PLAYING)
 		m_track_pos += readsz / m_spec.channels / m_spec.size();
 
 	if (readsz >= size)
 		// Haven't reached the end of the buffer yet.
 		return;
 
-	switch (buf->state) {
-	case MusicQoaBuffer::STATE_PLAYING: {
-		const std::uint32_t tracksample = m_track_pos + (readsz / m_spec.channels / m_spec.size());
-		if ((tracksample / static_cast<double>(m_spec.samplerate)) >= m_current_section->end) {
-			buf->state = MusicQoaBuffer::STATE_LOOP_PENDING;
-			buf->pending_track_pos = m_current_section->loop_start;
-			buf->seek(buf->pending_track_pos);
-		}
-		break;
-	}
-
-	case MusicQoaBuffer::STATE_LOOP_PENDING:
-		m_track_pos = buf->pending_track_pos;
-		buf->state = MusicQoaBuffer::STATE_PLAYING;
-		break;
-
-	default:
-		break;
-	}
-
-	buf->frame.pos = 0;
 	buf->frame.swap(buf->ready_frame);
-	std::thread decode_thread(MusicQoaBuffer::decode_frame, buf);
+	std::thread decode_thread(MusicQoaBuffer::decode_frame, this);
 	decode_thread.detach();
 	buf->frame.read(out + readsz, size - readsz);
 	m_track_pos += (size - readsz) / m_spec.channels / m_spec.size();
@@ -130,15 +119,57 @@ void MusicPlayer::buffer_qoa(MusicQoaBuffer* buf, unsigned char* out, std::size_
 
 void MusicPlayer::MusicQoaBuffer::seek(std::uint32_t sample_frame)
 {
-	qoa_data.pos = std::floor(sample_frame / QOA_FRAME_LEN) * qoa_max_frame_size(&music_data->desc);
+	qoa_data.seek(std::floor(sample_frame / QOA_FRAME_LEN) * qoa_max_frame_size(&music_data->desc));
 }
 
-void MusicPlayer::MusicQoaBuffer::decode_frame(MusicQoaBuffer* buf)
+void MusicPlayer::MusicQoaBuffer::queue_section(MusicTrackSection* section)
 {
 	unsigned int readsz, readlen;
-	readsz = qoa_decode_frame(buf->qoa_data.ptr(), buf->ready_frame.size, &buf->music_data->desc,
-	                          (short*) buf->ready_frame.data, &readlen);
-	buf->qoa_data.seek(buf->qoa_data.pos + readsz);
+	std::size_t pos = qoa_data.pos;
+	seek(section->loop_start);
+	readsz = qoa_decode_frame(qoa_data.ptr(), loop_start_frame.size, &music_data->desc,
+	                          (short*) loop_start_frame.data, &readlen);
+	loop_start_frame.seek(section->loop_start % QOA_FRAME_LEN);
+	qoa_data.seek(pos);
+}
+
+void MusicPlayer::MusicQoaBuffer::decode_frame(MusicPlayer* music)
+{
+	auto buf = static_cast<MusicQoaBuffer*>(music->m_buffer_data);
+
+	buf->ready_frame.seek(0);
+
+	switch (buf->loop_state) {
+	case MusicQoaBuffer::STATE_PLAYING: {
+		unsigned int readsz, readlen;
+		buf->ready_frame.size = QOA_FRAME_LEN * buf->music_data->desc.channels * sizeof(short);
+		readsz = qoa_decode_frame(buf->qoa_data.ptr(), buf->ready_frame.size,
+		                          &buf->music_data->desc, (short*) buf->ready_frame.data, &readlen);
+		buf->qoa_data.seek(buf->qoa_data.pos + readsz);
+
+		const std::uint32_t decode_qoa_frame = std::floor(buf->qoa_data.pos /
+		                                                  qoa_max_frame_size(&buf->music_data
+		                                                                          ->desc));
+		if (decode_qoa_frame * QOA_FRAME_LEN >= music->m_current_section->end) {
+			// HACK: Heh. Don't worry. The size will be restored soon.
+			buf->ready_frame.size = (music->m_current_section->end -
+			                         ((decode_qoa_frame - 1) * QOA_FRAME_LEN)) *
+			                        buf->music_data->desc.channels * sizeof(short);
+			buf->loop_state = MusicQoaBuffer::STATE_LOOPING;
+		}
+		break;
+	}
+
+	case MusicQoaBuffer::STATE_LOOPING: {
+		const std::size_t loopsz = buf->loop_start_frame.size - buf->loop_start_frame.pos;
+		buf->seek(music->m_current_section->loop_start + QOA_FRAME_LEN);
+		buf->loop_start_frame.read(buf->ready_frame.data, loopsz);
+		buf->loop_start_frame.seek(0);
+		buf->ready_frame.size = loopsz;
+		buf->loop_state = MusicQoaBuffer::STATE_PLAYING;
+		break;
+	}
+	}
 }
 
 /* Control */
@@ -183,18 +214,20 @@ void MusicPlayer::set_track(MusicTrack* track)
 
 	m_track = track;
 
+	m_spec = track->m_spec;
+	m_current_section = track->section(track->m_metadata.start_section);
+
 	switch (m_track->m_type) {
 	case MUSIC_QOA:
-		load_qoa(m_track);
+		load_qoa();
 		break;
 
 	default:
 		break;
 	}
 
-	m_spec = track->m_spec;
-	m_current_section = track->section(track->m_metadata.start_section);
-	m_next_section = m_current_section;
+	queue_section(m_current_section);
+
 	AudioEngine::get().refresh_source(this);
 }
 
@@ -206,6 +239,15 @@ void MusicPlayer::queue_section(std::size_t section)
 void MusicPlayer::queue_section(MusicTrackSection* section)
 {
 	m_next_section = section;
+
+	switch (m_track->m_type) {
+	case MUSIC_QOA:
+		static_cast<MusicQoaBuffer*>(m_buffer_data)->queue_section(section);
+		break;
+
+	default:
+		break;
+	}
 }
 
 }  //namespace cog2d

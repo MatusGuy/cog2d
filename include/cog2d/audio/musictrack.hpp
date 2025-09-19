@@ -24,10 +24,10 @@ enum MusicType
 
 struct MusicTrackSection
 {
-	double start = 0;
+	std::uint32_t start = 0;
 	float bpm;
-	double loop_start = 0;
-	double end;
+	std::uint32_t loop_start = 0;
+	std::uint32_t end;
 };
 
 struct MusicTrackMetadata

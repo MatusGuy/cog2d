@@ -36,7 +36,7 @@ public:
 
 private:
 	struct MusicQoaBuffer;
-	void load_qoa(MusicTrack* track);
+	void load_qoa();
 	void buffer_qoa(MusicQoaBuffer* buf, unsigned char* out, std::size_t size);
 
 private:

@@ -15,7 +15,7 @@ public:
 	TomlMusicTrackParser();
 
 	void parse_toml(toml::table& data, MusicTrack& result) override;
-	void parse_section(toml::table& data, MusicTrackSection& result);
+	void parse_section(toml::table& data, MusicTrackSection& result, std::uint32_t samplerate);
 };
 
 }  //namespace cog2d

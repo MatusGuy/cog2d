@@ -26,33 +26,44 @@ void TomlMusicTrackParser::parse_toml(toml::table& data, MusicTrack& result)
 
 		for (toml::array::iterator it = sections->begin(); it != sections->end(); ++it) {
 			MusicTrackSection section;
-			parse_section(as_table(*it), section);
+			parse_section(as_table(*it), section, result.m_spec.samplerate);
 			result.m_metadata.sections.push_back(section);
 		}
 	} else {
 		MusicTrackSection section;
-		parse_section(data, section);
+		parse_section(data, section, result.m_spec.samplerate);
 		result.m_metadata.sections.push_back(section);
 	}
 }
 
-void TomlMusicTrackParser::parse_section(toml::table& data, MusicTrackSection& result)
+std::uint32_t parse_time_point(toml::node* data, std::uint32_t samplerate,
+                               std::uint32_t default_value)
+{
+	if (!data)
+		return default_value;
+
+	switch (data->type()) {
+	case toml::node_type::floating_point:
+		return data->as_floating_point()->get() * samplerate;
+	case toml::node_type::integer:
+		return data->as_integer()->get();
+	default:
+		return default_value;
+	}
+}
+
+void TomlMusicTrackParser::parse_section(toml::table& data, MusicTrackSection& result,
+                                         std::uint32_t samplerate)
 {
 	using namespace toml_util;
-	using MusicDuration = std::chrono::duration<double, std::ratio<1>>;
-	using MusicTimestamp = std::chrono::time_point<Clock, MusicDuration>;
 
-	toml::value<double>* val = data.get_as<double>("start");
-	result.start = val ? val->get() : 0.0;
+	result.start = parse_time_point(data.get("start"), samplerate, 0);
+	result.loop_start = parse_time_point(data.get("loop_start"), samplerate, result.start);
+	result.end = parse_time_point(data.get("end"), samplerate,
+	                              std::numeric_limits<std::uint32_t>::max());
 
-	val = data.get_as<double>("bpm");
-	result.bpm = val ? val->get() : 0.0;
-
-	val = data.get_as<double>("loop_start");
-	result.loop_start = val ? val->get() : 0.0;
-
-	val = data.get_as<double>("end");
-	result.end = val ? val->get() : -1.0;
+	toml::value<double>* val = data.get_as<double>("bpm");
+	result.bpm = val ? val->get() : 0.f;
 }
 
 }  //namespace cog2d
