@@ -44,6 +44,8 @@ private:
 	MusicTrackSection* m_current_section;
 	MusicTrackSection* m_next_section;
 
+	void switch_section();
+
 	/// in sample frames
 	void* m_buffer_data = nullptr;
 	std::size_t m_track_pos = 0;
