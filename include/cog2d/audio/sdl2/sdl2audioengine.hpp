@@ -6,35 +6,25 @@
 
 #include <SDL2/SDL_audio.h>
 
-namespace cog2d {
+namespace cog2d::audio {
+namespace sdl {
 
 AudioFormat AudioFormat_from_sdl(SDL_AudioFormat format);
 SDL_AudioFormat AudioFormat_to_sdl(AudioFormat format);
 AudioSpec AudioSpec_from_sdl(const SDL_AudioSpec& spec);
 SDL_AudioSpec AudioSpec_to_sdl(const AudioSpec& spec);
 
-class SDL2AudioEngine : public AudioEngine
-{
-	COG2D_AUDIO_BACKEND(SDL2, "SDL2")
+void init(ProgramSettings& settings);
+void deinit();
 
-public:
-	SDL2AudioEngine();
+void add_source(MixerSource* source);
+void remove_source(MixerSource* source);
+void refresh_source(MixerSource* source);
 
-	void init(ProgramSettings* settings) override;
-	void deinit() override;
+AudioSpec spec();
 
-	void add_source(MixerSource* source) override;
-	void refresh_source(MixerSource* source) override;
+void feed_buffer_callback(void* userdata, std::uint8_t* stream, int len);
+void mix_buffers(void* out, void** buffers, std::size_t count, std::size_t size);
 
-	AudioSpec spec() override { return AudioSpec_from_sdl(m_spec); }
-
-private:
-	static void feed_buffer_callback(void* userdata, std::uint8_t* stream, int len);
-	static void mix_buffers(void* out, void** buffers, std::size_t count, std::size_t size);
-
-private:
-	SDL_AudioDeviceID m_dev;
-	SDL_AudioSpec m_spec;
-};
-
-}  //namespace cog2d
+}  //namespace sdl
+}  //namespace cog2d::audio

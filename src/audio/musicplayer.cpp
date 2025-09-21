@@ -25,8 +25,7 @@ void MusicPlayer::init()
 
 	m_track = nullptr;
 
-	COG2D_USE_AUDIOENGINE;
-	audioengine.add_source(this);
+	audio::add_source(this);
 }
 
 void MusicPlayer::deinit()
@@ -217,7 +216,7 @@ void MusicPlayer::set_track(MusicTrack* track)
 
 	queue_section(m_current_section);
 
-	AudioEngine::get().refresh_source(this);
+	audio::refresh_source(this);
 }
 
 void MusicPlayer::queue_section(std::size_t section)

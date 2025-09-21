@@ -19,7 +19,8 @@ struct ProgramSettings;
 
 class SDL2GraphicsEngine : public GraphicsEngine
 {
-	COG2D_GRAPHICS_BACKEND(SDL2, "SDL2")
+public:
+	SDL2GraphicsEngine() {}
 
 private:
 	SDL_Window* m_window = nullptr;

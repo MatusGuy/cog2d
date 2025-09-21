@@ -39,19 +39,18 @@ int Program::run(int argc, char* argv[])
 
 	GraphicsEngine::s_current = new SDL2GraphicsEngine;
 	InputManager::s_current = new InputManager;
-	AudioEngine::s_current = new AlSoftAudioEngine;
+	//AudioEngine::s_current = new AlSoftAudioEngine;
 	MusicPlayer::s_current = new MusicPlayer;
 	AssetManager::s_current = new AssetManager;
 	Config::s_current = new Config;
 
 	COG2D_USE_GRAPHICSENGINE;
 	COG2D_USE_INPUTMANAGER;
-	COG2D_USE_AUDIOENGINE;
 	COG2D_USE_ASSETMANAGER;
 
 	graphicsengine.init(m_settings);
 
-	audioengine.init(m_settings);
+	audio::init(*m_settings);
 	MusicPlayer::get().init();
 
 	if (register_actions()) {
@@ -107,7 +106,6 @@ void Program::quit()
 {
 	COG2D_USE_GRAPHICSENGINE;
 	COG2D_USE_ASSETMANAGER;
-	COG2D_USE_AUDIOENGINE;
 	COG2D_USE_CONFIG;
 
 	graphicsengine.deinit();
@@ -118,7 +116,7 @@ void Program::quit()
 		cfgfile.close();
 	}
 
-	audioengine.deinit();
+	audio::deinit();
 
 	TTF_Quit();
 	SDL_Quit();

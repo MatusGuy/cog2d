@@ -7,33 +7,22 @@
 #include <AL/alc.h>
 #include <AL/alext.h>
 
-namespace cog2d {
+namespace cog2d::audio {
+namespace alsoft {
 
 ALenum AudioFormat_to_al(AudioFormat format, std::uint8_t channels);
 AudioFormat AudioFormat_from_al(ALenum value);
 
-class AlSoftAudioEngine : public AudioEngine
-{
-	COG2D_AUDIO_BACKEND(ALSOFT, "OpenAL Soft")
+void init(ProgramSettings& settings);
+void deinit();
 
-public:
-	AlSoftAudioEngine();
+void add_source(MixerSource* source);
+void refresh_source(MixerSource* source);
+void remove_source(MixerSource* source);
 
-	void init(ProgramSettings* settings) override;
-	void deinit() override;
+AudioSpec spec();
 
-	void add_source(MixerSource* source) override;
-	void refresh_source(MixerSource* source) override;
-	void remove_source(MixerSource* source) override;
+static ALsizei feed_buffer_callback(ALvoid* userptr, ALvoid* data, ALsizei size) noexcept;
 
-	AudioSpec spec() override;
-
-private:
-	static ALsizei feed_buffer_callback(ALvoid* userptr, ALvoid* data, ALsizei size) noexcept;
-
-private:
-	ALCdevice* m_dev = nullptr;
-	ALCcontext* m_ctx = nullptr;
-};
-
-}  //namespace cog2d
+}  //namespace alsoft
+}  //namespace cog2d::audio

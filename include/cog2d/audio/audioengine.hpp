@@ -26,8 +26,6 @@ enum AudioFormat
 	AUDIOFORMAT_S16_BE
 };
 
-class AudioEngine;
-
 struct AudioSpec
 {
 	std::uint32_t samplerate = 0;
@@ -62,10 +60,7 @@ struct AudioSpec
 class MixerSource
 {
 public:
-	friend class AudioEngine;
-
-public:
-	virtual ~MixerSource();
+	virtual ~MixerSource() {}
 
 	virtual bool buffer(void* buf, std::size_t samples) = 0;
 
@@ -74,40 +69,27 @@ public:
 	inline void* userdata() { return m_userdata; }
 	inline void set_userdata(void* data) { m_userdata = data; }
 
-	inline AudioEngine* engine() { return m_engine; }
-
-protected:
+public:
 	AudioSpec m_spec;
+	std::uint16_t m_id;
 	void* m_userdata = nullptr;
-
-	std::size_t m_id = 0;
-	AudioEngine* m_engine = nullptr;
 };
 
-#define COG2D_AUDIO_BACKEND(_t, _n) COG2D_BACKEND(AUDIO, _t, _n)
-#define COG2D_USE_AUDIOENGINE COG2D_USING(AudioEngine, audioengine)
-class AudioEngine : public Currenton<AudioEngine>, public Backend
-{
-protected:
-	friend class MixerSource;
+namespace audio {
 
-public:
-	AudioEngine() {}
+extern Backend::AudioEngine type;
 
-	virtual void init(ProgramSettings* settings) = 0;
-	virtual void deinit() = 0;
+void init(ProgramSettings& settings);
+void deinit();
 
-	virtual void add_source(MixerSource* source);
-	virtual void remove_source(MixerSource* source);
-	virtual void refresh_source(MixerSource* source) = 0;
+void add_source(MixerSource* source);
+void remove_source(MixerSource* source);
+void refresh_source(MixerSource* source);
 
-	virtual AudioSpec spec() = 0;
+AudioSpec spec();
 
-	// Break comment in case of emergency
-	//virtual void update() {}
+// Break comment in case of emergency
+//void update();
 
-public:
-	std::vector<MixerSource*> m_sources;
-};
-
+}  //namespace audio
 }  //namespace cog2d

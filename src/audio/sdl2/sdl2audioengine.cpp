@@ -6,7 +6,7 @@
 
 #include "cog2d/util/logger.hpp"
 
-namespace cog2d {
+namespace cog2d::audio::sdl {
 
 AudioFormat AudioFormat_from_sdl(SDL_AudioFormat format)
 {
@@ -64,10 +64,17 @@ AudioSpec AudioSpec_from_sdl(const SDL_AudioSpec& spec)
 	return {spec.freq, spec.channels, AudioFormat_from_sdl(spec.format)};
 }
 
+static struct
+{
+	SDL_AudioDeviceID dev;
+	SDL_AudioSpec spec;
+	std::vector<MixerSource*> sources;
+} s_engine;
+
 struct SDLMixerSourceData
 {
 	std::unique_ptr<SDL_AudioStream, decltype(&SDL_FreeAudioStream)> stream;
-	void* buffer;
+	std::uint8_t* buffer;
 	std::size_t buffersize;
 
 	SDLMixerSourceData(SDL_AudioStream* _stream, std::size_t _buffersize)
@@ -80,40 +87,45 @@ struct SDLMixerSourceData
 	~SDLMixerSourceData() { delete[] buffer; }
 };
 
-SDL2AudioEngine::SDL2AudioEngine()
+void init(ProgramSettings& settings)
 {
+	s_engine.spec.callback = &feed_buffer_callback;
+	s_engine.spec.userdata = nullptr;
+	s_engine.spec.freq = 44100;
+	s_engine.spec.format = AUDIO_S16;
+	s_engine.spec.samples = 1024;
+	s_engine.spec.channels = 2;
+
+	s_engine.dev = SDL_OpenAudioDevice(nullptr, false, &s_engine.spec, &s_engine.spec, 0x0);
+
+	SDL_PauseAudioDevice(s_engine.dev, false);
 }
 
-void SDL2AudioEngine::init(ProgramSettings* settings)
+void deinit()
 {
-	m_spec.callback = &SDL2AudioEngine::feed_buffer_callback;
-	m_spec.userdata = static_cast<void*>(this);
-	m_spec.freq = 44100;
-	m_spec.format = AUDIO_S16;
-	m_spec.samples = 1024;
-	m_spec.channels = 2;
-
-	m_dev = SDL_OpenAudioDevice(nullptr, false, &m_spec, &m_spec, 0x0);
-
-	SDL_PauseAudioDevice(m_dev, false);
-}
-
-void SDL2AudioEngine::deinit()
-{
-	for (MixerSource* source : m_sources) {
-		delete static_cast<SDLMixerSourceData*>(source->userdata());
+	for (MixerSource* source : s_engine.sources) {
+		remove_source(source);
 	}
 
-	SDL_CloseAudioDevice(m_dev);
+	SDL_CloseAudioDevice(s_engine.dev);
 }
 
-void SDL2AudioEngine::add_source(MixerSource* source)
+void add_source(MixerSource* source)
 {
+	source->m_id = s_engine.sources.size();
+	s_engine.sources.push_back(source);
 	refresh_source(source);
-	AudioEngine::add_source(source);
 }
 
-void SDL2AudioEngine::refresh_source(MixerSource* source)
+void remove_source(MixerSource* source)
+{
+	s_engine.sources.erase(s_engine.sources.begin() + source->m_id);
+	if (source->userdata() != nullptr) {
+		delete static_cast<SDLMixerSourceData*>(source->userdata());
+	}
+}
+
+void refresh_source(MixerSource* source)
 {
 	if (source->userdata() != nullptr) {
 		delete static_cast<SDLMixerSourceData*>(source->userdata());
@@ -121,26 +133,31 @@ void SDL2AudioEngine::refresh_source(MixerSource* source)
 
 	auto data = new SDLMixerSourceData(SDL_NewAudioStream(AudioFormat_to_sdl(source->spec().format),
 	                                                      source->spec().channels,
-	                                                      source->spec().samplerate, m_spec.format,
-	                                                      m_spec.channels, m_spec.freq),
-	                                   m_spec.samples * source->spec().channels * sizeof(short));
+	                                                      source->spec().samplerate,
+	                                                      s_engine.spec.format,
+	                                                      s_engine.spec.channels,
+	                                                      s_engine.spec.freq),
+	                                   spec().samples_to_bytes(s_engine.spec.samples));
 
 	source->set_userdata(static_cast<void*>(data));
 }
 
-void SDL2AudioEngine::feed_buffer_callback(void* userdata, std::uint8_t* stream, int len)
+AudioSpec spec()
 {
-	auto engine = static_cast<SDL2AudioEngine*>(userdata);
+	return AudioSpec_from_sdl(s_engine.spec);
+}
 
-	void** buffers = new void*[engine->m_sources.size()];
-	//COG2D_LOG_DEBUG(fmt::format("{}", engine->m_sources.size()));
-	for (std::size_t i = 0; i < engine->m_sources.size(); ++i) {
+void feed_buffer_callback(void* userdata, std::uint8_t* stream, int len)
+{
+	void** buffers = new void*[s_engine.sources.size()];
+	//COG2D_LOG_DEBUG(fmt::format("{}", engine->s_engine.sources.size()));
+	for (std::size_t i = 0; i < s_engine.sources.size(); ++i) {
 		void*& buf = buffers[i];
 		buf = static_cast<void*>(new std::uint8_t[len]);
 
-		MixerSource* source = engine->m_sources[i];
+		MixerSource* source = s_engine.sources[i];
 		auto mixerdata = static_cast<SDLMixerSourceData*>(source->userdata());
-		if (!source->buffer(mixerdata->buffer, engine->m_spec.samples)) {
+		if (!source->buffer(mixerdata->buffer, s_engine.spec.samples)) {
 			// Make sure the buffer is completely muted if the source has no audio to buffer.
 			std::memset(buf, 0, len);
 			continue;
@@ -155,15 +172,15 @@ void SDL2AudioEngine::feed_buffer_callback(void* userdata, std::uint8_t* stream,
 	}
 
 	// mix all buffers into one delicious output buffer
-	mix_buffers(static_cast<void*>(stream), buffers, engine->m_sources.size(), len);
+	mix_buffers(static_cast<void*>(stream), buffers, s_engine.sources.size(), len);
 
-	for (std::size_t i = 0; i < engine->m_sources.size(); ++i) {
+	for (std::size_t i = 0; i < s_engine.sources.size(); ++i) {
 		delete[] buffers[i];
 	}
 	delete[] buffers;
 }
 
-void SDL2AudioEngine::mix_buffers(void* out, void** buffers, std::size_t count, std::size_t size)
+void mix_buffers(void* out, void** buffers, std::size_t count, std::size_t size)
 {
 	/*
 	// FIXME: this needs volume compensation
@@ -186,4 +203,4 @@ void SDL2AudioEngine::mix_buffers(void* out, void** buffers, std::size_t count, 
 	}
 }
 
-}  //namespace cog2d
+}  //namespace cog2d::audio::sdl

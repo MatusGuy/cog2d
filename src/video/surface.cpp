@@ -17,7 +17,7 @@ Surface Surface::from_pixmap(IoDevice& iodevice)
 		iodevice.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
 
 	switch (graphicsengine.m_pixmap_backend) {
-	case Backend::PIXMAP_SDL2_IMAGE: {
+	case Backend::PIXMAP_SDL_IMAGE: {
 		return Surface(IMG_Load_RW(iodevice.to_sdl(), true));
 	}
 	default:

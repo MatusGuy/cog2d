@@ -2,7 +2,7 @@
 
 #include "cog2d/util/logger.hpp"
 
-namespace cog2d {
+namespace cog2d::audio::alsoft {
 
 ALenum AudioFormat_to_al(AudioFormat format, std::uint8_t channels)
 {
@@ -49,47 +49,50 @@ AudioFormat AudioFormat_from_al(ALenum value)
 	}
 }
 
+static struct
+{
+	ALCdevice* dev;
+	ALCcontext* ctx;
+	std::vector<MixerSource*> sources;
+} s_engine;
+
 struct AlSoftMixerData
 {
 	ALuint buffer = 0;
 	ALuint source = 0;
 };
 
-AlSoftAudioEngine::AlSoftAudioEngine()
+void init(ProgramSettings& settings)
 {
+	s_engine.dev = alcOpenDevice(nullptr);
+	s_engine.ctx = alcCreateContext(s_engine.dev, nullptr);
+	alcMakeContextCurrent(s_engine.ctx);
 }
 
-void AlSoftAudioEngine::init(ProgramSettings* settings)
+void deinit()
 {
-	m_dev = alcOpenDevice(nullptr);
-	m_ctx = alcCreateContext(m_dev, nullptr);
-	alcMakeContextCurrent(m_ctx);
-}
-
-void AlSoftAudioEngine::deinit()
-{
-	for (MixerSource* source : m_sources) {
-		delete static_cast<AlSoftMixerData*>(source->userdata());
+	for (MixerSource* source : s_engine.sources) {
+		remove_source(source);
 	}
 
 	alcMakeContextCurrent(nullptr);
-	alcDestroyContext(m_ctx);
-	alcCloseDevice(m_dev);
+	alcDestroyContext(s_engine.ctx);
+	alcCloseDevice(s_engine.dev);
 }
 
-void AlSoftAudioEngine::add_source(MixerSource* source)
+void add_source(MixerSource* source)
 {
 	auto mixerdata = new AlSoftMixerData;
 	source->set_userdata(mixerdata);
+	source->m_id = s_engine.sources.size();
+	s_engine.sources.push_back(source);
 
 	alGenBuffers(1, &mixerdata->buffer);
 	alGenSources(1, &mixerdata->source);
 	refresh_source(source);
-
-	AudioEngine::add_source(source);
 }
 
-void AlSoftAudioEngine::refresh_source(MixerSource* source)
+void refresh_source(MixerSource* source)
 {
 	AlSoftMixerData* mixerdata = static_cast<AlSoftMixerData*>(source->userdata());
 	if (!source->spec().valid() || mixerdata == nullptr)
@@ -112,33 +115,30 @@ void AlSoftAudioEngine::refresh_source(MixerSource* source)
 	alSourcePlay(mixerdata->source);
 }
 
-void AlSoftAudioEngine::remove_source(MixerSource* source)
+void remove_source(MixerSource* source)
 {
-	AudioEngine::remove_source(source);
-
-	if (source->engine() != nullptr)
-		return;
-
 	auto mixerdata = static_cast<AlSoftMixerData*>(source->userdata());
 	alDeleteBuffers(1, &mixerdata->buffer);
 	alDeleteSources(1, &mixerdata->source);
+
+	s_engine.sources.erase(s_engine.sources.begin() + source->m_id);
+
+	delete mixerdata;
 }
 
-AudioSpec AlSoftAudioEngine::spec()
+AudioSpec spec()
 {
 	// Uh... yeah.
 	return {};
 }
 
-ALsizei AlSoftAudioEngine::feed_buffer_callback(ALvoid* userptr, ALvoid* data,
-                                                ALsizei size) noexcept
+ALsizei feed_buffer_callback(ALvoid* userptr, ALvoid* data, ALsizei size) noexcept
 {
 	MixerSource* source = static_cast<MixerSource*>(userptr);
-	AlSoftAudioEngine* engine = static_cast<AlSoftAudioEngine*>(source->engine());
 
 	source->buffer(data, size / source->spec().channels / sizeof(short));
 
 	return size;
 }
 
-}  //namespace cog2d
+}  //namespace cog2d::audio::alsoft

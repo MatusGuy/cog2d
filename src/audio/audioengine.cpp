@@ -3,35 +3,65 @@
 
 #include "audioengine.hpp"
 
+#include "cog2d/audio/sdl2/sdl2audioengine.hpp"
+#include "cog2d/audio/alsoft/alsoftaudioengine.hpp"
+
 #include "cog2d/util/logger.hpp"
 
-namespace cog2d {
+namespace cog2d::audio {
 
-void AudioEngine::add_source(MixerSource* source)
+Backend::AudioEngine type = Backend::AUDIO_ALSOFT;
+
+#define COG2D_CALL_AUDIO(_f, ...) \
+	switch (type) {               \
+	case Backend::AUDIO_SDL:      \
+	    sdl::_f(__VA_ARGS__);     \
+	    break;                    \
+	case Backend::AUDIO_ALSOFT:   \
+	    alsoft::_f(__VA_ARGS__);  \
+	    break;                    \
+	default:                      \
+	    break;                    \
+    }
+
+#define COG2D_CALL_RET_AUDIO(_f, ...)   \
+	switch (type) {                     \
+	case Backend::AUDIO_SDL:            \
+	    return sdl::_f(__VA_ARGS__);    \
+	case Backend::AUDIO_ALSOFT:         \
+	    return alsoft::_f(__VA_ARGS__); \
+	default:                            \
+	    return {};                      \
+    }
+
+void init(ProgramSettings& settings)
 {
-	if (source->m_engine != nullptr)
-		source->m_engine->remove_source(source);
-
-	source->m_engine = this;
-	source->m_id = m_sources.size();
-	m_sources.push_back(source);
+	COG2D_CALL_AUDIO(init, settings);
 }
 
-void AudioEngine::remove_source(MixerSource* source)
+void deinit()
 {
-	if (source->m_engine != this)
-		return;
-
-	source->m_engine = nullptr;
-	m_sources.erase(m_sources.begin() + source->m_id);
+	COG2D_CALL_AUDIO(deinit);
 }
 
-MixerSource::~MixerSource()
+void add_source(MixerSource* source)
 {
-	if (m_engine == nullptr)
-		return;
-
-	m_engine->remove_source(this);
+	COG2D_CALL_AUDIO(add_source, source);
 }
 
-}  //namespace cog2d
+void remove_source(MixerSource* source)
+{
+	COG2D_CALL_AUDIO(remove_source, source);
+}
+
+void refresh_source(MixerSource* source)
+{
+	COG2D_CALL_AUDIO(refresh_source, source);
+}
+
+AudioSpec spec()
+{
+	COG2D_CALL_RET_AUDIO(spec);
+}
+
+}  //namespace cog2d::audio

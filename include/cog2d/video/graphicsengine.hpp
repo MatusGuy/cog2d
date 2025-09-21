@@ -19,7 +19,6 @@ namespace cog2d {
 
 struct ProgramSettings;
 
-#define COG2D_GRAPHICS_BACKEND(_t, _n) COG2D_BACKEND(GRAPHICS, _t, _n)
 #define COG2D_USE_GRAPHICSENGINE COG2D_USING(GraphicsEngine, graphicsengine)
 class GraphicsEngine : public Currenton<GraphicsEngine>, public Backend
 {

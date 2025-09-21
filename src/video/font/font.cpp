@@ -16,7 +16,7 @@ Font* Font::create_ttf_font(IoDevice& device, int ptsize)
 		device.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
 
 	switch (graphicsengine.m_ttf_backend) {
-	case Backend::TTF_SDL2_TTF:
+	case Backend::TTF_SDL_TTF:
 		return new SDL2TtfFont(TTF_OpenFontRW(device.to_sdl(), true, ptsize));
 
 	default:
@@ -24,4 +24,4 @@ Font* Font::create_ttf_font(IoDevice& device, int ptsize)
 	}
 }
 
-}
+}  //namespace cog2d
