@@ -4,6 +4,8 @@
 
 #include <cstring>
 
+#include <SDL2/SDL.h>
+
 #include "cog2d/util/logger.hpp"
 
 namespace cog2d::audio::sdl {
@@ -89,6 +91,8 @@ struct SDLMixerSourceData
 
 void init(ProgramSettings& settings)
 {
+	SDL_Init(SDL_INIT_AUDIO);
+
 	s_engine.spec.callback = &feed_buffer_callback;
 	s_engine.spec.userdata = nullptr;
 	s_engine.spec.freq = 44100;
@@ -108,6 +112,7 @@ void deinit()
 	}
 
 	SDL_CloseAudioDevice(s_engine.dev);
+	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
 void add_source(MixerSource* source)

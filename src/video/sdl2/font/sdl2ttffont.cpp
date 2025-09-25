@@ -36,21 +36,21 @@ int SDL2TtfFont::get_text_width(std::string_view text)
 
 void SDL2TtfFont::write_text(Texture* texture, std::string_view text, const Vector& pos)
 {
-	COG2D_USE_GRAPHICSENGINE;
+;
 
 	Surface textsurface = TTF_RenderUTF8_Solid(m_font, text.data(), Color(0xFFFFFFFF));
 	Texture* texttexture = Texture::from_surface(textsurface);
 
-	graphicsengine.push_target(texture);
-	graphicsengine.draw_texture(texttexture, pos);
-	graphicsengine.pop_target();
+	graphics::push_target(texture);
+	graphics::draw_texture(texttexture, pos);
+	graphics::pop_target();
 
 	delete texttexture;
 }
 
 std::unique_ptr<Texture> SDL2TtfFont::create_text(std::string_view text)
 {
-	COG2D_USE_GRAPHICSENGINE;
+;
 	COG2D_USE_ASSETMANAGER;
 
 	Surface textsurface = TTF_RenderUTF8_Solid(get_font(), text.data(), Color(0xFFFFFFFF));

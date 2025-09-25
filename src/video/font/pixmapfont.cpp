@@ -25,7 +25,7 @@ PixmapFont::PixmapFont()
 
 void PixmapFont::load_texture(IoDevice& device)
 {
-	COG2D_USE_GRAPHICSENGINE;
+;
 
 	if (!device.is_open())
 		device.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
@@ -104,9 +104,9 @@ int PixmapFont::get_text_width(std::string_view text)
 
 void PixmapFont::write_text(Texture* texture, std::string_view text, const Vector& pos)
 {
-	COG2D_USE_GRAPHICSENGINE;
+;
 
-	graphicsengine.push_target(texture);
+	graphics::push_target(texture);
 
 	int x = pos.x;
 	for (char c : text) {
@@ -116,18 +116,18 @@ void PixmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 			const Rect_t<int> src = {g.pos, size};
 			const Rect dest = {{static_cast<float>(x), pos.y}, static_cast<Vector>(size)};
 
-			graphicsengine.draw_texture(m_texture.get(), src, dest);
+			graphics::draw_texture(m_texture.get(), src, dest);
 		}
 
 		x += g.width + m_horizontal_spacing;
 	}
 
-	graphicsengine.pop_target();
+	graphics::pop_target();
 }
 
 std::unique_ptr<Texture> PixmapFont::create_text(std::string_view text)
 {
-	COG2D_USE_GRAPHICSENGINE;
+;
 
 	int width = get_text_width(text);
 

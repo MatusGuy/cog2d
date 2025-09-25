@@ -110,7 +110,7 @@ void CollisionSystem::rect_rect(Actor* a, Actor* b)
 
 	Vector& mov = target->col().mov;
 
-	CollideInfo<Vector::type> info = Collision::rect_rect<Vector::type>(d1, d2);
+	CollideInfo<Vector::type> info = collision::rect_rect<Vector::type>(d1, d2);
 
 	info.apply(mov);
 
@@ -159,7 +159,7 @@ CollideInfo<Vector::type> CollisionSystem::rect_tilerect(Actor* a, const Rect& t
 
 	Vector& mov = a->col().mov;
 
-	CollideInfo<Vector::type> info = Collision::rect_rect<Vector::type>(d1, tilerect);
+	CollideInfo<Vector::type> info = collision::rect_rect<Vector::type>(d1, tilerect);
 	return info;
 }
 

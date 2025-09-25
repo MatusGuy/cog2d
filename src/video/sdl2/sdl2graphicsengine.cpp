@@ -9,12 +9,20 @@
 #include "cog2d/util/logger.hpp"
 #include "cog2d/video/sdl2/sdl2texture.hpp"
 
-namespace cog2d {
+namespace cog2d::graphics::sdl {
 
-void SDL2GraphicsEngine::init(ProgramSettings* settings)
+static struct
 {
-	m_pixmap_backend = Backend::PIXMAP_SDL_IMAGE;
-	m_ttf_backend = Backend::TTF_SDL_TTF;
+	SDL_Window* window;
+	SDL_Renderer* renderer;
+	SDL_Texture* proxy;
+	std::stack<Texture*> target_stack;
+} s_engine;
+
+void init(ProgramSettings& settings)
+{
+	pixmap_backend = Backend::PIXMAP_SDL_IMAGE;
+	ttf_backend = Backend::TTF_SDL_TTF;
 
 	int init = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
 	if (init != 0) {
@@ -25,87 +33,88 @@ void SDL2GraphicsEngine::init(ProgramSettings* settings)
 		return;
 	}
 
-	m_window = SDL_CreateWindow(settings->title.data(), SDL_WINDOWPOS_CENTERED,
-	                            SDL_WINDOWPOS_CENTERED, settings->wwidth, settings->wheight,
-	                            settings->window_flags);
-	if (!m_window) {
+	s_engine.window = SDL_CreateWindow(settings.title.data(), SDL_WINDOWPOS_CENTERED,
+	                                   SDL_WINDOWPOS_CENTERED, settings.wwidth, settings.wheight,
+	                                   settings.window_flags);
+	if (!s_engine.window) {
 		COG2D_LOG_FATAL("SDL2GraphicsEngine", fmt::format("SDL2 failed to create window with "
 		                                                  "reason: '{}'",
 		                                                  SDL_GetError()));
 		return;
 	}
 
-	m_renderer = SDL_CreateRenderer(m_window, -1, settings->render_flags);
-	if (!m_renderer) {
+	s_engine.renderer = SDL_CreateRenderer(s_engine.window, -1, settings.render_flags);
+	if (!s_engine.renderer) {
 		COG2D_LOG_FATAL("SDL2GraphicsEngine", fmt::format("SDL2 failed to create renderer with "
 		                                                  "reason: '{}'",
 		                                                  SDL_GetError()));
 		return;
 	}
 
-	SDL_SetRenderDrawBlendMode(m_renderer, settings->blend_mode);
+	SDL_SetRenderDrawBlendMode(s_engine.renderer, settings.blend_mode);
 
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, settings->scale_quality.data());
-	SDL_SetHint(SDL_HINT_RENDER_VSYNC, settings->vsync ? "1" : "0");
-	SDL_SetHint(SDL_HINT_RENDER_BATCHING, settings->batching ? "1" : "0");
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, settings.scale_quality.data());
+	SDL_SetHint(SDL_HINT_RENDER_VSYNC, settings.vsync ? "1" : "0");
+	SDL_SetHint(SDL_HINT_RENDER_BATCHING, settings.batching ? "1" : "0");
 
-	SDL_Rect viewport = {0, 0, settings->lwidth, settings->lheight};
-	SDL_RenderSetViewport(m_renderer, &viewport);
-	SDL_RenderSetLogicalSize(m_renderer, settings->lwidth, settings->lheight);
-	SDL_SetWindowMinimumSize(m_window, settings->lwidth, settings->lheight);
+	SDL_Rect viewport = {0, 0, settings.lwidth, settings.lheight};
+	SDL_RenderSetViewport(s_engine.renderer, &viewport);
+	SDL_RenderSetLogicalSize(s_engine.renderer, settings.lwidth, settings.lheight);
+	SDL_SetWindowMinimumSize(s_engine.window, settings.lwidth, settings.lheight);
 
-	m_logical_size.x = settings->lwidth;
-	m_logical_size.y = settings->lheight;
+	//s_engine.logical_size.x = settings.lwidth;
+	//s_engine.logical_size.y = settings.lheight;
 
-	if (settings->proxy_texture) {
-		m_proxy = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
-		                            settings->lwidth, settings->lheight);
+	if (settings.proxy_texture) {
+		s_engine.proxy = SDL_CreateTexture(s_engine.renderer, SDL_PIXELFORMAT_RGBA8888,
+		                                   SDL_TEXTUREACCESS_TARGET, settings.lwidth,
+		                                   settings.lheight);
 	}
 }
 
-void SDL2GraphicsEngine::deinit()
+void deinit()
 {
-	if (m_proxy) {
-		SDL_DestroyTexture(m_proxy);
-		m_proxy = nullptr;
+	if (s_engine.proxy) {
+		SDL_DestroyTexture(s_engine.proxy);
+		s_engine.proxy = nullptr;
 	}
 
-	if (m_renderer) {
-		SDL_DestroyRenderer(m_renderer);
-		m_renderer = nullptr;
+	if (s_engine.renderer) {
+		SDL_DestroyRenderer(s_engine.renderer);
+		s_engine.renderer = nullptr;
 	}
 
-	if (m_window) {
-		SDL_DestroyWindow(m_window);
-		m_window = nullptr;
+	if (s_engine.window) {
+		SDL_DestroyWindow(s_engine.window);
+		s_engine.window = nullptr;
 	}
 
-	SDL_QuitSubSystem(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-void SDL2GraphicsEngine::pre_draw()
+void pre_draw()
 {
 	SDL_SetRenderDrawColor(get_renderer(), 0x0, 0x0, 0x0, 0x0);
 
-	if (m_proxy)
-		SDL_SetRenderTarget(m_renderer, m_proxy);
+	if (s_engine.proxy)
+		SDL_SetRenderTarget(s_engine.renderer, s_engine.proxy);
 
-	SDL_RenderClear(m_renderer);
+	SDL_RenderClear(s_engine.renderer);
 }
 
-void SDL2GraphicsEngine::post_draw()
+void post_draw()
 {
-	SDL_SetRenderTarget(m_renderer, nullptr);
+	SDL_SetRenderTarget(s_engine.renderer, nullptr);
 
-	if (m_proxy)
-		SDL_RenderCopy(m_renderer, m_proxy, nullptr, nullptr);
+	if (s_engine.proxy)
+		SDL_RenderCopy(s_engine.renderer, s_engine.proxy, nullptr, nullptr);
 
-	SDL_RenderPresent(m_renderer);
+	SDL_RenderPresent(s_engine.renderer);
 }
 
-void SDL2GraphicsEngine::draw_rect(Rect rect, bool filled, Color color)
+void draw_rect(Rect rect, bool filled, Color color)
 {
-	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawColor(s_engine.renderer, color.r, color.g, color.b, color.a);
 
 #ifdef COG2D_GRAPHICS_USE_INT
 	SDL_Rect srect = rect.to_sdl_rect();
@@ -115,20 +124,20 @@ void SDL2GraphicsEngine::draw_rect(Rect rect, bool filled, Color color)
 
 #ifdef COG2D_GRAPHICS_USE_INT
 	if (filled)
-		SDL_RenderFillRect(m_renderer, &srect);
+		SDL_RenderFillRect(s_engine.renderer, &srect);
 	else
-		SDL_RenderDrawRect(m_renderer, &srect);
+		SDL_RenderDrawRect(s_engine.renderer, &srect);
 #else
 	if (filled)
-		SDL_RenderFillRectF(m_renderer, &srect);
+		SDL_RenderFillRectF(s_engine.renderer, &srect);
 	else
-		SDL_RenderDrawRectF(m_renderer, &srect);
+		SDL_RenderDrawRectF(s_engine.renderer, &srect);
 #endif
 }
 
-void SDL2GraphicsEngine::draw_circle(Vector center, float radius, bool filled, Color color)
+void draw_circle(Vector center, float radius, bool filled, Color color)
 {
-	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawColor(s_engine.renderer, color.r, color.g, color.b, color.a);
 
 	if (filled) {
 		for (int w = 0; w < radius * 2; w++) {
@@ -137,10 +146,10 @@ void SDL2GraphicsEngine::draw_circle(Vector center, float radius, bool filled, C
 				float dy = radius - (float) h;  // vertical offset
 				if ((dx * dx + dy * dy) <= (radius * radius)) {
 #ifdef COG2D_GRAPHICS_USE_INT
-					SDL_RenderDrawPoint(m_renderer, static_cast<int>(center.x + dx),
+					SDL_RenderDrawPoint(s_engine.renderer, static_cast<int>(center.x + dx),
 					                    static_cast<int>(center.y + dy));
 #else
-					SDL_RenderDrawPointF(m_renderer, center.x + dx, center.y + dy);
+					SDL_RenderDrawPointF(s_engine.renderer, center.x + dx, center.y + dy);
 #endif
 				}
 			}
@@ -156,14 +165,14 @@ void SDL2GraphicsEngine::draw_circle(Vector center, float radius, bool filled, C
 		int centerY = (int) center.y;
 
 		while (x >= y) {
-			SDL_RenderDrawPoint(m_renderer, centerX + x, centerY + y);
-			SDL_RenderDrawPoint(m_renderer, centerX + y, centerY + x);
-			SDL_RenderDrawPoint(m_renderer, centerX - y, centerY + x);
-			SDL_RenderDrawPoint(m_renderer, centerX - x, centerY + y);
-			SDL_RenderDrawPoint(m_renderer, centerX - x, centerY - y);
-			SDL_RenderDrawPoint(m_renderer, centerX - y, centerY - x);
-			SDL_RenderDrawPoint(m_renderer, centerX + y, centerY - x);
-			SDL_RenderDrawPoint(m_renderer, centerX + x, centerY - y);
+			SDL_RenderDrawPoint(s_engine.renderer, centerX + x, centerY + y);
+			SDL_RenderDrawPoint(s_engine.renderer, centerX + y, centerY + x);
+			SDL_RenderDrawPoint(s_engine.renderer, centerX - y, centerY + x);
+			SDL_RenderDrawPoint(s_engine.renderer, centerX - x, centerY + y);
+			SDL_RenderDrawPoint(s_engine.renderer, centerX - x, centerY - y);
+			SDL_RenderDrawPoint(s_engine.renderer, centerX - y, centerY - x);
+			SDL_RenderDrawPoint(s_engine.renderer, centerX + y, centerY - x);
+			SDL_RenderDrawPoint(s_engine.renderer, centerX + x, centerY - y);
 
 			if (err <= 0) {
 				y++;
@@ -180,31 +189,31 @@ void SDL2GraphicsEngine::draw_circle(Vector center, float radius, bool filled, C
 	}
 }
 
-void SDL2GraphicsEngine::draw_line(Vector a, Vector b, Color color)
+void draw_line(Vector a, Vector b, Color color)
 {
-	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawColor(s_engine.renderer, color.r, color.g, color.b, color.a);
 
 #ifdef COG2D_GRAPHICS_USE_INT
-	SDL_RenderDrawLine(m_renderer, static_cast<int>(a.x), static_cast<int>(a.y),
+	SDL_RenderDrawLine(s_engine.renderer, static_cast<int>(a.x), static_cast<int>(a.y),
 	                   static_cast<int>(b.x), static_cast<int>(b.y));
 #else
-	SDL_RenderDrawLineF(m_renderer, a.x, a.y, b.x, b.y);
+	SDL_RenderDrawLineF(s_engine.renderer, a.x, a.y, b.x, b.y);
 #endif
 }
 
-void SDL2GraphicsEngine::draw_point(Vector point, Color color)
+void draw_point(Vector point, Color color)
 {
-	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawColor(s_engine.renderer, color.r, color.g, color.b, color.a);
 
 #ifdef COG2D_GRAPHICS_USE_INT
-	SDL_RenderDrawPoint(m_renderer, static_cast<int>(point.x), static_cast<int>(point.y));
+	SDL_RenderDrawPoint(s_engine.renderer, static_cast<int>(point.x), static_cast<int>(point.y));
 #else
-	SDL_RenderDrawPointF(m_renderer, point.x, point.y);
+	SDL_RenderDrawPointF(s_engine.renderer, point.x, point.y);
 #endif
 }
 
-void SDL2GraphicsEngine::draw_texture(Texture* tex, Rect_t<int> src, Rect dest, Color color,
-                                      Flip flip, float angle, Vector center)
+void draw_texture(Texture* tex, Rect_t<int> src, Rect dest, Color color, Flip flip, float angle,
+                  Vector center)
 {
 	SDL_SetRenderDrawColor(get_renderer(), color.r, color.g, color.b, color.a);
 
@@ -218,7 +227,7 @@ void SDL2GraphicsEngine::draw_texture(Texture* tex, Rect_t<int> src, Rect dest, 
 
 	SDL_Rect ssrc = src.to_sdl_rect();
 	SDL_Rect sdest = dest.to_sdl_rect();
-	SDL_RenderCopyEx(m_renderer, static_cast<SDL2Texture*>(tex)->to_sdl(), &ssrc, &sdest,
+	SDL_RenderCopyEx(s_engine.renderer, static_cast<SDL2Texture*>(tex)->to_sdl(), &ssrc, &sdest,
 	                 static_cast<float>(angle), &scenter, static_cast<SDL_RendererFlip>(flip));
 #else
 	SDL_FPoint scenter = center.to_sdl_fpoint();
@@ -232,31 +241,54 @@ void SDL2GraphicsEngine::draw_texture(Texture* tex, Rect_t<int> src, Rect dest, 
 
 	SDL_Rect ssrc = src.to_sdl_rect();
 	SDL_FRect sdest = dest.to_sdl_frect();
-	SDL_RenderCopyExF(m_renderer, static_cast<SDL2Texture*>(tex)->to_sdl(), &ssrc, &sdest,
+	SDL_RenderCopyExF(s_engine.renderer, static_cast<SDL2Texture*>(tex)->to_sdl(), &ssrc, &sdest,
 	                  static_cast<float>(angle), &scenter, flip);
 #endif
 }
 
-Color SDL2GraphicsEngine::get_current_color()
+Color get_current_color()
 {
 	Color resp;
-	SDL_GetRenderDrawColor(m_renderer, &resp.r, &resp.g, &resp.b, &resp.a);
+	SDL_GetRenderDrawColor(s_engine.renderer, &resp.r, &resp.g, &resp.b, &resp.a);
 	return resp;
 }
 
-void SDL2GraphicsEngine::push_target(Texture* tex)
+void push_target(Texture* tex)
 {
-	GraphicsEngine::push_target(tex);
-	SDL_SetRenderTarget(get_renderer(), m_target_stack.empty()
+	s_engine.target_stack.push(tex);
+	SDL_SetRenderTarget(get_renderer(), s_engine.target_stack.empty()
 	                                        ? nullptr
 	                                        : static_cast<SDL2Texture*>(get_target())->to_sdl());
 }
 
-void SDL2GraphicsEngine::pop_target()
+void pop_target()
 {
-	GraphicsEngine::pop_target();
-	SDL_SetRenderTarget(get_renderer(), m_target_stack.empty()
+	s_engine.target_stack.pop();
+	SDL_SetRenderTarget(get_renderer(), s_engine.target_stack.empty()
 	                                        ? nullptr
 	                                        : static_cast<SDL2Texture*>(get_target())->to_sdl());
 }
-}  //namespace cog2d
+
+SDL_Window* get_window()
+{
+	return s_engine.window;
+}
+
+SDL_Renderer* get_renderer()
+{
+	return s_engine.renderer;
+}
+
+Vector_t<int> get_logical_size()
+{
+	Vector_t<int> out;
+	SDL_GetWindowSize(s_engine.window, &out.x, &out.y);
+	return out;
+}
+
+Texture* get_target()
+{
+	return s_engine.target_stack.top();
+}
+
+}  //namespace cog2d::graphics::sdl

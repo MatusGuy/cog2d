@@ -7,44 +7,107 @@
 
 #include "cog2d/program.hpp"
 
-namespace cog2d {
+#include "cog2d/video/sdl2/sdl2graphicsengine.hpp"
 
-void GraphicsEngine::draw_texture(Texture* tex, Rect dest, Color color, Flip flip, float angle,
-                                  Vector center)
+namespace cog2d::graphics {
+
+Backend::GraphicsEngine type = Backend::GRAPHICS_SDL;
+
+Backend::Pixmap pixmap_backend;
+Backend::Ttf ttf_backend;
+
+#define COG2D_CALL_GRAPHICS(_f, ...) sdl::_f(__VA_ARGS__)
+#define COG2D_CALL_RET_GRAPHICS(_f, ...) return sdl::_f(__VA_ARGS__)
+
+void init(ProgramSettings& settings)
+{
+	COG2D_CALL_GRAPHICS(init, settings);
+}
+
+void deinit()
+{
+	COG2D_CALL_GRAPHICS(deinit);
+}
+
+void pre_draw()
+{
+	COG2D_CALL_GRAPHICS(pre_draw);
+}
+
+void post_draw()
+{
+	COG2D_CALL_GRAPHICS(post_draw);
+}
+
+void draw_rect(Rect rect, bool filled, Color color)
+{
+	COG2D_CALL_GRAPHICS(draw_rect, rect, filled, color);
+}
+
+void draw_circle(Vector center, float radius, bool filled, Color color)
+{
+	COG2D_CALL_GRAPHICS(draw_circle, center, radius, filled, color);
+}
+
+void draw_line(Vector a, Vector b)
+{
+	COG2D_CALL_GRAPHICS(draw_line, a, b);
+}
+
+void draw_point(Vector point)
+{
+	COG2D_CALL_GRAPHICS(draw_point, point);
+}
+
+void draw_texture(Texture* tex, Rect_t<int> src, Rect dest, Color color, Flip flip, float angle,
+                  Vector center)
+{
+	COG2D_CALL_GRAPHICS(draw_texture, tex, src, dest, color, flip, angle, center);
+}
+
+void draw_texture(Texture* tex, Rect dest, Color color, Flip flip, float angle, Vector center)
 {
 	draw_texture(tex, {{0, 0}, tex->size()}, dest, color, flip, angle, center);
 }
 
-void GraphicsEngine::draw_texture(Texture* tex, Vector pos, Color color, Flip flip, float angle,
-                                  Vector center)
+void draw_texture(Texture* tex, Vector pos, Color color, Flip flip, float angle, Vector center)
 {
 	draw_texture(tex, {pos, tex->size()}, color, flip, angle, center);
 }
 
-void GraphicsEngine::draw_texture(Texture* tex, Rect_t<int> src, Rect dest, Color color, Flip flip,
-                                  float angle)
+void draw_texture(Texture* tex, Rect_t<int> src, Rect dest, Color color, Flip flip, float angle)
 {
 	draw_texture(tex, src, dest, color, flip, angle, tex->size() / 2);
 }
 
-void GraphicsEngine::draw_texture(Texture* tex, Rect dest, Color color, Flip flip, float angle)
+void draw_texture(Texture* tex, Rect dest, Color color, Flip flip, float angle)
 {
 	draw_texture(tex, {{0, 0}, tex->size()}, dest, color, flip, angle, tex->size() / 2);
 }
 
-void GraphicsEngine::draw_texture(Texture* tex, Vector pos, Color color, Flip flip, float angle)
+void draw_texture(Texture* tex, Vector pos, Color color, Flip flip, float angle)
 {
 	draw_texture(tex, {pos, tex->size()}, color, flip, angle, tex->size() / 2);
 }
 
-void GraphicsEngine::push_target(Texture* tex)
+Vector_t<int> get_logical_size()
 {
-	m_target_stack.push(tex);
+	COG2D_CALL_RET_GRAPHICS(get_logical_size);
 }
 
-void GraphicsEngine::pop_target()
+void push_target(Texture* tex)
 {
-	m_target_stack.pop();
+	COG2D_CALL_GRAPHICS(push_target, tex);
 }
 
-}  //namespace cog2d
+void pop_target()
+{
+	COG2D_CALL_GRAPHICS(pop_target);
+}
+
+Texture* get_target()
+{
+	COG2D_CALL_RET_GRAPHICS(get_target);
+}
+
+}  //namespace cog2d::graphics

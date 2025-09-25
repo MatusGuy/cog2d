@@ -11,12 +11,10 @@ namespace cog2d {
 
 Surface Surface::from_pixmap(IoDevice& iodevice)
 {
-	COG2D_USE_GRAPHICSENGINE;
-
 	if (!iodevice.is_open())
 		iodevice.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
 
-	switch (graphicsengine.m_pixmap_backend) {
+	switch (graphics::pixmap_backend) {
 	case Backend::PIXMAP_SDL_IMAGE: {
 		return Surface(IMG_Load_RW(iodevice.to_sdl(), true));
 	}

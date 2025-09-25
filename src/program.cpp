@@ -37,18 +37,17 @@ int Program::run(int argc, char* argv[])
 	// std::atexit(&Program::quit);
 	init_sdl();
 
-	GraphicsEngine::s_current = new SDL2GraphicsEngine;
+	//GraphicsEngine::s_current = new SDL2GraphicsEngine;
 	InputManager::s_current = new InputManager;
 	//AudioEngine::s_current = new AlSoftAudioEngine;
 	MusicPlayer::s_current = new MusicPlayer;
 	AssetManager::s_current = new AssetManager;
 	Config::s_current = new Config;
 
-	COG2D_USE_GRAPHICSENGINE;
 	COG2D_USE_INPUTMANAGER;
 	COG2D_USE_ASSETMANAGER;
 
-	graphicsengine.init(m_settings);
+	graphics::init(*m_settings);
 
 	audio::init(*m_settings);
 	MusicPlayer::get().init();
@@ -89,9 +88,9 @@ int Program::run(int argc, char* argv[])
 		std::unique_ptr<Screen>& screen = m_screen_stack.top();
 		screen->update();
 
-		graphicsengine.pre_draw();
+		graphics::pre_draw();
 		screen->draw();
-		graphicsengine.post_draw();
+		graphics::post_draw();
 
 		now = Clock::now();
 		m_delta_time = now - m_prog_time;
@@ -104,11 +103,10 @@ int Program::run(int argc, char* argv[])
 
 void Program::quit()
 {
-	COG2D_USE_GRAPHICSENGINE;
 	COG2D_USE_ASSETMANAGER;
 	COG2D_USE_CONFIG;
 
-	graphicsengine.deinit();
+	graphics::deinit();
 
 	if (m_settings->systems & System::SYSTEM_CONFIG) {
 		std::ofstream cfgfile(config.get_config_path(m_settings));
@@ -132,7 +130,7 @@ void Program::push_screen(std::unique_ptr<Screen> screen)
 
 void Program::init_sdl()
 {
-	int errcode = SDL_Init(SDL_INIT_EVENTS | SDL_INIT_TIMER | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO);
+	int errcode = SDL_Init(SDL_INIT_EVENTS | SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
 	if (errcode != 0) {
 		std::stringstream stream;
 		stream << SDL_GetError() << " (" << errcode << ")";

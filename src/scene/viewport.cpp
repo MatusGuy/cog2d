@@ -11,8 +11,8 @@ Viewport::Viewport()
     : m_region(0, 0, 0, 0),
       m_camera(nullptr)
 {
-	COG2D_USE_GRAPHICSENGINE;
-	m_region.size = graphicsengine.get_logical_size();
+;
+	m_region.size = graphics::get_logical_size();
 }
 
 Viewport::Viewport(Rect_t<int> region)
@@ -26,4 +26,4 @@ void Viewport::set_camera(Camera* camera)
 	m_camera = camera;
 }
 
-}
+}  //namespace cog2d

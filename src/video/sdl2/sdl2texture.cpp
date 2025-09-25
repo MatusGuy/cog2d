@@ -25,10 +25,9 @@ Vector_t<int> SDL2Texture::query_size()
 
 bool SDL2Texture::construct()
 {
-	COG2D_USE_GRAPHICSENGINE;
-	m_data = SDL_CreateTexture(static_cast<SDL2GraphicsEngine&>(graphicsengine).get_renderer(),
-	                           SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, m_size.x,
-	                           m_size.y);
+;
+	m_data = SDL_CreateTexture(graphics::sdl::get_renderer(), SDL_PIXELFORMAT_RGBA8888,
+	                           SDL_TEXTUREACCESS_TARGET, m_size.x, m_size.y);
 
 	if (!m_data)
 		return false;

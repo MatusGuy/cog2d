@@ -30,9 +30,8 @@ public:
 
 	virtual void draw_text(std::string_view text, const Vector& pos)
 	{
-		COG2D_USE_GRAPHICSENGINE;
 		Texture* tex = m_cache.get(std::string{text});
-		graphicsengine.draw_texture(tex, pos);
+		graphics::draw_texture(tex, pos);
 	}
 
 	virtual int get_text_width(std::string_view text) = 0;

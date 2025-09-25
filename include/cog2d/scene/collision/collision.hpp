@@ -50,7 +50,7 @@ struct CollideInfo
 	}
 };
 
-namespace Collision {
+namespace collision {
 
 template<typename T>
 CollideInfo<T> rect_rect(Rect_t<T> r1, Rect_t<T> r2)

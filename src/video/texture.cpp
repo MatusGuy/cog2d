@@ -13,12 +13,9 @@ namespace cog2d {
 
 Texture* Texture::from_surface(Surface& surface)
 {
-	COG2D_USE_GRAPHICSENGINE;
-	switch (graphicsengine.type) {
+	switch (graphics::type) {
 	case Backend::GRAPHICS_SDL:
-		return new SDL2Texture(SDL_CreateTextureFromSurface(static_cast<
-		                                                        SDL2GraphicsEngine&>(graphicsengine)
-		                                                        .get_renderer(),
+		return new SDL2Texture(SDL_CreateTextureFromSurface(graphics::sdl::get_renderer(),
 		                                                    surface.to_sdl()));
 	default:
 		return nullptr;
@@ -27,8 +24,7 @@ Texture* Texture::from_surface(Surface& surface)
 
 Texture* Texture::create(const Vector_t<int>& size)
 {
-	COG2D_USE_GRAPHICSENGINE;
-	switch (graphicsengine.type) {
+	switch (graphics::type) {
 	case Backend::GRAPHICS_SDL: {
 		Texture* tex = new SDL2Texture(size);
 		if (!tex->construct()) {

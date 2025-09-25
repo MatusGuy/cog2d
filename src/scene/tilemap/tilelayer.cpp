@@ -19,7 +19,6 @@ TileLayer::TileLayer()
 
 void TileLayer::draw()
 {
-	COG2D_USE_GRAPHICSENGINE;
 	COG2D_USE_VIEWPORT;
 
 	Camera* camera = viewport.get_camera();
@@ -61,7 +60,7 @@ void TileLayer::draw()
 		dest.size = m_map->m_tile_sz;
 		dest.pos = destpos;
 
-		graphicsengine.draw_texture(set->m_texture.get(), src, dest);
+		graphics::draw_texture(set->m_texture.get(), src, dest);
 
 		next_tile();
 	}

@@ -64,7 +64,7 @@ Asset<T>::~Asset()
 
 Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
 {
-	COG2D_USE_GRAPHICSENGINE;
+;
 
 	if (!device.is_open())
 		device.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
