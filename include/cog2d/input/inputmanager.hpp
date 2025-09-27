@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 #include <functional>
+#include <cstdint>
 
 #include <SDL2/SDL.h>
 
@@ -14,6 +15,21 @@
 
 namespace cog2d {
 struct ProgramSettings;
+
+using ControllerId = std::uint8_t;
+using ActionId = std::uint8_t;
+
+enum MenuAction
+{
+	MENU_UP,
+	MENU_DOWN,
+	MENU_LEFT,
+	MENU_RIGHT,
+	MENU_ACCEPT,
+	MENU_CANCEL,
+
+	MENU_COUNT
+};
 
 struct InputAction
 {
@@ -45,9 +61,11 @@ InputAction* register_action(InputAction& action);
 void init(ProgramSettings& settings);
 
 void add_controller(Controller* controller);
-std::size_t get_controller_count();
-Controller* get_controller(uint8_t id);
+std::size_t controller_count();
+//Controller* get_controller(uint8_t id);
 
 void event(SDL_Event* ev);
+
+bool hold(ControllerId player, ActionId action);
 }  //namespace input
 }  //namespace cog2d
