@@ -38,13 +38,12 @@ int Program::run(int argc, char* argv[])
 	init_sdl();
 
 	//GraphicsEngine::s_current = new SDL2GraphicsEngine;
-	InputManager::s_current = new InputManager;
+	//InputManager::s_current = new InputManager;
 	//AudioEngine::s_current = new AlSoftAudioEngine;
 	MusicPlayer::s_current = new MusicPlayer;
 	AssetManager::s_current = new AssetManager;
 	Config::s_current = new Config;
 
-	COG2D_USE_INPUTMANAGER;
 	COG2D_USE_ASSETMANAGER;
 
 	graphics::init(*m_settings);
@@ -53,7 +52,7 @@ int Program::run(int argc, char* argv[])
 	MusicPlayer::get().init();
 
 	if (register_actions()) {
-		InputManager::get().init();
+		input::init(*m_settings);
 	}
 
 	register_settings();
@@ -147,8 +146,6 @@ void Program::init_sdl()
 
 void Program::poll_sdl_events()
 {
-	COG2D_USE_INPUTMANAGER;
-
 	SDL_Event ev;
 	while (SDL_PollEvent(&ev)) {
 		if (ev.type == SDL_QUIT) {
@@ -164,7 +161,7 @@ void Program::poll_sdl_events()
 			continue;
 		}
 
-		inputmanager.event(&ev);
+		input::event(&ev);
 	}
 }
 

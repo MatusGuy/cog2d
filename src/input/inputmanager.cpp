@@ -6,21 +6,21 @@
 #include "cog2d/input/keyboardcontroller.hpp"
 #include "cog2d/input/joypadcontroller.hpp"
 
-namespace cog2d {
+namespace cog2d::input {
 
-InputManager::InputManager()
-    : m_actions(),
-      m_controllers()
+static struct
 {
-}
+	std::vector<InputAction> actions;
+	std::vector<Controller*> controllers;
+} s_manager;
 
-InputAction* InputManager::register_action(InputAction& action)
+InputAction* register_action(InputAction& action)
 {
-	m_actions.push_back(action);
+	s_manager.actions.push_back(action);
 	return &action;
 }
 
-void InputManager::init()
+void init(ProgramSettings& settings)
 {
 	// The keyboard should always be there for you :)
 	KeyboardController* keyboard = new KeyboardController;
@@ -35,25 +35,25 @@ void InputManager::init()
 	}
 }
 
-void InputManager::add_controller(Controller* controller)
+void add_controller(Controller* controller)
 {
-	m_controllers.push_back(controller);
+	s_manager.controllers.push_back(controller);
 
-	for (auto& action : m_actions) {
+	for (auto& action : s_manager.actions) {
 		controller->apply_action(&action);
 	}
 
 	controller->apply_finish();
 }
 
-void InputManager::event(SDL_Event* ev)
+void event(SDL_Event* ev)
 {
 	switch (ev->type) {
 	case SDL_JOYDEVICEADDED: {
 		SDL_JoyDeviceEvent jev = ev->jdevice;
 
-		for (int i = 0; i < m_controllers.size(); i++) {
-			Controller* controller = m_controllers[i];
+		for (int i = 0; i < s_manager.controllers.size(); i++) {
+			Controller* controller = s_manager.controllers[i];
 			if (controller->get_type() == JoypadController::type() &&
 			    static_cast<JoypadController*>(controller)->m_device_id == jev.which) {
 				// joypad already exists
@@ -70,20 +70,31 @@ void InputManager::event(SDL_Event* ev)
 	case SDL_JOYDEVICEREMOVED: {
 		SDL_JoyDeviceEvent jev = ev->jdevice;
 
-		for (int i = 0; i < m_controllers.size(); i++) {
-			Controller* controller = m_controllers[i];
+		for (int i = 0; i < s_manager.controllers.size(); i++) {
+			Controller* controller = s_manager.controllers[i];
 			if (controller->get_type() == JoypadController::type() &&
 			    static_cast<JoypadController*>(controller)->m_device_id == jev.which) {
-				m_controllers.erase(m_controllers.begin() + i);
+				s_manager.controllers.erase(s_manager.controllers.begin() + i);
 			}
 		}
 		return;
 	}
 	}
 
-	for (Controller* controller : m_controllers) {
+	for (Controller* controller : s_manager.controllers) {
 		controller->event(ev);
 	}
 }
 
-}  //namespace cog2d
+Controller* get_controller(uint8_t id)
+{
+	return static_cast<size_t>(id + 1) > get_controller_count() ? nullptr
+	                                                            : s_manager.controllers[id];
+}
+
+std::size_t get_controller_count()
+{
+	return s_manager.controllers.size();
+}
+
+}  //namespace cog2d::input

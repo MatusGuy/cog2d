@@ -25,8 +25,6 @@ PixmapFont::PixmapFont()
 
 void PixmapFont::load_texture(IoDevice& device)
 {
-;
-
 	if (!device.is_open())
 		device.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
 
@@ -104,8 +102,6 @@ int PixmapFont::get_text_width(std::string_view text)
 
 void PixmapFont::write_text(Texture* texture, std::string_view text, const Vector& pos)
 {
-;
-
 	graphics::push_target(texture);
 
 	int x = pos.x;
@@ -127,8 +123,6 @@ void PixmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 
 std::unique_ptr<Texture> PixmapFont::create_text(std::string_view text)
 {
-;
-
 	int width = get_text_width(text);
 
 	auto texture = std::unique_ptr<Texture>(Texture::create({width, m_glyph_height}));
