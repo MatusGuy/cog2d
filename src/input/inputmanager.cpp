@@ -3,11 +3,6 @@
 
 #include "inputmanager.hpp"
 
-#include <unordered_map>
-
-#include "cog2d/input/keyboardcontroller.hpp"
-#include "cog2d/input/joypadcontroller.hpp"
-
 namespace cog2d::input {
 
 /// Maximum amount of keys on an input device
@@ -17,77 +12,32 @@ namespace cog2d::input {
 
 static struct
 {
-	std::vector<InputAction> actions;
+	InputAction actions[COG2D_NUM_ACTIONS];
 	bool held_menu[MENU_COUNT];
 	bool held_actions[COG2D_MAX_PLAYERS][COG2D_NUM_ACTIONS];
 	ActionId action_map[COG2D_MAX_PLAYERS][COG2D_MAX_KEYS];
 } s_manager;
 
-InputAction* register_action(InputAction& action)
+void register_action(InputAction&& action)
 {
-	s_manager.actions.push_back(action);
-	return &action;
+	s_manager.actions[action.id] = action;
 }
 
 void init(ProgramSettings& settings)
 {
-	for (int i = 0; i < s_manager.actions.size(); ++i) {
-		std::uint32_t key = s_manager.actions[i].configs[0].input_id;
-		s_manager.action_map[0][key] = i;
+	// right now, player mapping is hardcoded to first player
+	// solution is to have a screen where the first player to hit a button on their controller
+	// becomes the first player and so on and can change their inputs bla bla bla... See other
+	// multiplayer games like Spelunky or Idk smash bros. When the game starts, control bindings are
+	// correctly assigned to each player
+	for (int i = 0; i < COG2D_NUM_ACTIONS; ++i) {
+		s_manager.action_map[0][s_manager.actions[i].scancode] = i;
 	}
-}
-
-void add_controller(Controller* controller)
-{
-	/*
-	s_manager.controllers.push_back(controller);
-
-	for (auto& action : s_manager.actions) {
-		controller->apply_action(&action);
-	}
-
-	controller->apply_finish();
-	*/
 }
 
 void event(SDL_Event* ev)
 {
 	switch (ev->type) {
-	case SDL_JOYDEVICEADDED: {
-		/*
-		SDL_JoyDeviceEvent jev = ev->jdevice;
-
-		for (int i = 0; i < s_manager.controllers.size(); i++) {
-			Controller* controller = s_manager.controllers[i];
-			if (controller->get_type() == JoypadController::type() &&
-				static_cast<JoypadController*>(controller)->m_device_id == jev.which) {
-				// joypad already exists
-				break;
-			}
-		}
-
-		JoypadController* jcontroller = new JoypadController(jev.which);
-
-		add_controller(jcontroller);
-		*/
-		break;
-	}
-
-	case SDL_JOYDEVICEREMOVED: {
-		/*
-		SDL_JoyDeviceEvent jev = ev->jdevice;
-
-		for (int i = 0; i < s_manager.controllers.size(); i++) {
-			Controller* controller = s_manager.controllers[i];
-			if (controller->get_type() == JoypadController::type() &&
-				static_cast<JoypadController*>(controller)->m_device_id == jev.which) {
-				s_manager.controllers.erase(s_manager.controllers.begin() + i);
-			}
-		}
-		*/
-		break;
-	}
-
 	case SDL_KEYDOWN: {
 		ActionId action = s_manager.action_map[0][ev->key.keysym.scancode];
 		s_manager.held_actions[0][action] = true;
@@ -102,17 +52,8 @@ void event(SDL_Event* ev)
 	}
 }
 
-/*
-Controller* get_controller(uint8_t id)
-{
-	return static_cast<size_t>(id + 1) > get_controller_count() ? nullptr
-																: s_manager.controllers[id];
-}
-*/
-
 std::size_t controller_count()
 {
-	//return s_manager.controllers.size();
 	return 1;
 }
 

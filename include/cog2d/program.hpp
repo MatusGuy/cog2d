@@ -12,6 +12,7 @@
 #include "cog2d/screen.hpp"
 #include "cog2d/util/typetraits.hpp"
 #include "cog2d/util/timing.hpp"
+#include "cog2d/util/currenton.hpp"
 
 namespace cog2d {
 
