@@ -12,9 +12,6 @@ namespace cog2d {
 
 SDL2TtfFont::SDL2TtfFont(const std::string& path, int ptsz)
 {
-	//COG2D_USE_ASSETMANAGER;
-
-	//m_font = assetmanager.load_font(path, ptsz);
 }
 
 SDL2TtfFont::SDL2TtfFont(TTF_Font* font)
@@ -36,8 +33,6 @@ int SDL2TtfFont::get_text_width(std::string_view text)
 
 void SDL2TtfFont::write_text(Texture* texture, std::string_view text, const Vector& pos)
 {
-;
-
 	Surface textsurface = TTF_RenderUTF8_Solid(m_font, text.data(), Color(0xFFFFFFFF));
 	Texture* texttexture = Texture::from_surface(textsurface);
 
@@ -50,9 +45,6 @@ void SDL2TtfFont::write_text(Texture* texture, std::string_view text, const Vect
 
 std::unique_ptr<Texture> SDL2TtfFont::create_text(std::string_view text)
 {
-;
-	COG2D_USE_ASSETMANAGER;
-
 	Surface textsurface = TTF_RenderUTF8_Solid(get_font(), text.data(), Color(0xFFFFFFFF));
 	return std::unique_ptr<Texture>(Texture::from_surface(textsurface));
 }

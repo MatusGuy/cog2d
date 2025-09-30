@@ -34,7 +34,7 @@ void TileSet::parse(toml::table& data)
 	m_set_sz.y = get_as<std::int64_t>(data, "imageheight") / m_tile_sz.y;
 
 	std::filesystem::path path = get_as<std::string>(data, "image");
-	m_texture = AssetManager::get().pixmaps.load_file(path);
+	m_texture = cog2d::assets::pixmaps.load_file(path);
 }
 
 void TileSet::parse_external(toml::table& data)

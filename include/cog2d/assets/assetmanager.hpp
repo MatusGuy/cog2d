@@ -12,19 +12,13 @@
 #include "cog2d/util/currenton.hpp"
 
 namespace cog2d {
+namespace assets {
 
-#define COG2D_USE_ASSETMANAGER COG2D_USING(AssetManager, assetmanager)
-class AssetManager : public Currenton<AssetManager>
-{
-public:
-	PixmapCollection pixmaps;
-	PixmapFontCollection pixmapfonts;
-	TileSetCollection tilesets;
-	MusicTrackCollection musictracks;
-	SoundEffectCollection sounds;
+extern PixmapCollection pixmaps;
+extern PixmapFontCollection pixmapfonts;
+extern TileSetCollection tilesets;
+extern MusicTrackCollection musictracks;
+extern SoundEffectCollection sounds;
 
-public:
-	AssetManager();
-};
-
+}  //namespace assets
 }  //namespace cog2d

@@ -45,8 +45,6 @@ TileMap::TileSetRef& TileMap::get_tileset(TileId tileid)
 
 void TileMap::parse_toml(toml::table& data)
 {
-	COG2D_USE_ASSETMANAGER;
-
 	using namespace toml_util;
 
 	toml::array& sets = get_as_array(data, "tilesets");
@@ -59,7 +57,7 @@ void TileMap::parse_toml(toml::table& data)
 
 		// TODO: support embedded tileset
 		std::string path = get_as<std::string>(setdata, "source");
-		set.set = assetmanager.tilesets.load_file(path);
+		set.set = cog2d::assets::tilesets.load_file(path);
 
 		m_sets.push_back(set);
 	}

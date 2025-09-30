@@ -13,8 +13,6 @@ namespace cog2d {
 
 void BinTileMapParser::parse(IoDevice& device, TileMap& result)
 {
-	COG2D_USE_ASSETMANAGER;
-
 	device.seek(0, IoDevice::SEEKPOS_BEGIN);
 
 	char header[4];
@@ -53,7 +51,7 @@ void BinTileMapParser::parse(IoDevice& device, TileMap& result)
 		std::string name;
 		device.read(name);
 
-		set.set = assetmanager.tilesets.load_file(name);
+		set.set = cog2d::assets::tilesets.load_file(name);
 
 		result.m_sets.push_back(set);
 	}

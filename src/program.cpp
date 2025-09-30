@@ -41,10 +41,8 @@ int Program::run(int argc, char* argv[])
 	//InputManager::s_current = new InputManager;
 	//AudioEngine::s_current = new AlSoftAudioEngine;
 	MusicPlayer::s_current = new MusicPlayer;
-	AssetManager::s_current = new AssetManager;
+	//AssetManager::s_current = new AssetManager;
 	Config::s_current = new Config;
-
-	COG2D_USE_ASSETMANAGER;
 
 	graphics::init(*m_settings);
 
@@ -102,7 +100,6 @@ int Program::run(int argc, char* argv[])
 
 void Program::quit()
 {
-	COG2D_USE_ASSETMANAGER;
 	COG2D_USE_CONFIG;
 
 	graphics::deinit();
@@ -167,10 +164,8 @@ void Program::poll_sdl_events()
 
 void Program::update_fonts_gc()
 {
-	COG2D_USE_ASSETMANAGER;
-
 	// TODO: ttf fonts
-	const AssetRefs<PixmapFont>& pfonts = assetmanager.pixmapfonts.get_assets();
+	const AssetRefs<PixmapFont>& pfonts = cog2d::assets::pixmapfonts.get_assets();
 	for (auto it = pfonts.begin(); it != pfonts.end(); ++it) {
 		AssetRef<PixmapFont> pfont = it->second;
 		std::shared_ptr<PixmapFont> pfont_ptr = pfont.lock();
