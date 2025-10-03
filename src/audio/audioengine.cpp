@@ -11,6 +11,7 @@
 namespace cog2d::audio {
 
 Backend::AudioEngine type = Backend::AUDIO_ALSOFT;
+MusicPlayer music;
 
 #define COG2D_CALL_AUDIO(_f, ...) \
 	switch (type) {               \
@@ -44,24 +45,24 @@ void deinit()
 	COG2D_CALL_AUDIO(deinit);
 }
 
-void add_source(MixerSource* source)
+void add_sound(SoundEffect& sound)
 {
-	COG2D_CALL_AUDIO(add_source, source);
+	COG2D_CALL_AUDIO(add_sound, sound);
 }
 
-void remove_source(MixerSource* source)
+void remove_sound(SoundEffect& sound)
 {
-	COG2D_CALL_AUDIO(remove_source, source);
+	COG2D_CALL_AUDIO(remove_sound, sound);
 }
 
-void refresh_source(MixerSource* source)
+void refresh_music()
 {
-	COG2D_CALL_AUDIO(refresh_source, source);
+	COG2D_CALL_AUDIO(refresh_music);
 }
 
-AudioSpec spec()
+void play_sound(SoundEffect& sound)
 {
-	COG2D_CALL_RET_AUDIO(spec);
+	COG2D_CALL_AUDIO(play_sound, sound);
 }
 
 }  //namespace cog2d::audio

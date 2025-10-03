@@ -7,25 +7,19 @@
 
 namespace cog2d {
 
-class SoundEffect : public MixerSource
+class SoundEffect
 {
 public:
-	std::uint8_t* m_data = nullptr;
-	std::uint32_t m_size;
-
-	/// in sample frames
-	std::size_t m_pos = std::numeric_limits<std::size_t>::max();
+	std::uint8_t* data = nullptr;
+	std::uint32_t size;
+	AudioSpec spec;
+	void* enginedata = nullptr;
 
 public:
 	SoundEffect();
-	~SoundEffect() override;
+	~SoundEffect();
 
 	void load(IoDevice& device);
-
-	bool buffer(void* buf, std::size_t samples) override;
-
-	bool is_playing();
-	void play();
 };
 
 }  //namespace cog2d

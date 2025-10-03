@@ -9,14 +9,14 @@
 #include "cog2d/util/currenton.hpp"
 #include "cog2d/util/timing.hpp"
 #include "cog2d/util/backend.hpp"
-
-struct SDL_AudioSpec;
+#include "cog2d/audio/musicplayer.hpp"
 
 namespace cog2d {
 
+class SoundEffect;
 struct ProgramSettings;
 
-enum AudioFormat
+enum AudioFormat : std::uint8_t
 {
 	AUDIOFORMAT_U8,
 	AUDIOFORMAT_S8,
@@ -78,18 +78,16 @@ public:
 namespace audio {
 
 extern Backend::AudioEngine type;
+extern MusicPlayer music;
 
 void init(ProgramSettings& settings);
 void deinit();
 
-void add_source(MixerSource* source);
-void remove_source(MixerSource* source);
-void refresh_source(MixerSource* source);
+void add_sound(SoundEffect& sound);
+void remove_sound(SoundEffect& sound);
+void play_sound(SoundEffect& sound);
 
-AudioSpec spec();
-
-// Break comment in case of emergency
-//void update();
+void refresh_music();
 
 }  //namespace audio
 }  //namespace cog2d

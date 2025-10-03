@@ -4,15 +4,12 @@
 
 #include <optional>
 
-#include "cog2d/audio/audioengine.hpp"
-
 namespace cog2d {
 
 struct MusicTrackSection;
 class MusicTrack;
 
-#define COG2D_USE_MUSICPLAYER COG2D_USING(MusicPlayer, musicplayer)
-class MusicPlayer : public Currenton<MusicPlayer>, public MixerSource
+class MusicPlayer
 {
 public:
 	friend class MusicTrack;
@@ -20,7 +17,7 @@ public:
 public:
 	MusicPlayer();
 
-	bool buffer(void* buf, std::size_t samples) override;
+	bool buffer(void* buf, std::size_t size);
 
 	void init();
 	void deinit();

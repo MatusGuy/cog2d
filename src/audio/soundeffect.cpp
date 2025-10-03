@@ -15,10 +15,10 @@ SoundEffect::SoundEffect()
 
 SoundEffect::~SoundEffect()
 {
-	if (m_data != nullptr)
-		SDL_FreeWAV(m_data);
+	audio::remove_sound(*this);
 
-	MixerSource::~MixerSource();
+	if (data != nullptr)
+		SDL_FreeWAV(data);
 }
 
 void SoundEffect::load(IoDevice& device)
@@ -26,36 +26,9 @@ void SoundEffect::load(IoDevice& device)
 	if (!device.is_open())
 		device.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
 
-	SDL_AudioSpec spec;
-	SDL_LoadWAV_RW(device.to_sdl(), true, &spec, &m_data, &m_size);
-	m_spec = audio::sdl::AudioSpec_from_sdl(spec);
-	//m_pos = m_size / m_spec.channels / sizeof(short);
-}
-
-bool SoundEffect::buffer(void* buf, std::size_t samples)
-{
-	if (!is_playing()) {
-		//COG2D_LOG_DEBUG(fmt::format("{} {}", m_pos * m_spec.channels * sizeof(short), m_size));
-		//std::memset(buf, 0, samples * m_spec.channels * sizeof(short));
-		return false;
-	}
-
-	std::size_t cpysz = std::min(m_spec.samples_to_bytes(samples),
-	                             m_size - m_spec.samples_to_bytes(m_pos));
-	std::memcpy(buf, m_data + m_spec.samples_to_bytes(m_pos), cpysz);
-
-	m_pos += samples;
-	return true;
-}
-
-bool SoundEffect::is_playing()
-{
-	return m_spec.samples_to_bytes(m_pos) < m_size;
-}
-
-void SoundEffect::play()
-{
-	m_pos = 0;
+	SDL_AudioSpec wavspec;
+	SDL_LoadWAV_RW(device.to_sdl(), true, &wavspec, &data, &size);
+	spec = audio::sdl::AudioSpec_from_sdl(wavspec);
 }
 
 }  //namespace cog2d

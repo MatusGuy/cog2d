@@ -40,14 +40,15 @@ int Program::run(int argc, char* argv[])
 	//GraphicsEngine::s_current = new SDL2GraphicsEngine;
 	//InputManager::s_current = new InputManager;
 	//AudioEngine::s_current = new AlSoftAudioEngine;
-	MusicPlayer::s_current = new MusicPlayer;
+	//MusicPlayer::s_current = new MusicPlayer;
 	//AssetManager::s_current = new AssetManager;
 	Config::s_current = new Config;
 
 	graphics::init(*m_settings);
 
 	audio::init(*m_settings);
-	MusicPlayer::get().init();
+	audio::music.init();
+	//MusicPlayer::get().init();
 
 	if (register_actions()) {
 		input::init(*m_settings);

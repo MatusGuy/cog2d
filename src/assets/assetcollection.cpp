@@ -64,7 +64,7 @@ Asset<T>::~Asset()
 
 Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
 {
-;
+	;
 
 	if (!device.is_open())
 		device.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
@@ -128,6 +128,7 @@ Asset<SoundEffect> SoundEffectCollection::load(std::string_view name, IoDevice& 
 {
 	SoundEffect* sound = new SoundEffect;
 	sound->load(device);
+	audio::add_sound(*sound);
 	//AudioEngine::get().add_source(sound);
 	return add(name, sound);
 }

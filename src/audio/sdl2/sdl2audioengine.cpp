@@ -10,6 +10,10 @@
 
 namespace cog2d::audio::sdl {
 
+///
+/// NOTE: OUT OF ORDER!!
+///
+
 AudioFormat AudioFormat_from_sdl(SDL_AudioFormat format)
 {
 	switch (format) {
@@ -107,49 +111,12 @@ void init(ProgramSettings& settings)
 
 void deinit()
 {
-	for (MixerSource* source : s_engine.sources) {
-		remove_source(source);
-	}
-
 	SDL_CloseAudioDevice(s_engine.dev);
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
-void add_source(MixerSource* source)
-{
-	source->m_id = s_engine.sources.size();
-	s_engine.sources.push_back(source);
-	refresh_source(source);
-}
-
-void remove_source(MixerSource* source)
-{
-	s_engine.sources.erase(s_engine.sources.begin() + source->m_id);
-	if (source->userdata() != nullptr) {
-		delete static_cast<SDLMixerSourceData*>(source->userdata());
-	}
-}
-
 void refresh_source(MixerSource* source)
 {
-	if (source->userdata() != nullptr) {
-		delete static_cast<SDLMixerSourceData*>(source->userdata());
-	}
-
-	auto data = new SDLMixerSourceData(SDL_NewAudioStream(AudioFormat_to_sdl(source->spec().format),
-	                                                      source->spec().channels,
-	                                                      source->spec().samplerate,
-	                                                      s_engine.spec.format,
-	                                                      s_engine.spec.channels,
-	                                                      s_engine.spec.freq),
-	                                   spec().samples_to_bytes(s_engine.spec.samples));
-
-	source->set_userdata(static_cast<void*>(data));
-}
-
-AudioSpec spec()
-{
-	return AudioSpec_from_sdl(s_engine.spec);
 }
 
 void feed_buffer_callback(void* userdata, std::uint8_t* stream, int len)
@@ -171,8 +138,6 @@ void feed_buffer_callback(void* userdata, std::uint8_t* stream, int len)
 		SDL_AudioStreamPut(mixerdata->stream.get(), mixerdata->buffer, mixerdata->buffersize);
 		SDL_AudioStreamFlush(mixerdata->stream.get());
 		SDL_AudioStreamGet(mixerdata->stream.get(), buf, len);
-		if (i == 1)
-			COG2D_LOG_DEBUG(fmt::format("on: {}", ((uint16_t*) buf)[0]));
 		SDL_AudioStreamClear(mixerdata->stream.get());
 	}
 
@@ -206,6 +171,22 @@ void mix_buffers(void* out, void** buffers, std::size_t count, std::size_t size)
 		                   static_cast<std::uint8_t*>(buffers[buf]), AUDIO_S16, size,
 		                   SDL_MIX_MAXVOLUME);
 	}
+}
+
+void add_sound(SoundEffect& sound)
+{
+}
+
+void remove_sound(SoundEffect& sound)
+{
+}
+
+void refresh_music()
+{
+}
+
+void play_sound(SoundEffect& sound)
+{
 }
 
 }  //namespace cog2d::audio::sdl

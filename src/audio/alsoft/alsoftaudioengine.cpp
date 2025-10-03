@@ -1,6 +1,8 @@
 #include "alsoftaudioengine.hpp"
 
 #include "cog2d/util/logger.hpp"
+#include "cog2d/audio/musictrack.hpp"
+#include "cog2d/audio/soundeffect.hpp"
 
 namespace cog2d::audio::alsoft {
 
@@ -49,30 +51,50 @@ AudioFormat AudioFormat_from_al(ALenum value)
 	}
 }
 
+struct AlSoftSource
+{
+	ALuint buffer = 0;
+	ALuint source = 0;
+
+	inline bool valid() { return buffer != 0 && source != 0; }
+};
+
 static struct
 {
 	ALCdevice* dev;
 	ALCcontext* ctx;
-	std::vector<MixerSource*> sources;
-} s_engine;
 
-struct AlSoftMixerData
-{
-	ALuint buffer = 0;
-	ALuint source = 0;
-};
+	AlSoftSource music_source;
+	AlSoftSource sounds[64];
+	std::uint64_t sounds_count = 0;
+} s_engine;
 
 void init(ProgramSettings& settings)
 {
 	s_engine.dev = alcOpenDevice(nullptr);
 	s_engine.ctx = alcCreateContext(s_engine.dev, nullptr);
 	alcMakeContextCurrent(s_engine.ctx);
+
+	music.init();
+	alGenSources(1, &s_engine.music_source.source);
+
+	alSourcef(s_engine.music_source.source, AL_PITCH, 1);
+	alSourcef(s_engine.music_source.source, AL_GAIN, 1.0f);
+	alSource3f(s_engine.music_source.source, AL_POSITION, 0, 0, 0);
+	alSource3f(s_engine.music_source.source, AL_VELOCITY, 0, 0, 0);
+	alSourcei(s_engine.music_source.source, AL_LOOPING, AL_FALSE);
+
+	refresh_music();
 }
 
 void deinit()
 {
-	for (MixerSource* source : s_engine.sources) {
-		remove_source(source);
+	alDeleteBuffers(1, &s_engine.music_source.buffer);
+	alDeleteSources(1, &s_engine.music_source.source);
+
+	for (unsigned int i = 0; i < s_engine.sounds_count; ++i) {
+		alDeleteBuffers(1, &s_engine.sounds[i].buffer);
+		alDeleteSources(1, &s_engine.sounds[i].source);
 	}
 
 	alcMakeContextCurrent(nullptr);
@@ -80,65 +102,68 @@ void deinit()
 	alcCloseDevice(s_engine.dev);
 }
 
-void add_source(MixerSource* source)
+void add_sound(SoundEffect& sound)
 {
-	auto mixerdata = new AlSoftMixerData;
-	source->set_userdata(mixerdata);
-	source->m_id = s_engine.sources.size();
-	s_engine.sources.push_back(source);
+	sound.enginedata = (void*) s_engine.sounds_count;
+	AlSoftSource& src = s_engine.sounds[s_engine.sounds_count];
 
-	alGenBuffers(1, &mixerdata->buffer);
-	alGenSources(1, &mixerdata->source);
-	refresh_source(source);
+	alGenBuffers(1, &src.buffer);
+	alGenSources(1, &src.source);
+
+	alSourcef(src.source, AL_PITCH, 1);
+	alSourcef(src.source, AL_GAIN, 1.0f);
+	alSource3f(src.source, AL_POSITION, 0, 0, 0);
+	alSource3f(src.source, AL_VELOCITY, 0, 0, 0);
+	alSourcei(src.source, AL_LOOPING, AL_FALSE);
+	alSourcei(src.source, AL_BUFFER, src.buffer);
+
+	alBufferData(src.buffer, AudioFormat_to_al(sound.spec.format, sound.spec.channels), sound.data,
+	             sound.size, sound.spec.samplerate);
+
+	++s_engine.sounds_count;
 }
 
-void refresh_source(MixerSource* source)
+void remove_sound(SoundEffect& sound)
 {
-	AlSoftMixerData* mixerdata = static_cast<AlSoftMixerData*>(source->userdata());
-	if (!source->spec().valid() || mixerdata == nullptr)
+	AlSoftSource& src = s_engine.sounds[(std::uint64_t) sound.enginedata];
+
+	alDeleteBuffers(1, &src.buffer);
+	alDeleteSources(1, &src.source);
+
+	src.buffer = 0;
+	src.source = 0;
+
+	--s_engine.sounds_count;
+}
+
+static ALsizei music_buffer_callback(ALvoid* userptr, ALvoid* data, ALsizei size) noexcept
+{
+	music.buffer(data, size);
+	return size;
+}
+
+void refresh_music()
+{
+	if (s_engine.music_source.buffer != 0)
+		alDeleteBuffers(1, &s_engine.music_source.buffer);
+
+	if (music.track() == nullptr)
 		return;
 
-	alBufferi(mixerdata->buffer, AL_SIZE, 1024 * source->spec().channels * source->spec().format);
-	alBufferCallbackSOFT(mixerdata->buffer,
-	                     AudioFormat_to_al(source->spec().format, source->spec().channels),
-	                     source->spec().samplerate, &feed_buffer_callback,
-	                     static_cast<ALvoid*>(source));
+	alGenBuffers(1, &s_engine.music_source.buffer);
 
-	alSourcef(mixerdata->source, AL_PITCH, 1);
-	alSourcef(mixerdata->source, AL_GAIN, 1.0f);
-	alSource3f(mixerdata->source, AL_POSITION, 0, 0, 0);
-	alSource3f(mixerdata->source, AL_VELOCITY, 0, 0, 0);
-	alSourcei(mixerdata->source, AL_LOOPING, AL_FALSE);
-	alSourcei(mixerdata->source, AL_BUFFER, mixerdata->buffer);
+	AudioSpec& spec = music.track()->m_spec;
+	alBufferCallbackSOFT(s_engine.music_source.buffer,
+	                     AudioFormat_to_al(spec.format, spec.channels), spec.samplerate,
+	                     &music_buffer_callback, nullptr);
 
-	alSourceStop(mixerdata->source);
-	alSourcePlay(mixerdata->source);
+	alSourcei(s_engine.music_source.source, AL_BUFFER, s_engine.music_source.buffer);
 }
 
-void remove_source(MixerSource* source)
+void play_sound(SoundEffect& sound)
 {
-	auto mixerdata = static_cast<AlSoftMixerData*>(source->userdata());
-	alDeleteBuffers(1, &mixerdata->buffer);
-	alDeleteSources(1, &mixerdata->source);
-
-	s_engine.sources.erase(s_engine.sources.begin() + source->m_id);
-
-	delete mixerdata;
-}
-
-AudioSpec spec()
-{
-	// Uh... yeah.
-	return {};
-}
-
-ALsizei feed_buffer_callback(ALvoid* userptr, ALvoid* data, ALsizei size) noexcept
-{
-	MixerSource* source = static_cast<MixerSource*>(userptr);
-
-	source->buffer(data, size / source->spec().channels / sizeof(short));
-
-	return size;
+	AlSoftSource& src = s_engine.sounds[(std::uint64_t) sound.enginedata];
+	alSourcePlay(src.source);
 }
 
 }  //namespace cog2d::audio::alsoft

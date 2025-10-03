@@ -16,13 +16,11 @@ AudioFormat AudioFormat_from_al(ALenum value);
 void init(ProgramSettings& settings);
 void deinit();
 
-void add_source(MixerSource* source);
-void refresh_source(MixerSource* source);
-void remove_source(MixerSource* source);
+void add_sound(SoundEffect& sound);
+void remove_sound(SoundEffect& sound);
+void play_sound(SoundEffect& sound);
 
-AudioSpec spec();
-
-static ALsizei feed_buffer_callback(ALvoid* userptr, ALvoid* data, ALsizei size) noexcept;
+void refresh_music();
 
 }  //namespace alsoft
 }  //namespace cog2d::audio
