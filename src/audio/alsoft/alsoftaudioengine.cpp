@@ -109,16 +109,18 @@ void add_sound(SoundEffect& sound)
 
 	alGenBuffers(1, &src.buffer);
 	alGenSources(1, &src.source);
-
 	alSourcef(src.source, AL_PITCH, 1);
 	alSourcef(src.source, AL_GAIN, 1.0f);
 	alSource3f(src.source, AL_POSITION, 0, 0, 0);
 	alSource3f(src.source, AL_VELOCITY, 0, 0, 0);
 	alSourcei(src.source, AL_LOOPING, AL_FALSE);
-	alSourcei(src.source, AL_BUFFER, src.buffer);
 
 	alBufferData(src.buffer, AudioFormat_to_al(sound.spec.format, sound.spec.channels), sound.data,
 	             sound.size, sound.spec.samplerate);
+	COG2D_LOG_DEBUG(fmt::format("{:x}", alGetError()));
+
+	alSourcei(src.source, AL_BUFFER, src.buffer);
+	alSourceStop(src.source);
 
 	++s_engine.sounds_count;
 }
@@ -144,6 +146,10 @@ static ALsizei music_buffer_callback(ALvoid* userptr, ALvoid* data, ALsizei size
 
 void refresh_music()
 {
+	return;
+
+	alSourceStop(s_engine.music_source.source);
+
 	if (s_engine.music_source.buffer != 0)
 		alDeleteBuffers(1, &s_engine.music_source.buffer);
 
@@ -158,12 +164,16 @@ void refresh_music()
 	                     &music_buffer_callback, nullptr);
 
 	alSourcei(s_engine.music_source.source, AL_BUFFER, s_engine.music_source.buffer);
+
+	alSourcePlay(s_engine.music_source.source);
 }
 
 void play_sound(SoundEffect& sound)
 {
 	AlSoftSource& src = s_engine.sounds[(std::uint64_t) sound.enginedata];
+	//alSourceRewind(src.source);
 	alSourcePlay(src.source);
+	COG2D_LOG_DEBUG(fmt::format("{:x}", alGetError()));
 }
 
 }  //namespace cog2d::audio::alsoft
