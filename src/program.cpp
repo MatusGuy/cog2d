@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 
 #include <SDL2/SDL_ttf.h>
 
@@ -14,7 +15,6 @@
 #include "cog2d/audio/audioengine.hpp"
 #include "cog2d/audio/musicplayer.hpp"
 #include "cog2d/assets/assetmanager.hpp"
-#include "cog2d/config/config.hpp"
 #include "cog2d/video/font/pixmapfont.hpp"
 #include "cog2d/video/sdl2/sdl2graphicsengine.hpp"
 #include "cog2d/audio/sdl2/sdl2audioengine.hpp"
@@ -42,7 +42,6 @@ int Program::run(int argc, char* argv[])
 	//AudioEngine::s_current = new AlSoftAudioEngine;
 	//MusicPlayer::s_current = new MusicPlayer;
 	//AssetManager::s_current = new AssetManager;
-	Config::s_current = new Config;
 
 	graphics::init(*m_settings);
 
@@ -56,7 +55,13 @@ int Program::run(int argc, char* argv[])
 
 	register_settings();
 	if (m_settings->systems & System::SYSTEM_CONFIG) {
-		Config::get().init(m_settings);
+		File file(std::filesystem::path(SDL_GetPrefPath(m_settings->org_name.data(),
+		                                                m_settings->app_name.data())) /
+		          "config.toml");
+		file.open(File::OPENMODE_READ);
+		toml::table config = toml::parse(file);
+		file.close();
+		load_config(config);
 	}
 
 	// Run this after all essential systems
@@ -101,14 +106,17 @@ int Program::run(int argc, char* argv[])
 
 void Program::quit()
 {
-	COG2D_USE_CONFIG;
-
 	graphics::deinit();
 
 	if (m_settings->systems & System::SYSTEM_CONFIG) {
-		std::ofstream cfgfile(config.get_config_path(m_settings));
-		config.save(cfgfile);
-		cfgfile.close();
+		File file(std::filesystem::path(SDL_GetPrefPath(m_settings->org_name.data(),
+		                                                m_settings->app_name.data())) /
+		          "config.toml");
+		file.open(File::OPENMODE_WRITE);
+		toml::table config;
+		save_config(config);
+		*file.stl_stream() << config;
+		file.close();
 	}
 
 	audio::deinit();

@@ -117,7 +117,6 @@ void add_sound(SoundEffect& sound)
 
 	alBufferData(src.buffer, AudioFormat_to_al(sound.spec.format, sound.spec.channels), sound.data,
 	             sound.size, sound.spec.samplerate);
-	COG2D_LOG_DEBUG(fmt::format("{:x}", alGetError()));
 
 	alSourcei(src.source, AL_BUFFER, src.buffer);
 	alSourceStop(src.source);
@@ -146,8 +145,6 @@ static ALsizei music_buffer_callback(ALvoid* userptr, ALvoid* data, ALsizei size
 
 void refresh_music()
 {
-	return;
-
 	alSourceStop(s_engine.music_source.source);
 
 	if (s_engine.music_source.buffer != 0)
@@ -173,7 +170,6 @@ void play_sound(SoundEffect& sound)
 	AlSoftSource& src = s_engine.sounds[(std::uint64_t) sound.enginedata];
 	//alSourceRewind(src.source);
 	alSourcePlay(src.source);
-	COG2D_LOG_DEBUG(fmt::format("{:x}", alGetError()));
 }
 
 }  //namespace cog2d::audio::alsoft
