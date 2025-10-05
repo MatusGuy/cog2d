@@ -25,7 +25,7 @@ namespace cog2d {
 Program::Program()
     : m_keep_running(true),
       m_paused(false),
-      m_settings(new ProgramSettings),
+      m_settings(),
       m_screen_stack()
 {
 }
@@ -43,20 +43,20 @@ int Program::run(int argc, char* argv[])
 	//MusicPlayer::s_current = new MusicPlayer;
 	//AssetManager::s_current = new AssetManager;
 
-	graphics::init(*m_settings);
+	graphics::init(m_settings);
 
-	audio::init(*m_settings);
+	audio::init(m_settings);
 	audio::music.init();
 	//MusicPlayer::get().init();
 
 	if (register_actions()) {
-		input::init(*m_settings);
+		input::init(m_settings);
 	}
 
 	register_settings();
-	if (m_settings->systems & System::SYSTEM_CONFIG) {
-		File file(std::filesystem::path(SDL_GetPrefPath(m_settings->org_name.data(),
-		                                                m_settings->app_name.data())) /
+	if (m_settings.systems & System::SYSTEM_CONFIG) {
+		File file(std::filesystem::path(SDL_GetPrefPath(m_settings.org_name.data(),
+		                                                m_settings.app_name.data())) /
 		          "config.toml");
 		file.open(File::OPENMODE_READ);
 		toml::table config = toml::parse(file);
@@ -108,9 +108,9 @@ void Program::quit()
 {
 	graphics::deinit();
 
-	if (m_settings->systems & System::SYSTEM_CONFIG) {
-		File file(std::filesystem::path(SDL_GetPrefPath(m_settings->org_name.data(),
-		                                                m_settings->app_name.data())) /
+	if (m_settings.systems & System::SYSTEM_CONFIG) {
+		File file(std::filesystem::path(SDL_GetPrefPath(m_settings.org_name.data(),
+		                                                m_settings.app_name.data())) /
 		          "config.toml");
 		file.open(File::OPENMODE_WRITE);
 		toml::table config;

@@ -70,7 +70,7 @@ struct ProgramSettings
 class Program : public Currenton<Program>
 {
 public:
-	ProgramSettings* m_settings;
+	ProgramSettings m_settings;
 
 	TimePoint m_prog_time;
 	Duration m_delta_time;
