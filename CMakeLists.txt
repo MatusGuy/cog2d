@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 
 project(COG2D LANGUAGES CXX)
 
-list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/)
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
 
@@ -33,21 +33,22 @@ endif()
 set(CMAKE_CXX_STANDARD ${COG2D_CXX_STANDARD})
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
+add_library(cog2d INTERFACE)
 file(GLOB_RECURSE COG2D_SRC CONFIGURE_DEPENDS src/*.cpp include/cog2d/*.hpp)
-add_library(cog2d STATIC ${COG2D_SRC})
+target_sources(cog2d INTERFACE ${COG2D_SRC})
 
-target_compile_features(cog2d PUBLIC cxx_std_${COG2D_CXX_STANDARD})
+target_compile_features(cog2d INTERFACE cxx_std_${COG2D_CXX_STANDARD})
 
 #target_compile_options(cog2d PUBLIC -fno-rtti)
 
-target_include_directories(cog2d SYSTEM PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(cog2d SYSTEM INTERFACE ${PROJECT_SOURCE_DIR}/include)
 
 # Get all include subdirectories so that it becomes possible to just write the name of the header
 # in source (cpp) files.
 set(COG2D_INCLUDE_DIRECTORY ${PROJECT_SOURCE_DIR}/include)
 file(GLOB_RECURSE _cog2d_includes LIST_DIRECTORIES true ${COG2D_INCLUDE_DIRECTORY}/cog2d/*)
 list(FILTER _cog2d_includes EXCLUDE REGEX "[.][A-Za-z0-9]+$")
-target_include_directories(cog2d PRIVATE ${_cog2d_includes} ${COG2D_INCLUDE_DIRECTORY}/cog2d)
+target_include_directories(cog2d INTERFACE ${_cog2d_includes} ${COG2D_INCLUDE_DIRECTORY}/cog2d)
 
 # Dependencies #
 
@@ -57,7 +58,7 @@ option(COG2D_USE_PKGCONFIG "Use pkgconfig for finding dependencies" ${PKG_CONFIG
 ## SDL2 ##
 find_package(SDL2 REQUIRED)
 target_link_libraries(cog2d
-	PUBLIC
+	INTERFACE
 	$<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
 	$<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
 )
@@ -65,11 +66,11 @@ target_link_libraries(cog2d
 ## SDL2_image ##
 if(COG2D_USE_PKGCONFIG)
 	pkg_check_modules(SDL2_image REQUIRED IMPORTED_TARGET SDL2_image)
-	target_link_libraries(cog2d PUBLIC PkgConfig::SDL2_image)
+	target_link_libraries(cog2d INTERFACE PkgConfig::SDL2_image)
 else()
 	find_package(SDL2_image REQUIRED)
 	target_link_libraries(cog2d
-		PUBLIC
+		INTERFACE
 		$<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,
 		     SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
 	)
@@ -78,20 +79,20 @@ endif()
 ## OpenAL ##
 if(COG2D_USE_PKGCONFIG)
 	pkg_check_modules(OpenAL REQUIRED IMPORTED_TARGET openal)
-	target_link_libraries(cog2d PUBLIC PkgConfig::OpenAL)
+	target_link_libraries(cog2d INTERFACE PkgConfig::OpenAL)
 else()
 	find_package(OpenAL REQUIRED)
-	target_link_libraries(cog2d PUBLIC OpenAL::OpenAL)
+	target_link_libraries(cog2d INTERFACE OpenAL::OpenAL)
 endif()
 
 ## SDL2_ttf ##
 if(COG2D_USE_PKGCONFIG)
 	pkg_check_modules(SDL2_ttf REQUIRED IMPORTED_TARGET SDL2_ttf)
-	target_link_libraries(cog2d PUBLIC PkgConfig::SDL2_ttf)
+	target_link_libraries(cog2d INTERFACE PkgConfig::SDL2_ttf)
 else()
 	find_package(SDL2_ttf REQUIRED)
 	target_link_libraries(cog2d
-		PUBLIC
+		INTERFACE
 		$<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
 	)
 endif()
@@ -101,39 +102,39 @@ option(COG2D_USE_FMT "Use fmt formatting library for cog2d instead of std::forma
 if(COG2D_USE_FMT OR (COG2D_CXX_STANDARD LESS 20))
 	if(COG2D_USE_PKGCONFIG)
 		pkg_check_modules(fmt REQUIRED IMPORTED_TARGET fmt)
-		target_link_libraries(cog2d PUBLIC PkgConfig::fmt)
+		target_link_libraries(cog2d INTERFACE PkgConfig::fmt)
 	else()
 		find_package(fmt REQUIRED)
-		target_link_libraries(cog2d PUBLIC fmt::fmt)
+		target_link_libraries(cog2d INTERFACE fmt::fmt)
 	endif()
-	target_compile_definitions(cog2d PUBLIC COG2D_USE_FMT)
+	target_compile_definitions(cog2d INTERFACE COG2D_USE_FMT)
 endif()
 
 ## toml++ ##
 
 if(COG2D_USE_PKGCONFIG)
 	pkg_check_modules(tomlplusplus REQUIRED IMPORTED_TARGET tomlplusplus)
-	target_link_libraries(cog2d PUBLIC PkgConfig::tomlplusplus)
+	target_link_libraries(cog2d INTERFACE PkgConfig::tomlplusplus)
 else()
 	find_package(tomlplusplus REQUIRED)
-	target_link_libraries(cog2d PUBLIC tomlplusplus::tomlplusplus)
+	target_link_libraries(cog2d INTERFACE tomlplusplus::tomlplusplus)
 endif()
 
 ## external ##
 add_subdirectory(external/qoa)
-target_link_libraries(cog2d PUBLIC qoa)
+target_link_libraries(cog2d INTERFACE qoa)
 
 # Preprocessor definitions #
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	target_compile_definitions(cog2d PUBLIC COG2D_DEBUG)
+	target_compile_definitions(cog2d INTERFACE COG2D_DEBUG)
 endif()
 
 set(COG2D_ASSET_PATH "${CMAKE_SOURCE_DIR}" CACHE STRING "Where cog2d looks for assets.")
-target_compile_definitions(cog2d PUBLIC COG2D_ASSET_PATH="${COG2D_ASSET_PATH}")
+target_compile_definitions(cog2d INTERFACE COG2D_ASSET_PATH="${COG2D_ASSET_PATH}")
 
 option(COG2D_GRAPHICS_USE_INT "Disable SDL's subpixel rendering." NO)
 if(COG2D_GRAPHICS_USE_INT)
-	target_compile_definitions(cog2d PUBLIC COG2D_GRAPHICS_USE_INT)
+	target_compile_definitions(cog2d INTERFACE COG2D_GRAPHICS_USE_INT)
 endif()
 
 # Tests #
