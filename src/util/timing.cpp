@@ -8,7 +8,7 @@ namespace cog2d {
 
 float velocity_multiplier()
 {
-	return static_cast<float>(Program::get().m_delta_time.count()) / LOGICAL_DT.count();
+	return static_cast<float>(s_program.delta_time.count()) / LOGICAL_DT.count();
 	//return 1;
 }
 

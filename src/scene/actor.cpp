@@ -93,7 +93,7 @@ void Actor::gravity()
 {
 	namespace ch = std::chrono;
 
-	const ch::duration<float> dt_sec = Program::get().m_delta_time;
+	const ch::duration<float> dt_sec = s_program.delta_time;
 	vel().x += accel().x * dt_sec.count();
 	vel().y += (accel().y + grav()) * dt_sec.count();
 }

@@ -21,14 +21,14 @@ public:
 
 	/** returns the period of the timer or 0 if it isn't started */
 	inline Duration get_period() const { return m_period; }
-	inline Duration get_timeleft() const {
-		return m_period - (Program::get().m_prog_time - m_start);
-	}
-	inline Duration get_timegone() const { return Program::get().m_prog_time - m_start; }
-	inline float get_progress() const {
+	inline Duration get_timeleft() const { return m_period - (s_program.prog_time - m_start); }
+	inline Duration get_timegone() const { return s_program.prog_time - m_start; }
+	inline float get_progress() const
+	{
 		return static_cast<float>(get_timegone().count()) / get_period().count();
 	}
-	inline bool started() const {
+	inline bool started() const
+	{
 		return (m_period != Duration::zero() && get_timeleft() > Duration::zero());
 	}
 

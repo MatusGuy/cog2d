@@ -21,119 +21,11 @@
 #include "cog2d/audio/alsoft/alsoftaudioengine.hpp"
 
 namespace cog2d {
+Program s_program;
 
-Program::Program()
-    : m_keep_running(true),
-      m_paused(false),
-      m_settings(),
-      m_screen_stack()
-{
-}
+namespace program {
 
-int Program::run(int argc, char* argv[])
-{
-	Logger::s_current = new Logger;
-
-	// std::atexit(&Program::quit);
-	init_sdl();
-
-	//GraphicsEngine::s_current = new SDL2GraphicsEngine;
-	//InputManager::s_current = new InputManager;
-	//AudioEngine::s_current = new AlSoftAudioEngine;
-	//MusicPlayer::s_current = new MusicPlayer;
-	//AssetManager::s_current = new AssetManager;
-
-	graphics::init(m_settings);
-
-	audio::init(m_settings);
-	audio::music.init();
-	//MusicPlayer::get().init();
-
-	if (register_actions()) {
-		input::init(m_settings);
-	}
-
-	register_settings();
-	if (m_settings.systems & System::SYSTEM_CONFIG) {
-		File file(std::filesystem::path(SDL_GetPrefPath(m_settings.org_name.data(),
-		                                                m_settings.app_name.data())) /
-		          "config.toml");
-		file.open(File::OPENMODE_READ);
-		toml::table config = toml::parse(file);
-		file.close();
-		load_config(config);
-	}
-
-	// Run this after all essential systems
-	// have been initialized.
-	init();
-
-	TimePoint now = Clock::now();
-
-	Timer timer;
-	timer.start(100ms);
-
-	while (m_keep_running) {
-		m_prog_time = Clock::now();
-
-		poll_sdl_events();
-
-		if (timer.check() && false) {
-			if (m_delta_time != Duration::zero())
-				COG2D_LOG_DEBUG(fmt::format("FPS: {}, DT: {}, vel: {}", 1s / m_delta_time,
-				                            m_delta_time, velocity_multiplier()));
-			timer.start(100ms);
-		}
-
-		update_fonts_gc();
-		//MusicPlayer::get().update();
-
-		std::unique_ptr<Screen>& screen = m_screen_stack.top();
-		screen->update();
-
-		graphics::pre_draw();
-		screen->draw();
-		graphics::post_draw();
-
-		now = Clock::now();
-		m_delta_time = now - m_prog_time;
-	}
-
-	quit();
-
-	return 0;
-}
-
-void Program::quit()
-{
-	graphics::deinit();
-
-	if (m_settings.systems & System::SYSTEM_CONFIG) {
-		File file(std::filesystem::path(SDL_GetPrefPath(m_settings.org_name.data(),
-		                                                m_settings.app_name.data())) /
-		          "config.toml");
-		file.open(File::OPENMODE_WRITE);
-		toml::table config;
-		save_config(config);
-		*file.stl_stream() << config;
-		file.close();
-	}
-
-	audio::deinit();
-
-	TTF_Quit();
-	SDL_Quit();
-}
-
-void Program::push_screen(std::unique_ptr<Screen> screen)
-{
-	Screen* screenptr = screen.get();
-	m_screen_stack.push(std::move(screen));
-
-	screenptr->init();
-}
-
-void Program::init_sdl()
+void init_sdl()
 {
 	int errcode = SDL_Init(SDL_INIT_EVENTS | SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
 	if (errcode != 0) {
@@ -150,20 +42,20 @@ void Program::init_sdl()
 	}
 }
 
-void Program::poll_sdl_events()
+void poll_sdl_events()
 {
 	SDL_Event ev;
 	while (SDL_PollEvent(&ev)) {
 		if (ev.type == SDL_QUIT) {
-			m_keep_running = false;
+			s_program.keep_running = false;
 			break;
 		}
 
-		if (!event(&ev)) {
+		if (!ext::event(&ev)) {
 			continue;
 		}
 
-		if (!m_screen_stack.top()->event(&ev)) {
+		if (!s_program.screen_stack.top()->event(&ev)) {
 			continue;
 		}
 
@@ -171,7 +63,7 @@ void Program::poll_sdl_events()
 	}
 }
 
-void Program::update_fonts_gc()
+void update_fonts_gc()
 {
 	// TODO: ttf fonts
 	const AssetRefs<PixmapFont>& pfonts = cog2d::assets::pixmapfonts.get_assets();
@@ -182,4 +74,104 @@ void Program::update_fonts_gc()
 	}
 }
 
+int run(int argc, char* argv[])
+{
+	Logger::s_current = new Logger;
+
+	ext::program_settings(s_program.settings);
+
+	// std::atexit(&Program::quit);
+	init_sdl();
+
+	graphics::init(s_program.settings);
+
+	audio::init(s_program.settings);
+	audio::music.init();
+
+	ext::register_actions();
+	if (s_program.settings.systems & System::SYSTEM_INPUT) {
+		input::init(s_program.settings);
+	}
+
+	ext::register_config();
+	if (s_program.settings.systems & System::SYSTEM_CONFIG) {
+		File file(std::filesystem::path(SDL_GetPrefPath(s_program.settings.org_name.data(),
+		                                                s_program.settings.app_name.data())) /
+		          "config.toml");
+		file.open(File::OPENMODE_READ);
+		toml::table config = toml::parse(file);
+		file.close();
+		ext::load_config(config);
+	}
+
+	// Run this after all essential systems
+	// have been initialized.
+	ext::init();
+
+	TimePoint now = Clock::now();
+
+	Timer timer;
+	timer.start(100ms);
+
+	while (s_program.keep_running) {
+		s_program.prog_time = Clock::now();
+
+		poll_sdl_events();
+
+		if (timer.check() && false) {
+			if (s_program.delta_time != Duration::zero())
+				COG2D_LOG_DEBUG(fmt::format("FPS: {}, DT: {}, vel: {}", 1s / s_program.delta_time,
+				                            s_program.delta_time, velocity_multiplier()));
+			timer.start(100ms);
+		}
+
+		update_fonts_gc();
+		//MusicPlayer::get().update();
+
+		std::unique_ptr<Screen>& screen = s_program.screen_stack.top();
+		screen->update();
+
+		graphics::pre_draw();
+		screen->draw();
+		graphics::post_draw();
+
+		now = Clock::now();
+		s_program.delta_time = now - s_program.prog_time;
+	}
+
+	quit();
+
+	return 0;
+}
+
+void quit()
+{
+	graphics::deinit();
+
+	if (s_program.settings.systems & System::SYSTEM_CONFIG) {
+		File file(std::filesystem::path(SDL_GetPrefPath(s_program.settings.org_name.data(),
+		                                                s_program.settings.app_name.data())) /
+		          "config.toml");
+		file.open(File::OPENMODE_WRITE);
+		toml::table config;
+		ext::save_config(config);
+		*file.stl_stream() << config;
+		file.close();
+	}
+
+	audio::deinit();
+
+	TTF_Quit();
+	SDL_Quit();
+}
+
+void push_screen(std::unique_ptr<Screen> screen)
+{
+	Screen* screenptr = screen.get();
+	s_program.screen_stack.push(std::move(screen));
+
+	screenptr->init();
+}
+
+}  //namespace program
 }  //namespace cog2d

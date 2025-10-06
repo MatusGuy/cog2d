@@ -14,36 +14,32 @@ FontCache::FontCache(Font& font)
 
 Texture* FontCache::get(const std::string& text)
 {
-	COG2D_USE_PROGRAM;
-
 	auto it = m_strings.find(text);
 	if (it != m_strings.end()) {
 		CacheEntry& entry = it->second;
-		entry.last_use = program.m_prog_time;
+		entry.last_use = s_program.prog_time;
 		return entry.texture.get();
 	} else {
 		std::unique_ptr<Texture> texture = m_font.create_text(text);
 		Texture* ptr = texture.get();
 		m_strings.insert(std::make_pair<std::string, CacheEntry>(std::string(text),
 		                                                         CacheEntry{std::move(texture),
-		                                                                    program.m_prog_time}));
+		                                                                    s_program.prog_time}));
 		return ptr;
 	}
 }
 
 bool FontCache::update_gc()
 {
-	COG2D_USE_PROGRAM;
-
 	static TimePoint last_cleanup;
 	if (last_cleanup == TimePoint(Duration::zero()))
-		last_cleanup = program.m_prog_time;
+		last_cleanup = s_program.prog_time;
 
 	// Make GC more aggressive when there are more strings (can happen with constant string updates)
 	Duration GC_TIME((1 + 15 / static_cast<int>(((m_strings.size()) / 32.f) + 1)) * 1000);
 	Duration GC_INTERVAL = GC_TIME;
 	bool did_cleanup = false;
-	TimePoint curr = program.m_prog_time;
+	TimePoint curr = s_program.prog_time;
 
 	if (last_cleanup >= curr - GC_INTERVAL) {
 		return false;

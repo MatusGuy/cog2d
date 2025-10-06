@@ -17,21 +17,19 @@
 
 namespace cog2d {
 
-#define COG2D_MAIN(prgclass)         \
-	int main(int argc, char* argv[]) \
-	{                                \
-		prgclass prg;                \
-		prgclass::s_current = &prg;  \
-		return prg.run(argc, argv);  \
+#define COG2D_MAIN                                \
+	int main(int argc, char* argv[])              \
+    {                                             \
+	    return ::cog2d::program::run(argc, argv); \
 	}
 
 enum System : std::uint8_t
 {
-	SYSTEM_VIDEO = 0x1,
-	SYSTEM_INPUT = 0x2,
-	SYSTEM_ASSET = 0x4,
-	SYSTEM_SOUND = 0x8,
-	SYSTEM_CONFIG = 0x16,
+	SYSTEM_VIDEO = 1 << 0,
+	SYSTEM_INPUT = 1 << 1,
+	SYSTEM_ASSET = 1 << 2,
+	SYSTEM_SOUND = 1 << 3,
+	SYSTEM_CONFIG = 1 << 4,
 
 	SYSTEM_EVERYTHING = 0xFF
 };
@@ -66,55 +64,44 @@ struct ProgramSettings
 	std::uint8_t systems = System::SYSTEM_EVERYTHING;
 };
 
-#define COG2D_USE_PROGRAM COG2D_USING(Program, program)
-class Program : public Currenton<Program>
+struct Program
 {
-public:
-	ProgramSettings m_settings;
+	ProgramSettings settings;
 
-	TimePoint m_prog_time;
-	Duration m_delta_time;
-
-public:
-	Program();
-
-	int run(int argc, char* argv[]);
-
-	void quit();
-
-	void push_screen(std::unique_ptr<Screen> screen);
-	void pop_screen();
-
-	template<class T, class = BaseOf<T, Screen>>
-	inline T& get_screen_as()
-	{
-		return *static_cast<T*>(m_screen_stack.top().get());
-	}
-
-	virtual void init() = 0;
-	virtual bool event(SDL_Event* ev) = 0;
-
-	virtual void load_config(const toml::table& table) {}
-	virtual void save_config(toml::table& table) {}
-
-	// Return false if you won't be using the InputManager.
-	virtual bool register_actions() { return false; }
-
-	// Return false if you won't be using the Config system.
-	virtual bool register_settings() { return false; }
-
-protected:
-	bool m_keep_running;
-	bool m_paused;  // FIXME: Remove me!
-
-private:
-	std::stack<std::unique_ptr<Screen>> m_screen_stack;
-
-private:
-	void init_sdl();
-	void poll_sdl_events();
-
-	void update_fonts_gc();
+	TimePoint prog_time;
+	Duration delta_time;
+	std::stack<std::unique_ptr<Screen>> screen_stack;
+	bool keep_running = true;
 };
 
+extern Program s_program;
+namespace program {
+int run(int argc, char* argv[]);
+
+void quit();
+
+void push_screen(std::unique_ptr<Screen> screen);
+void pop_screen();
+
+template<class T>
+inline T& get_screen_as()
+{
+	return *static_cast<T*>(s_program.screen_stack.top().get());
+}
+
+namespace ext {
+void program_settings(ProgramSettings& settings);
+void init();
+bool event(SDL_Event* ev);
+
+void load_config(const toml::table& table);
+void save_config(toml::table& table);
+
+// Return false if you won't be using the InputManager.
+void register_actions();
+
+// Return false if you won't be using the Config system.
+void register_config();
+}  //namespace ext
+}  //namespace program
 }  //namespace cog2d
