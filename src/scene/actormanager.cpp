@@ -80,7 +80,7 @@ void ActorManager::draw()
 void ActorManager::notify_activity(Actor* actor)
 {
 	if (actor->m_manager != this) {
-		COG2D_LOG_WARN("ActorManager", "Attempted to perform operation on foreign actor.");
+		log::warn("ActorManager", "Attempted to perform operation on foreign actor.");
 		return;
 	}
 

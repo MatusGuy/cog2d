@@ -28,7 +28,7 @@ Texture* Texture::create(const Vector_t<int>& size)
 	case Backend::GRAPHICS_SDL: {
 		Texture* tex = new SDL2Texture(size);
 		if (!tex->construct()) {
-			COG2D_LOG_FATAL("SDL2Texture",
+			log::fatal("SDL2Texture",
 			                fmt::format("Failed to create texture with size {}", tex->size()));
 			return nullptr;
 		}

@@ -20,7 +20,7 @@ void BinTileMapParser::parse(IoDevice& device, TileMap& result)
 	header[3] = '\0';
 
 	if (std::strcmp(header, "C2M\0")) {
-		COG2D_LOG_ERROR("BinTileMapParser", fmt::format("Unrecognized header: \"{}\"", header));
+		log::error("BinTileMapParser", fmt::format("Unrecognized header: \"{}\"", header));
 		return;
 	}
 
@@ -66,7 +66,7 @@ void BinTileMapParser::parse(IoDevice& device, TileMap& result)
 		device.read(name);
 		*/
 
-		//COG2D_LOG_DEBUG(fmt::format("{:x}", device.tell()));
+		//log::debug(fmt::format("{:x}", device.tell()));
 		if (type == 0) {
 			auto layer = std::make_unique<TileLayer>();
 			layer->m_map = &result;
@@ -125,7 +125,7 @@ void BinTileMapParser::parse_object_group(IoDevice& device)
 	ActorFactory* factory = m_actormanager.factory();
 
 	if (!factory) {
-		COG2D_LOG_WARN("BinTileMapParser", "The ActorManager has no factory.");
+		log::warn("BinTileMapParser", "The ActorManager has no factory.");
 		return;
 	}
 

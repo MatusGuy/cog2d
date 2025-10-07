@@ -72,7 +72,7 @@ Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
 	Texture* texture = Texture::from_pixmap(device);
 
 	if (!texture) {
-		COG2D_LOG_ERROR("PixmapCollection",
+		log::error("PixmapCollection",
 		                fmt::format("Could not load pixmap \"{}\": {}", name, SDL_GetError()));
 		return {};
 	}

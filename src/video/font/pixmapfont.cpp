@@ -32,7 +32,7 @@ void PixmapFont::load_texture(IoDevice& device)
 
 	if (!surface.to_sdl()) {
 		// FIXME: This is not where this message goes. It goes outside of this function.
-		COG2D_LOG_ERROR("BitmapFont", "Couldn't open BitmapFont.");
+		log::error("BitmapFont", "Couldn't open BitmapFont.");
 		return;
 	}
 
@@ -59,7 +59,7 @@ void PixmapFont::load_texture(IoDevice& device)
 	}
 
 	if (m_glyph_height == -1) {
-		COG2D_LOG_ERROR("BitmapFont", "Couldn't determine glyph height.");
+		log::error("BitmapFont", "Couldn't determine glyph height.");
 		return;
 	}
 

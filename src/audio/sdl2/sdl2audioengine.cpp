@@ -122,7 +122,7 @@ void refresh_source(MixerSource* source)
 void feed_buffer_callback(void* userdata, std::uint8_t* stream, int len)
 {
 	void** buffers = new void*[s_engine.sources.size()];
-	//COG2D_LOG_DEBUG(fmt::format("{}", engine->s_engine.sources.size()));
+	//log::debug(fmt::format("{}", engine->s_engine.sources.size()));
 	for (std::size_t i = 0; i < s_engine.sources.size(); ++i) {
 		void*& buf = buffers[i];
 		buf = static_cast<void*>(new std::uint8_t[len]);

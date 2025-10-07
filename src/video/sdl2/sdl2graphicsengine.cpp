@@ -26,10 +26,10 @@ void init(ProgramSettings& settings)
 
 	int init = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
 	if (init != 0) {
-		COG2D_LOG_FATAL("SDL2GraphicsEngine",
-		                fmt::format("SDL2 failed to initialize video & events with "
-		                            "errcode {} and reason: '{}'",
-		                            init, SDL_GetError()));
+		log::fatal("SDL2GraphicsEngine",
+		           fmt::format("SDL2 failed to initialize video & events with "
+		                       "errcode {} and reason: '{}'",
+		                       init, SDL_GetError()));
 		return;
 	}
 
@@ -37,17 +37,17 @@ void init(ProgramSettings& settings)
 	                                   SDL_WINDOWPOS_CENTERED, settings.wwidth, settings.wheight,
 	                                   settings.window_flags);
 	if (!s_engine.window) {
-		COG2D_LOG_FATAL("SDL2GraphicsEngine", fmt::format("SDL2 failed to create window with "
-		                                                  "reason: '{}'",
-		                                                  SDL_GetError()));
+		log::fatal("SDL2GraphicsEngine", fmt::format("SDL2 failed to create window with "
+		                                             "reason: '{}'",
+		                                             SDL_GetError()));
 		return;
 	}
 
 	s_engine.renderer = SDL_CreateRenderer(s_engine.window, -1, settings.render_flags);
 	if (!s_engine.renderer) {
-		COG2D_LOG_FATAL("SDL2GraphicsEngine", fmt::format("SDL2 failed to create renderer with "
-		                                                  "reason: '{}'",
-		                                                  SDL_GetError()));
+		log::fatal("SDL2GraphicsEngine", fmt::format("SDL2 failed to create renderer with "
+		                                             "reason: '{}'",
+		                                             SDL_GetError()));
 		return;
 	}
 

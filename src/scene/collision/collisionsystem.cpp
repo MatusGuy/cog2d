@@ -28,16 +28,16 @@ void CollisionSystem::update()
 			Vector_t<int> tilepos = tiles.pos;
 			const Vector_t<std::uint16_t> tilesz = m_tilelayer->m_map->m_tile_sz;
 			CollideInfo<Vector::type> collideinfo;
-			//COG2D_LOG_DEBUG(fmt::format("{}", tiles));
+			//log::debug(fmt::format("{}", tiles));
 			for (; tilepos.x < tiles.get_right(); ++tilepos.x) {
 				for (; tilepos.y < tiles.get_bottom(); ++tilepos.y) {
 					Rect tilerect(tilepos * static_cast<Vector>(tilesz),
 					              static_cast<Vector>(tilesz));
 
-					//COG2D_LOG_DEBUG(fmt::format("{}", a->classidx()));
-					//COG2D_LOG_DEBUG(fmt::format("{}, {}", tilepos,
+					//log::debug(fmt::format("{}", a->classidx()));
+					//log::debug(fmt::format("{}, {}", tilepos,
 					//                            m_tilelayer->get_tile_id(tilepos)));
-					//COG2D_LOG_DEBUG(fmt::format("{}, {}", tilepos, tilerect));
+					//log::debug(fmt::format("{}, {}", tilepos, tilerect));
 
 					CollideInfo<Vector::type>
 					    collideinfo2 = rect_tile(a, m_tilelayer->get_tile_id(tilepos), tilerect);

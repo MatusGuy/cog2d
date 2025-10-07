@@ -65,7 +65,6 @@ target_sources(cog2d INTERFACE
 	src/scene/tilemap/tilescene.cpp
 	src/scene/tilemap/tileset.cpp
 	src/scene/viewport.cpp
-	src/util/logger.cpp
 	src/util/timer.cpp
 	src/util/timing.cpp
 	src/video/font/font.cpp

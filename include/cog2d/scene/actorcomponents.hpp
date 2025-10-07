@@ -12,7 +12,7 @@
 		constexpr auto msg =                                 \
 		    "Actor has no component of type {}. "            \
 		    "It is depended on by component of type {}.";    \
-		COG2D_LOG_ERROR(fmt::format(msg, comp::type, type)); \
+		log::error(fmt::format(msg, comp::type, type)); \
 	}
 
 namespace cog2d {

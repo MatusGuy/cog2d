@@ -31,14 +31,14 @@ void init_sdl()
 	if (errcode != 0) {
 		std::stringstream stream;
 		stream << SDL_GetError() << " (" << errcode << ")";
-		COG2D_LOG_FATAL("SDL", stream.str());
+		log::fatal("SDL", stream.str());
 	}
 
 	errcode = TTF_Init();
 	if (errcode != 0) {
 		std::stringstream stream;
 		stream << SDL_GetError() << " (" << errcode << ")";
-		COG2D_LOG_FATAL("SDL_ttf", stream.str());
+		log::fatal("SDL_ttf", stream.str());
 	}
 }
 
@@ -76,8 +76,6 @@ void update_fonts_gc()
 
 int run(int argc, char* argv[])
 {
-	Logger::s_current = new Logger;
-
 	ext::program_settings(s_program.settings);
 
 	// std::atexit(&Program::quit);
@@ -120,8 +118,8 @@ int run(int argc, char* argv[])
 
 		if (timer.check() && false) {
 			if (s_program.delta_time != Duration::zero())
-				COG2D_LOG_DEBUG(fmt::format("FPS: {}, DT: {}, vel: {}", 1s / s_program.delta_time,
-				                            s_program.delta_time, velocity_multiplier()));
+				log::debug(fmt::format("FPS: {}, DT: {}, vel: {}", 1s / s_program.delta_time,
+				                       s_program.delta_time, velocity_multiplier()));
 			timer.start(100ms);
 		}
 
