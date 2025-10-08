@@ -72,8 +72,8 @@ target_sources(cog2d INTERFACE
 	src/video/font/pixmapfont.cpp
 	src/video/font/tomlpixmapfontparser.cpp
 	src/video/graphicsengine.cpp
+	src/video/sdl2graphicsengine.cpp
 	src/video/sdl2/font/sdl2ttffont.cpp
-	src/video/sdl2/sdl2graphicsengine.cpp
 	src/video/sdl2/sdl2texture.cpp
 	src/video/surface.cpp
 	src/video/texture.cpp
@@ -132,8 +132,8 @@ target_sources(cog2d INTERFACE
 	include/cog2d/video/font/pixmapfont.hpp
 	include/cog2d/video/font/tomlpixmapfontparser.hpp
 	include/cog2d/video/graphicsengine.hpp
+	include/cog2d/video/sdl2graphicsengine.hpp
 	include/cog2d/video/sdl2/font/sdl2ttffont.hpp
-	include/cog2d/video/sdl2/sdl2graphicsengine.hpp
 	include/cog2d/video/sdl2/sdl2texture.hpp
 	include/cog2d/video/surface.hpp
 	include/cog2d/video/texture.hpp)
@@ -237,6 +237,9 @@ option(COG2D_GRAPHICS_USE_INT "Disable SDL's subpixel rendering." NO)
 if(COG2D_GRAPHICS_USE_INT)
 	target_compile_definitions(cog2d INTERFACE COG2D_GRAPHICS_USE_INT)
 endif()
+
+set(COG2D_GRAPHICS_BACKEND SDL2 CACHE STRING "Backend to use for graphics")
+target_compile_definitions(cog2d INTERFACE COG2D_GRAPHICS_BACKEND_${COG2D_GRAPHICS_BACKEND})
 
 # Tests #
 

@@ -12,15 +12,16 @@ namespace cog2d {
 class IoDevice;
 class Surface;
 
+/*
 class SDL2Texture : public Texture
 {
 public:
 	SDL2Texture(SDL_Texture* tex)
-	    : Texture(static_cast<void*>(tex))
+		: Texture(static_cast<void*>(tex))
 	{
 	}
 	SDL2Texture(const Vector_t<int> size)
-	    : Texture(size)
+		: Texture(size)
 	{
 	}
 	~SDL2Texture();
@@ -32,5 +33,6 @@ public:
 protected:
 	bool construct() override;
 };
+*/
 
 }  //namespace cog2d

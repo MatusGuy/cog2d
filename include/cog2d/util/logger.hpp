@@ -7,20 +7,19 @@
 
 #include "cog2d/util/fmt.hpp"
 
-namespace cog2d {
-
 #define COG2D_LOGGING_LEVEL(_name, _func, _colorcode, _stream)                                     \
 	inline void _func(const std::string& msg)                                                      \
     {                                                                                              \
 	    std::fprintf(_stream, "[" _colorcode #_name "\033[0m] %s\n", msg.data());                  \
 	    std::fflush(_stream);                                                                      \
-    }                                                                                              \
+	}                                                                                              \
 	inline void _func(const std::string& cat, const std::string& msg)                              \
     {                                                                                              \
 	    std::fprintf(_stream, "[" _colorcode #_name "\033[0m] [%s] %s\n", cat.data(), msg.data()); \
 	    std::fflush(_stream);                                                                      \
-    }
+	}
 
+namespace cog2d {
 namespace log {
 
 inline void debug(const std::string& msg)

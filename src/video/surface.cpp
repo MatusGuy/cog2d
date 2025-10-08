@@ -14,13 +14,11 @@ Surface Surface::from_pixmap(IoDevice& iodevice)
 	if (!iodevice.is_open())
 		iodevice.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
 
-	switch (graphics::pixmap_backend) {
-	case Backend::PIXMAP_SDL_IMAGE: {
-		return Surface(IMG_Load_RW(iodevice.to_sdl(), true));
-	}
-	default:
-		return Surface(nullptr);
-	}
+#ifdef COG2D_GRAPHICS_BACKEND_SDL2
+	return Surface(IMG_Load_RW(iodevice.to_sdl(), true));
+#else
+	return Surface(nullptr);
+#endif
 }
 
 }  //namespace cog2d

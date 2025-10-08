@@ -5,6 +5,8 @@
 
 #include "cog2d/util/math/vector.hpp"
 
+struct SDL_Texture;
+
 namespace cog2d {
 
 class IoDevice;
@@ -13,7 +15,11 @@ class Surface;
 class Texture
 {
 public:
-	void* m_data;
+#ifdef COG2D_GRAPHICS_BACKEND_SDL2
+	using Data = SDL_Texture*;
+#endif
+public:
+	Data m_data;
 	Vector_t<int> m_size;
 
 public:
@@ -22,10 +28,10 @@ public:
 	static Texture* from_pixmap(IoDevice& device);
 
 public:
-	Texture(void* tex);
-	virtual ~Texture() {}
+	Texture(Data tex);
+	~Texture();
 
-	inline void* data() { return m_data; }
+	inline Data data() { return m_data; }
 
 	inline Vector_t<int> size()
 	{
@@ -35,11 +41,11 @@ public:
 		return m_size;
 	}
 
-	virtual Vector_t<int> query_size() = 0;
+	Vector_t<int> query_size();
 
 protected:
 	Texture(const Vector_t<int>& size);
-	virtual bool construct() = 0;
+	bool construct();
 };
 
 }  //namespace cog2d

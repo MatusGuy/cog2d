@@ -9,7 +9,7 @@
 #include "cog2d/util/logger.hpp"
 #include "cog2d/video/sdl2/sdl2texture.hpp"
 
-namespace cog2d::graphics::sdl {
+namespace cog2d::graphics {
 
 static struct
 {
@@ -94,7 +94,7 @@ void deinit()
 
 void pre_draw()
 {
-	SDL_SetRenderDrawColor(get_renderer(), 0x0, 0x0, 0x0, 0x0);
+	SDL_SetRenderDrawColor(sdl2::get_renderer(), 0x0, 0x0, 0x0, 0x0);
 
 	if (s_engine.proxy)
 		SDL_SetRenderTarget(s_engine.renderer, s_engine.proxy);
@@ -215,7 +215,7 @@ void draw_point(Vector point, Color color)
 void draw_texture(Texture* tex, Rect_t<int> src, Rect dest, Color color, Flip flip, float angle,
                   Vector center)
 {
-	SDL_SetRenderDrawColor(get_renderer(), color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawColor(sdl2::get_renderer(), color.r, color.g, color.b, color.a);
 
 #ifdef COG2D_GRAPHICS_USE_INT
 	SDL_Point scenter = center.to_sdl_point();
@@ -227,8 +227,8 @@ void draw_texture(Texture* tex, Rect_t<int> src, Rect dest, Color color, Flip fl
 
 	SDL_Rect ssrc = src.to_sdl_rect();
 	SDL_Rect sdest = dest.to_sdl_rect();
-	SDL_RenderCopyEx(s_engine.renderer, static_cast<SDL2Texture*>(tex)->to_sdl(), &ssrc, &sdest,
-	                 static_cast<float>(angle), &scenter, static_cast<SDL_RendererFlip>(flip));
+	SDL_RenderCopyEx(s_engine.renderer, tex->data(), &ssrc, &sdest, static_cast<float>(angle),
+	                 &scenter, static_cast<SDL_RendererFlip>(flip));
 #else
 	SDL_FPoint scenter = center.to_sdl_fpoint();
 	if (scenter.x < 0) {
@@ -241,8 +241,8 @@ void draw_texture(Texture* tex, Rect_t<int> src, Rect dest, Color color, Flip fl
 
 	SDL_Rect ssrc = src.to_sdl_rect();
 	SDL_FRect sdest = dest.to_sdl_frect();
-	SDL_RenderCopyExF(s_engine.renderer, static_cast<SDL2Texture*>(tex)->to_sdl(), &ssrc, &sdest,
-	                  static_cast<float>(angle), &scenter, flip);
+	SDL_RenderCopyExF(s_engine.renderer, tex->data(), &ssrc, &sdest, static_cast<float>(angle),
+	                  &scenter, flip);
 #endif
 }
 
@@ -256,27 +256,15 @@ Color get_current_color()
 void push_target(Texture* tex)
 {
 	s_engine.target_stack.push(tex);
-	SDL_SetRenderTarget(get_renderer(), s_engine.target_stack.empty()
-	                                        ? nullptr
-	                                        : static_cast<SDL2Texture*>(get_target())->to_sdl());
+	SDL_SetRenderTarget(sdl2::get_renderer(),
+	                    s_engine.target_stack.empty() ? nullptr : get_target()->data());
 }
 
 void pop_target()
 {
 	s_engine.target_stack.pop();
-	SDL_SetRenderTarget(get_renderer(), s_engine.target_stack.empty()
-	                                        ? nullptr
-	                                        : static_cast<SDL2Texture*>(get_target())->to_sdl());
-}
-
-SDL_Window* get_window()
-{
-	return s_engine.window;
-}
-
-SDL_Renderer* get_renderer()
-{
-	return s_engine.renderer;
+	SDL_SetRenderTarget(sdl2::get_renderer(),
+	                    s_engine.target_stack.empty() ? nullptr : get_target()->data());
 }
 
 Vector_t<int> get_logical_size()
@@ -291,4 +279,17 @@ Texture* get_target()
 	return s_engine.target_stack.top();
 }
 
-}  //namespace cog2d::graphics::sdl
+namespace sdl2 {
+
+SDL_Window* get_window()
+{
+	return s_engine.window;
+}
+
+SDL_Renderer* get_renderer()
+{
+	return s_engine.renderer;
+}
+
+}  //namespace sdl2
+}  //namespace cog2d::graphics

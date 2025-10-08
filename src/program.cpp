@@ -16,7 +16,6 @@
 #include "cog2d/audio/musicplayer.hpp"
 #include "cog2d/assets/assetmanager.hpp"
 #include "cog2d/video/font/pixmapfont.hpp"
-#include "cog2d/video/sdl2/sdl2graphicsengine.hpp"
 #include "cog2d/audio/sdl2/sdl2audioengine.hpp"
 #include "cog2d/audio/alsoft/alsoftaudioengine.hpp"
 
