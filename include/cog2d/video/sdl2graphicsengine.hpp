@@ -11,7 +11,7 @@
 
 #include "cog2d/video/graphicsengine.hpp"
 
-#include "cog2d/video/sdl2/sdl2texture.hpp"
+#include "cog2d/video/texture.hpp"
 
 namespace cog2d::graphics {
 namespace sdl2 {

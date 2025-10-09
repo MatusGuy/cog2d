@@ -7,7 +7,6 @@
 
 #include "cog2d/program.hpp"
 #include "cog2d/util/logger.hpp"
-#include "cog2d/video/sdl2/sdl2texture.hpp"
 
 namespace cog2d::graphics {
 

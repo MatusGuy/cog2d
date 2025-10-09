@@ -3,11 +3,11 @@
 #include "fontcache.hpp"
 
 #include "cog2d/program.hpp"
-#include "cog2d/video/font/font.hpp"
+#include "cog2d/video/font/ttffont.hpp"
 
 namespace cog2d {
 
-FontCache::FontCache(Font& font)
+FontCache::FontCache(TtfFont& font)
     : m_font(font)
 {
 }
@@ -20,12 +20,11 @@ Texture* FontCache::get(const std::string& text)
 		entry.last_use = s_program.prog_time;
 		return entry.texture.get();
 	} else {
-		std::unique_ptr<Texture> texture = m_font.create_text(text);
-		Texture* ptr = texture.get();
+		Texture* texture = m_font.create_text(text);
 		m_strings.insert(std::make_pair<std::string, CacheEntry>(std::string(text),
 		                                                         CacheEntry{std::move(texture),
 		                                                                    s_program.prog_time}));
-		return ptr;
+		return texture;
 	}
 }
 

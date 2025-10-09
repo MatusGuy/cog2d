@@ -11,23 +11,29 @@
 
 namespace cog2d {
 
-class Font;
+class TtfFont;
 
 class FontCache
 {
 public:
 	struct CacheEntry
 	{
+		CacheEntry(Texture* tex, TimePoint time)
+		    : texture{tex},
+		      last_use(time)
+		{
+		}
+
 		std::unique_ptr<Texture> texture;
 		TimePoint last_use;
 	};
 
 public:
-	Font& m_font;
+	TtfFont& m_font;
 	std::unordered_map<std::string, CacheEntry> m_strings;
 
 public:
-	FontCache(Font& font);
+	FontCache(TtfFont& font);
 
 	Texture* get(const std::string& text);
 	bool update_gc();

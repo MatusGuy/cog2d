@@ -121,13 +121,13 @@ void PixmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 	graphics::pop_target();
 }
 
-std::unique_ptr<Texture> PixmapFont::create_text(std::string_view text)
+Texture* PixmapFont::create_text(std::string_view text)
 {
 	int width = get_text_width(text);
 
-	auto texture = std::unique_ptr<Texture>(Texture::create({width, m_glyph_height}));
-	write_text(texture.get(), text);
-	return std::move(texture);
+	Texture* texture = Texture::create({width, m_glyph_height});
+	write_text(texture, text);
+	return texture;
 }
 
 Color PixmapFont::get_pixel(Surface& surface, Vector_t<int> pos)

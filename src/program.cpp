@@ -65,12 +65,14 @@ void poll_sdl_events()
 void update_fonts_gc()
 {
 	// TODO: ttf fonts
+	/*
 	const AssetRefs<PixmapFont>& pfonts = cog2d::assets::pixmapfonts.get_assets();
 	for (auto it = pfonts.begin(); it != pfonts.end(); ++it) {
 		AssetRef<PixmapFont> pfont = it->second;
 		std::shared_ptr<PixmapFont> pfont_ptr = pfont.lock();
 		pfont_ptr->m_cache.update_gc();
 	}
+	*/
 }
 
 int run(int argc, char* argv[])

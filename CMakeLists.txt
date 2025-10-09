@@ -67,14 +67,13 @@ target_sources(cog2d INTERFACE
 	src/scene/viewport.cpp
 	src/util/timer.cpp
 	src/util/timing.cpp
-	src/video/font/font.cpp
+	src/video/font/sdl2ttffont.cpp
 	src/video/font/fontcache.cpp
 	src/video/font/pixmapfont.cpp
 	src/video/font/tomlpixmapfontparser.cpp
 	src/video/graphicsengine.cpp
 	src/video/sdl2graphicsengine.cpp
-	src/video/sdl2/font/sdl2ttffont.cpp
-	src/video/sdl2/sdl2texture.cpp
+	src/video/font/sdl2ttffont.cpp
 	src/video/surface.cpp
 	src/video/texture.cpp
 
@@ -127,14 +126,12 @@ target_sources(cog2d INTERFACE
 	include/cog2d/util/timing.hpp
 	include/cog2d/util/typetraits.hpp
 	include/cog2d/video/color.hpp
-	include/cog2d/video/font/font.hpp
+	include/cog2d/video/font/ttffont.hpp
 	include/cog2d/video/font/fontcache.hpp
 	include/cog2d/video/font/pixmapfont.hpp
 	include/cog2d/video/font/tomlpixmapfontparser.hpp
 	include/cog2d/video/graphicsengine.hpp
 	include/cog2d/video/sdl2graphicsengine.hpp
-	include/cog2d/video/sdl2/font/sdl2ttffont.hpp
-	include/cog2d/video/sdl2/sdl2texture.hpp
 	include/cog2d/video/surface.hpp
 	include/cog2d/video/texture.hpp)
 
