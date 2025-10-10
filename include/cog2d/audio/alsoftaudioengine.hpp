@@ -13,14 +13,5 @@ namespace alsoft {
 ALenum AudioFormat_to_al(AudioFormat format, std::uint8_t channels);
 AudioFormat AudioFormat_from_al(ALenum value);
 
-void init(ProgramSettings& settings);
-void deinit();
-
-void add_sound(SoundEffect& sound);
-void remove_sound(SoundEffect& sound);
-void play_sound(SoundEffect& sound);
-
-void refresh_music();
-
 }  //namespace alsoft
 }  //namespace cog2d::audio

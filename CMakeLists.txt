@@ -37,11 +37,10 @@ add_library(cog2d INTERFACE)
 target_sources(cog2d INTERFACE
 	src/assets/assetcollection.cpp
 	src/assets/assetmanager.cpp
-	src/audio/alsoft/alsoftaudioengine.cpp
+	src/audio/alsoftaudioengine.cpp
 	src/audio/audioengine.cpp
 	src/audio/musicplayer.cpp
 	src/audio/musictrack.cpp
-	src/audio/sdl2/sdl2audioengine.cpp
 	src/audio/soundeffect.cpp
 	src/audio/tomlmusictrackparser.cpp
 	src/filesystem/assetfile.cpp
@@ -80,11 +79,10 @@ target_sources(cog2d INTERFACE
 	include/cog2d/assets/asset.hpp
 	include/cog2d/assets/assetcollection.hpp
 	include/cog2d/assets/assetmanager.hpp
-	include/cog2d/audio/alsoft/alsoftaudioengine.hpp
+	include/cog2d/audio/alsoftaudioengine.hpp
 	include/cog2d/audio/audioengine.hpp
 	include/cog2d/audio/musicplayer.hpp
 	include/cog2d/audio/musictrack.hpp
-	include/cog2d/audio/sdl2/sdl2audioengine.hpp
 	include/cog2d/audio/soundeffect.hpp
 	include/cog2d/audio/tomlmusictrackparser.hpp
 	include/cog2d/filesystem/assetfile.hpp
@@ -237,6 +235,9 @@ endif()
 
 set(COG2D_GRAPHICS_BACKEND SDL2 CACHE STRING "Backend to use for graphics")
 target_compile_definitions(cog2d INTERFACE COG2D_GRAPHICS_BACKEND_${COG2D_GRAPHICS_BACKEND})
+
+set(COG2D_AUDIO_BACKEND ALSOFT CACHE STRING "Backend to use for graphics")
+target_compile_definitions(cog2d INTERFACE COG2D_AUDIO_BACKEND_${COG2D_GRAPHICS_BACKEND})
 
 # Tests #
 

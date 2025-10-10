@@ -16,8 +16,7 @@
 #include "cog2d/audio/musicplayer.hpp"
 #include "cog2d/assets/assetmanager.hpp"
 #include "cog2d/video/font/pixmapfont.hpp"
-#include "cog2d/audio/sdl2/sdl2audioengine.hpp"
-#include "cog2d/audio/alsoft/alsoftaudioengine.hpp"
+#include "cog2d/audio/audioengine.hpp"
 
 namespace cog2d {
 Program s_program;

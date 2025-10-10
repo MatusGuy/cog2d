@@ -57,27 +57,8 @@ struct AudioSpec
 	}
 };
 
-class MixerSource
-{
-public:
-	virtual ~MixerSource() {}
-
-	virtual bool buffer(void* buf, std::size_t samples) = 0;
-
-	inline const AudioSpec& spec() { return m_spec; }
-
-	inline void* userdata() { return m_userdata; }
-	inline void set_userdata(void* data) { m_userdata = data; }
-
-public:
-	AudioSpec m_spec;
-	std::uint16_t m_id;
-	void* m_userdata = nullptr;
-};
-
 namespace audio {
 
-extern Backend::AudioEngine type;
 extern MusicPlayer music;
 
 void init(ProgramSettings& settings);

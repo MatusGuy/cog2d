@@ -4,8 +4,9 @@
 #include "cog2d/audio/musictrack.hpp"
 #include "cog2d/audio/soundeffect.hpp"
 
-namespace cog2d::audio::alsoft {
+namespace cog2d::audio {
 
+namespace alsoft {
 ALenum AudioFormat_to_al(AudioFormat format, std::uint8_t channels)
 {
 	switch (channels) {
@@ -50,6 +51,7 @@ AudioFormat AudioFormat_from_al(ALenum value)
 		return AUDIOFORMAT_S16_LE;
 	}
 }
+}  //namespace alsoft
 
 struct AlSoftSource
 {
@@ -115,8 +117,8 @@ void add_sound(SoundEffect& sound)
 	alSource3f(src.source, AL_VELOCITY, 0, 0, 0);
 	alSourcei(src.source, AL_LOOPING, AL_FALSE);
 
-	alBufferData(src.buffer, AudioFormat_to_al(sound.spec.format, sound.spec.channels), sound.data,
-	             sound.size, sound.spec.samplerate);
+	alBufferData(src.buffer, alsoft::AudioFormat_to_al(sound.spec.format, sound.spec.channels),
+	             sound.data, sound.size, sound.spec.samplerate);
 
 	alSourcei(src.source, AL_BUFFER, src.buffer);
 	alSourceStop(src.source);
@@ -157,7 +159,7 @@ void refresh_music()
 
 	AudioSpec& spec = music.track()->m_spec;
 	alBufferCallbackSOFT(s_engine.music_source.buffer,
-	                     AudioFormat_to_al(spec.format, spec.channels), spec.samplerate,
+	                     alsoft::AudioFormat_to_al(spec.format, spec.channels), spec.samplerate,
 	                     &music_buffer_callback, nullptr);
 
 	alSourcei(s_engine.music_source.source, AL_BUFFER, s_engine.music_source.buffer);
@@ -172,4 +174,4 @@ void play_sound(SoundEffect& sound)
 	alSourcePlay(src.source);
 }
 
-}  //namespace cog2d::audio::alsoft
+}  //namespace cog2d::audio
