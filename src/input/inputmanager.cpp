@@ -44,17 +44,17 @@ void init(ProgramSettings& settings)
 	// multiplayer games like Spelunky or Idk smash bros. When the game starts, control bindings are
 	// correctly assigned to each player
 
-	//s_manager.kbd_player = 0;
+	s_manager.kbd_player = 0;
 
-	s_manager.joysticks[0] = SDL_JoystickOpen(0);
-	s_manager.joy_player[0] = 0;
+	//s_manager.joysticks[0] = SDL_JoystickOpen(0);
+	//s_manager.joy_player[0] = 0;
 
 	//s_manager.gamectrls[0] = SDL_GameControllerOpen(1);
 	//s_manager.gamectrl_player[0] = 0;
 
 	for (int i = 0; i < COG2D_NUM_ACTIONS; ++i) {
-		//s_manager.action_map[s_manager.kbd_player][s_manager.actions[i].scancode] = i;
-		get_joy_action(s_manager.joy_player[0], s_manager.actions[i].joybutton) = i;
+		s_manager.action_map[s_manager.kbd_player][s_manager.actions[i].scancode] = i;
+		//get_joy_action(s_manager.joy_player[0], s_manager.actions[i].joybutton) = i;
 		//s_manager.action_map[s_manager.kbd_player][s_manager.actions[i].gamectrlbutton] = i;
 	}
 }
