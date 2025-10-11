@@ -13,6 +13,7 @@ AssetFile::AssetFile(const std::filesystem::path& path)
 int AssetFile::open(OpenMode mode)
 {
 	std::filesystem::path assetpath = COG2D_ASSET_PATH;
+	assetpath.make_preferred();
 
 	m_path = std::filesystem::absolute(assetpath / m_path);
 	auto pathit = m_path.begin();

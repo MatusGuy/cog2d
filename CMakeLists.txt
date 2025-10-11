@@ -6,7 +6,25 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
 
+# Options #
+
+set(COG2D_ASSET_PATH "${CMAKE_SOURCE_DIR}" CACHE STRING "Where cog2d looks for assets.")
+set(COG2D_GRAPHICS_BACKEND SDL2 CACHE STRING "Backend to use for graphics")
+set(COG2D_AUDIO_BACKEND ALSOFT CACHE STRING "Backend to use for graphics")
+
+option(COG2D_TESTS "Add little programs that test cog2d." NO)
+option(COG2D_UTIL "Add little utilities for cog2d development." NO)
+option(COG2D_USE_FMT "Use fmt formatting library for cog2d instead of std::format" NO)
+option(COG2D_GRAPHICS_USE_INT "Disable SDL's subpixel rendering." NO)
+
 # Utilities #
+
+# For use in the dependant project
+# Adds all public cog2d CMake functions
+macro(cog2d_project_setup)
+	list(APPEND CMAKE_MODULE_PATH "${COG2D_SOURCE_DIR}/cmake/")
+	include(Cog2dGame)
+endmacro()
 
 function(mklink link target)
 	file(TO_NATIVE_PATH "${link}" nlink)
@@ -20,6 +38,24 @@ function(mklink link target)
 		file(CREATE_LINK "${ntarget}" "${nlink}" SYMBOLIC)
 	endif()
 endfunction()
+
+# Dependencies #
+
+find_package(PkgConfig REQUIRED)
+
+find_package(SDL2 REQUIRED)
+pkg_check_modules(SDL2_image REQUIRED IMPORTED_TARGET SDL2_image)
+pkg_check_modules(SDL2_ttf REQUIRED IMPORTED_TARGET SDL2_ttf)
+pkg_check_modules(OpenAL REQUIRED IMPORTED_TARGET openal)
+pkg_check_modules(tomlplusplus REQUIRED IMPORTED_TARGET tomlplusplus)
+
+add_subdirectory(external/qoa)
+
+## fmt ##
+if(COG2D_USE_FMT OR (COG2D_CXX_STANDARD LESS 20))
+	pkg_check_modules(fmt REQUIRED IMPORTED_TARGET fmt)
+	set(COG2D_USE_FMT YES)
+endif()
 
 # Sources #
 
@@ -146,108 +182,39 @@ file(GLOB_RECURSE _cog2d_includes LIST_DIRECTORIES true ${COG2D_INCLUDE_DIRECTOR
 list(FILTER _cog2d_includes EXCLUDE REGEX "[.][A-Za-z0-9]+$")
 target_include_directories(cog2d INTERFACE ${_cog2d_includes} ${COG2D_INCLUDE_DIRECTORY}/cog2d)
 
-# Dependencies #
-
-find_package(PkgConfig QUIET)
-option(COG2D_USE_PKGCONFIG "Use pkgconfig for finding dependencies" ${PKG_CONFIG_FOUND})
-
-## SDL2 ##
-find_package(SDL2 REQUIRED)
-target_link_libraries(cog2d
-	INTERFACE
-	$<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
-	$<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
+target_link_libraries(cog2d INTERFACE
+	SDL2::SDL2
+	PkgConfig::SDL2_image
+	PkgConfig::SDL2_ttf
+	PkgConfig::OpenAL
+	PkgConfig::tomlplusplus
+	qoa
 )
 
-## SDL2_image ##
-if(COG2D_USE_PKGCONFIG)
-	pkg_check_modules(SDL2_image REQUIRED IMPORTED_TARGET SDL2_image)
-	target_link_libraries(cog2d INTERFACE PkgConfig::SDL2_image)
-else()
-	find_package(SDL2_image REQUIRED)
-	target_link_libraries(cog2d
-		INTERFACE
-		$<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,
-		     SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
-	)
+if(COG2D_USE_FMT)
+	target_link_libraries(cog2d INTERFACE PkgConfig::fmt)
 endif()
-
-## OpenAL ##
-if(COG2D_USE_PKGCONFIG)
-	pkg_check_modules(OpenAL REQUIRED IMPORTED_TARGET openal)
-	target_link_libraries(cog2d INTERFACE PkgConfig::OpenAL)
-else()
-	find_package(OpenAL REQUIRED)
-	target_link_libraries(cog2d INTERFACE OpenAL::OpenAL)
-endif()
-
-## SDL2_ttf ##
-if(COG2D_USE_PKGCONFIG)
-	pkg_check_modules(SDL2_ttf REQUIRED IMPORTED_TARGET SDL2_ttf)
-	target_link_libraries(cog2d INTERFACE PkgConfig::SDL2_ttf)
-else()
-	find_package(SDL2_ttf REQUIRED)
-	target_link_libraries(cog2d
-		INTERFACE
-		$<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
-	)
-endif()
-
-## fmt ##
-option(COG2D_USE_FMT "Use fmt formatting library for cog2d instead of std::format" NO)
-if(COG2D_USE_FMT OR (COG2D_CXX_STANDARD LESS 20))
-	if(COG2D_USE_PKGCONFIG)
-		pkg_check_modules(fmt REQUIRED IMPORTED_TARGET fmt)
-		target_link_libraries(cog2d INTERFACE PkgConfig::fmt)
-	else()
-		find_package(fmt REQUIRED)
-		target_link_libraries(cog2d INTERFACE fmt::fmt)
-	endif()
-	target_compile_definitions(cog2d INTERFACE COG2D_USE_FMT)
-endif()
-
-## toml++ ##
-
-if(COG2D_USE_PKGCONFIG)
-	pkg_check_modules(tomlplusplus REQUIRED IMPORTED_TARGET tomlplusplus)
-	target_link_libraries(cog2d INTERFACE PkgConfig::tomlplusplus)
-else()
-	find_package(tomlplusplus REQUIRED)
-	target_link_libraries(cog2d INTERFACE tomlplusplus::tomlplusplus)
-endif()
-
-## external ##
-add_subdirectory(external/qoa)
-target_link_libraries(cog2d INTERFACE qoa)
 
 # Preprocessor definitions #
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	target_compile_definitions(cog2d INTERFACE COG2D_DEBUG)
 endif()
 
-set(COG2D_ASSET_PATH "${CMAKE_SOURCE_DIR}" CACHE STRING "Where cog2d looks for assets.")
 target_compile_definitions(cog2d INTERFACE COG2D_ASSET_PATH="${COG2D_ASSET_PATH}")
 
-option(COG2D_GRAPHICS_USE_INT "Disable SDL's subpixel rendering." NO)
 if(COG2D_GRAPHICS_USE_INT)
 	target_compile_definitions(cog2d INTERFACE COG2D_GRAPHICS_USE_INT)
 endif()
 
-set(COG2D_GRAPHICS_BACKEND SDL2 CACHE STRING "Backend to use for graphics")
 target_compile_definitions(cog2d INTERFACE COG2D_GRAPHICS_BACKEND_${COG2D_GRAPHICS_BACKEND})
-
-set(COG2D_AUDIO_BACKEND ALSOFT CACHE STRING "Backend to use for graphics")
 target_compile_definitions(cog2d INTERFACE COG2D_AUDIO_BACKEND_${COG2D_GRAPHICS_BACKEND})
 
-# Tests #
-
-option(COG2D_TESTS "Add little programs that test cog2d." NO)
+# Misc. #
 
 if(COG2D_TESTS)
 	add_subdirectory(tests)
 endif()
 
-option(COG2D_UTIL "Add little utilities for cog2d development." NO)
 if(COG2D_UTIL)
 	add_custom_target(tidy_files
 		COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${PROJECT_SOURCE_DIR}

@@ -14,6 +14,7 @@ File::File(const std::filesystem::path& path)
     : m_path(path),
       m_stream()
 {
+	m_path.make_preferred();
 	m_stream.exceptions(std::ios::badbit);
 }
 

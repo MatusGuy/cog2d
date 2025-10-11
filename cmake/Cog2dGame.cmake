@@ -9,4 +9,9 @@ function(cog2d_unity_group_sources _target)
 	set_source_files_properties(${_target_sources} PROPERTIES UNITY_GROUP "${_target}_sources")
 	get_target_property(_cog2d_sources cog2d INTERFACE_SOURCES)
 	set_source_files_properties(${_cog2d_sources} PROPERTIES UNITY_GROUP "cog2d_sources")
+
+	#get_target_property(_target_sources ${_target} SOURCES)
+	#get_target_property(_cog2d_sources cog2d INTERFACE_SOURCES)
+	#set_source_files_properties(${_cog2d_sources} ${_target_sources} PROPERTIES
+	#	UNITY_GROUP "sources")
 endfunction()
