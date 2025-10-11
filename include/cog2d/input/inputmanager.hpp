@@ -4,8 +4,6 @@
 #pragma once
 
 #include <string>
-#include <map>
-#include <functional>
 #include <cstdint>
 
 #include <SDL2/SDL.h>
@@ -28,13 +26,20 @@ enum MenuAction
 	MENU_COUNT
 };
 
+enum JoyHat : int {
+	HAT_UP = -1,
+	HAT_DOWN = -2,
+	HAT_LEFT = -3,
+	HAT_RIGHT = -4
+};
+
 struct InputAction
 {
 	ActionId id;
 	std::string display_name;
 
 	SDL_Scancode scancode;
-	std::uint32_t joybutton;
+	int joybutton;
 	SDL_GameControllerButton gamectrlbutton;
 };
 
@@ -43,6 +48,7 @@ namespace input {
 void register_action(InputAction&& action);
 
 void init(ProgramSettings& settings);
+void deinit();
 
 std::size_t controller_count();
 

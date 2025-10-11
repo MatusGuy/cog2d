@@ -144,6 +144,8 @@ int run(int argc, char* argv[])
 
 void quit()
 {
+	input::deinit();
+
 	graphics::deinit();
 
 	if (s_program.settings.systems & System::SYSTEM_CONFIG) {
