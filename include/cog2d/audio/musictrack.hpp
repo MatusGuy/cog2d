@@ -3,7 +3,6 @@
 #pragma once
 
 #include <memory>
-#include <SDL_mixer.h>
 #include <qoa.h>
 
 #include "cog2d/util/timing.hpp"

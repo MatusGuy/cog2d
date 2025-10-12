@@ -26,11 +26,22 @@ enum MenuAction
 	MENU_COUNT
 };
 
-enum JoyHat : int {
+enum JoyHat : int
+{
 	HAT_UP = -1,
 	HAT_DOWN = -2,
 	HAT_LEFT = -3,
-	HAT_RIGHT = -4
+	HAT_RIGHT = -4,
+
+	HAT_COUNT = 4
+};
+
+struct JoyAxisConverter
+{
+	ActionId negative = 0;
+	ActionId positive = 0;
+
+	inline bool is_valid() { return positive != negative; }
 };
 
 struct InputAction
@@ -38,14 +49,17 @@ struct InputAction
 	ActionId id;
 	std::string display_name;
 
-	SDL_Scancode scancode;
+	SDL_Scancode scancode = SDL_SCANCODE_UNKNOWN;
 	int joybutton;
 	SDL_GameControllerButton gamectrlbutton;
+
+	inline bool is_valid() { return scancode != SDL_SCANCODE_UNKNOWN; }
 };
 
 namespace input {
 
 void register_action(InputAction&& action);
+void register_joy_axis_converter(std::uint8_t axis, JoyAxisConverter converter);
 
 void init(ProgramSettings& settings);
 void deinit();
