@@ -3,8 +3,8 @@ project('cog2d', 'cpp', default_options: 'default_library=static')
 # Dependencies #
 
 sdl2_dep = dependency('sdl2')
-sdl2_image_dep = dependency('sdl2_image')
-sdl2_ttf_dep = dependency('sdl2_ttf')
+sdl2_image_dep = dependency(['sdl2_image', 'SDL2_image'])
+sdl2_ttf_dep = dependency(['sdl2_ttf', 'SDL2_ttf'])
 openal_dep = dependency('openal')
 fmt_dep = dependency('fmt')
 
