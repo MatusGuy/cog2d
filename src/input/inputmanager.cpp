@@ -54,16 +54,16 @@ void init(ProgramSettings& settings)
 
 	//s_manager.kbd_player = 0;
 
-	s_manager.joysticks[0] = SDL_JoystickOpen(0);
-	s_manager.joy_player[0] = 0;
+	//s_manager.joysticks[0] = SDL_JoystickOpen(0);
+	//s_manager.joy_player[0] = 0;
 
 	//s_manager.gamectrls[0] = SDL_GameControllerOpen(1);
 	//s_manager.gamectrl_player[0] = 0;
 
 	for (int i = 0; i < COG2D_NUM_ACTIONS; ++i) {
 		InputAction& action = s_manager.actions[i];
-		//s_manager.action_map[s_manager.kbd_player][s_manager.actions[i].scancode] = i;
-		get_joy_action(s_manager.joy_player[0], action.joybutton) = i;
+		s_manager.action_map[s_manager.kbd_player][s_manager.actions[i].scancode] = i;
+		//get_joy_action(s_manager.joy_player[0], action.joybutton) = i;
 		//s_manager.action_map[s_manager.kbd_player][s_manager.actions[i].gamectrlbutton] = i;
 	}
 }
