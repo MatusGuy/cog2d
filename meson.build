@@ -112,11 +112,11 @@ cog2d_sources = files(
 cog2d_include_dirs = include_directories('include', is_system: true)
 cog2d_deps = [sdl2_dep, sdl2_image_dep, sdl2_ttf_dep, openal_dep, fmt_dep]
 
-declare_dependency(
+cog2d_dep = declare_dependency(
 	compile_args: ['-fno-rtti'],
 	dependencies: cog2d_deps,
 	include_directories: cog2d_include_dirs,
 	sources: cog2d_sources,
 )
 
-
+meson.override_dependency('cog2d', cog2d_dep)
