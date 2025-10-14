@@ -13,13 +13,10 @@ namespace cog2d {
 class TileSet;
 class TileMap;
 
-template<class T>
-class Parser;
+class IoDevice;
 
 class TileLayer
 {
-	friend class Parser<TileLayer>;
-
 public:
 	enum Type : std::uint8_t
 	{
@@ -42,6 +39,8 @@ public:
 
 public:
 	TileLayer();
+
+	void parse(IoDevice& device);
 
 	void draw();
 

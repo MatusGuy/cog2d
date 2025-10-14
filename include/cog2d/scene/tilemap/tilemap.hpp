@@ -12,13 +12,10 @@
 
 namespace cog2d {
 
-template<class T>
-class Parser;
+class ActorManager;
 
 class TileMap
 {
-	friend class Parser<TileMap>;
-
 public:
 	struct TileSetRef
 	{
@@ -39,6 +36,8 @@ public:
 
 public:
 	TileMap();
+
+	void parse(IoDevice& device, ActorManager& actormanager);
 
 	void draw();
 

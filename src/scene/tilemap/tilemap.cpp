@@ -17,7 +17,6 @@
 
 #include "cog2d/util/logger.hpp"
 #include "cog2d/assets/assetmanager.hpp"
-#include "cog2d/scene/tilemap/bintilemapparser.hpp"
 
 namespace cog2d {
 

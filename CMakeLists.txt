@@ -93,7 +93,7 @@ target_sources(cog2d INTERFACE
 	src/scene/collision/collisionbody.cpp
 	src/scene/collision/collisionsystem.cpp
 	src/scene/scene.cpp
-	src/scene/tilemap/bintilemapparser.cpp
+	src/scene/tilemap/tilemapparser.cpp
 	src/scene/tilemap/cameratilelayeriterator.cpp
 	src/scene/tilemap/tilelayer.cpp
 	src/scene/tilemap/tilemap.cpp
@@ -138,7 +138,6 @@ target_sources(cog2d INTERFACE
 	include/cog2d/scene/collision/collisionbody.hpp
 	include/cog2d/scene/collision/collisionsystem.hpp
 	include/cog2d/scene/scene.hpp
-	include/cog2d/scene/tilemap/bintilemapparser.hpp
 	include/cog2d/scene/tilemap/cameratilelayeriterator.hpp
 	include/cog2d/scene/tilemap/tile.hpp
 	include/cog2d/scene/tilemap/tilelayer.hpp
