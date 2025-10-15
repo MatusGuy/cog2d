@@ -78,7 +78,6 @@ class TileSetCollection : public AssetCollection<TileSet>
 {
 public:
 	Asset<TileSet> load(std::string_view name, IoDevice& device) override;
-	Asset<TileSet> load(std::string_view name, toml::table& data);
 };
 
 class MusicTrackCollection : public AssetCollection<MusicTrack>

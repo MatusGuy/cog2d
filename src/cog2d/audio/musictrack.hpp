@@ -6,6 +6,7 @@
 #include <qoa.h>
 
 #include "cog2d/util/timing.hpp"
+#include "cog2d/util/parsing.hpp"
 #include "cog2d/filesystem/iodevice.hpp"
 #include "cog2d/audio/audioengine.hpp"
 
@@ -51,7 +52,7 @@ public:
 	MusicTrack();
 	~MusicTrack();
 
-	void load(std::unique_ptr<IoDevice> device);
+	void load(toml::table& data);
 
 	inline MusicTrackSection* section(std::size_t sec)
 	{
@@ -72,6 +73,9 @@ private:
 	};
 
 	std::size_t buffer_qoa(void* chunk, std::size_t chunk_size);
+
+	void load_source(std::unique_ptr<IoDevice> device);
+	void load_section(toml::table& data, MusicTrackSection& result, std::uint32_t samplerate);
 };
 
 }  //namespace cog2d

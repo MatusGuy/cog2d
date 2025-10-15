@@ -10,8 +10,6 @@
 
 #include "cog2d/video/graphicsengine.hpp"
 #include "cog2d/util/logger.hpp"
-#include "cog2d/video/font/tomlpixmapfontparser.hpp"
-#include "cog2d/audio/tomlmusictrackparser.hpp"
 
 namespace cog2d {
 
@@ -64,8 +62,6 @@ Asset<T>::~Asset()
 
 Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
 {
-	;
-
 	if (!device.is_open())
 		device.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
 
@@ -73,7 +69,7 @@ Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
 
 	if (!texture) {
 		log::error("PixmapCollection",
-		                fmt::format("Could not load pixmap \"{}\": {}", name, SDL_GetError()));
+		           fmt::format("Could not load pixmap \"{}\": {}", name, SDL_GetError()));
 		return {};
 	}
 
@@ -84,15 +80,15 @@ Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
 
 Asset<PixmapFont> PixmapFontCollection::load(std::string_view name, IoDevice& device)
 {
-	auto font = new PixmapFont;
-
 	if (!device.is_open())
 		device.open(IoDevice::OPENMODE_READ);
 
-	new_parse<TomlPixmapFontParser>(device, *font);
+	toml::table data = toml::parse(device);
 
 	device.close();
 
+	PixmapFont* font = new PixmapFont;
+	font->load(data);
 	return add(name, font);
 }
 
@@ -105,11 +101,6 @@ Asset<TileSet> TileSetCollection::load(std::string_view name, IoDevice& device)
 
 	device.close();
 
-	return load(name, data);
-}
-
-Asset<TileSet> TileSetCollection::load(std::string_view name, toml::table& data)
-{
 	TileSet* set = new TileSet;
 	set->load(data);
 	return add(name, set);
@@ -119,8 +110,9 @@ Asset<MusicTrack> MusicTrackCollection::load(std::string_view name, IoDevice& de
 {
 	MusicTrack* track = new MusicTrack;
 	device.open(IoDevice::OPENMODE_READ);
-	new_parse<TomlMusicTrackParser>(device, *track);
+	toml::table data = toml::parse(device);
 	device.close();
+	track->load(data);
 	return add(name, track);
 }
 

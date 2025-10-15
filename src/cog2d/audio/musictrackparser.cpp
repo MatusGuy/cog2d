@@ -1,6 +1,6 @@
 // Copyright (C) 2025 MatusGuy
 // SPDX-License-Identifier: LGPL-3.0-only
-#include "tomlmusictrackparser.hpp"
+#include "musictrack.hpp"
 
 #include <iostream>
 
@@ -9,30 +9,26 @@
 
 namespace cog2d {
 
-TomlMusicTrackParser::TomlMusicTrackParser()
-{
-}
-
-void TomlMusicTrackParser::parse_toml(toml::table& data, MusicTrack& result)
+void MusicTrack::load(toml::table& data)
 {
 	using namespace toml_util;
 
-	result.load(std::make_unique<AssetFile>(get_as<std::string>(data, "source")));
+	load_source(std::make_unique<AssetFile>(get_as<std::string>(data, "source")));
 
 	toml::array* sections = data.get_as<toml::array>("sections");
 	if (sections) {
 		toml::value<std::int64_t>* start_section = data.get_as<std::int64_t>("start_section");
-		result.m_metadata.start_section = start_section ? start_section->get() : 0;
+		m_metadata.start_section = start_section ? start_section->get() : 0;
 
 		for (toml::array::iterator it = sections->begin(); it != sections->end(); ++it) {
 			MusicTrackSection section;
-			parse_section(as_table(*it), section, result.m_spec.samplerate);
-			result.m_metadata.sections.push_back(section);
+			load_section(as_table(*it), section, m_spec.samplerate);
+			m_metadata.sections.push_back(section);
 		}
 	} else {
 		MusicTrackSection section;
-		parse_section(data, section, result.m_spec.samplerate);
-		result.m_metadata.sections.push_back(section);
+		load_section(data, section, m_spec.samplerate);
+		m_metadata.sections.push_back(section);
 	}
 }
 
@@ -52,8 +48,8 @@ std::uint32_t parse_time_point(toml::node* data, std::uint32_t samplerate,
 	}
 }
 
-void TomlMusicTrackParser::parse_section(toml::table& data, MusicTrackSection& result,
-                                         std::uint32_t samplerate)
+void MusicTrack::load_section(toml::table& data, MusicTrackSection& result,
+                              std::uint32_t samplerate)
 {
 	using namespace toml_util;
 

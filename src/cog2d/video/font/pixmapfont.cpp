@@ -140,11 +140,11 @@ Color PixmapFont::get_pixel(Surface& surface, Vector_t<int> pos)
 
 	switch (bpp) {
 	case 1:
-		return data = *p;
+		data = *p;
 		break;
 
 	case 2:
-		return data = *(uint16_t*) p;
+		data = *(uint16_t*) p;
 		break;
 
 	case 3:

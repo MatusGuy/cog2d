@@ -78,7 +78,7 @@ target_sources(cog2d INTERFACE
 	src/cog2d/audio/musicplayer.cpp
 	src/cog2d/audio/musictrack.cpp
 	src/cog2d/audio/soundeffect.cpp
-	src/cog2d/audio/tomlmusictrackparser.cpp
+	src/cog2d/audio/musictrackparser.cpp
 	src/cog2d/filesystem/assetfile.cpp
 	src/cog2d/filesystem/file.cpp
 	src/cog2d/filesystem/iodevice.cpp
@@ -105,7 +105,7 @@ target_sources(cog2d INTERFACE
 	src/cog2d/video/font/sdl2ttffont.cpp
 	src/cog2d/video/font/fontcache.cpp
 	src/cog2d/video/font/pixmapfont.cpp
-	src/cog2d/video/font/tomlpixmapfontparser.cpp
+	src/cog2d/video/font/pixmapfontparser.cpp
 	src/cog2d/video/graphicsengine.cpp
 	src/cog2d/video/sdl2graphicsengine.cpp
 	src/cog2d/video/font/sdl2ttffont.cpp
@@ -120,7 +120,6 @@ target_sources(cog2d INTERFACE
 	src/cog2d/audio/musicplayer.hpp
 	src/cog2d/audio/musictrack.hpp
 	src/cog2d/audio/soundeffect.hpp
-	src/cog2d/audio/tomlmusictrackparser.hpp
 	src/cog2d/filesystem/assetfile.hpp
 	src/cog2d/filesystem/file.hpp
 	src/cog2d/filesystem/iodevice.hpp
@@ -162,7 +161,6 @@ target_sources(cog2d INTERFACE
 	src/cog2d/video/font/ttffont.hpp
 	src/cog2d/video/font/fontcache.hpp
 	src/cog2d/video/font/pixmapfont.hpp
-	src/cog2d/video/font/tomlpixmapfontparser.hpp
 	src/cog2d/video/graphicsengine.hpp
 	src/cog2d/video/sdl2graphicsengine.hpp
 	src/cog2d/video/surface.hpp

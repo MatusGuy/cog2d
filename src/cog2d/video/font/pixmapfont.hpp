@@ -23,8 +23,7 @@ class PixmapFont
 public:
 	PixmapFont();
 
-	void load(IoDevice& device);
-	void load(toml::table& doc);
+	void load(toml::table& data);
 
 	int get_text_width(std::string_view text);
 	void write_text(Texture* texture, std::string_view text, const Vector& pos = {0, 0});

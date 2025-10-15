@@ -18,7 +18,6 @@ inline auto parse(cog2d::IoDevice& stream)
 }  //namespace toml
 
 namespace cog2d {
-
 namespace toml_util {
 
 template<class T>
@@ -73,53 +72,4 @@ inline toml::array& get_as_table(toml::node& node, std::string_view key)
 }
 
 }  //namespace toml_util
-
-// TODO: Custom exception for parsing error
-template<class T>
-class Parser
-{
-	friend T;
-
-public:
-	using ParserTarget = T;
-
-public:
-	/**
-	 * @brief parse
-	 * @throws parser exception
-	 * @param device
-	 * @param result
-	 */
-	// FIXME: virtual?? really??
-	virtual void parse(IoDevice& device, T& result) = 0;
-};
-
-template<class T>
-class TomlParser : public Parser<T>
-{
-public:
-	void parse(IoDevice& device, T& result) override
-	{
-		toml::table table = toml::parse(device);
-		parse_toml(table, result);
-	}
-
-	virtual void parse_toml(toml::table& data, T& result) = 0;
-};
-
-// these are some BAD function names
-template<class T, class = std::enable_if<is_instance_of_v<T, Parser>, T>, typename... Args>
-void new_parse(IoDevice& device, typename T::ParserTarget& result, Args&&... args)
-{
-	T parser(std::forward<Args>(args)...);
-	parser.parse(device, result);
-}
-
-template<class T, class = std::enable_if<is_instance_of_v<T, Parser>, T>>
-void new_parse(IoDevice& device, typename T::ParserTarget& result)
-{
-	T parser;
-	parser.parse(device, result);
-}
-
 }  //namespace cog2d
