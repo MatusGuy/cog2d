@@ -12,43 +12,18 @@ TileSet::TileSet()
 {
 }
 
-void TileSet::load(toml::table& data)
+void TileSet::load(TomlTable& data)
 {
-	if (data.contains("source")) {
-		// Sorry, but your tileset data is in another castle.
-		parse_external(data);
-		return;
-	}
+	data.at("tilewidth", m_tile_sz.x);
+	data.at("tileheight", m_tile_sz.y);
 
-	parse(data);
-}
+	data.at("columns", m_set_sz.x);
+	data.at("imageheight", m_set_sz.y);
+	m_set_sz.y /= m_tile_sz.y;
 
-void TileSet::parse(toml::table& data)
-{
-	using namespace toml_util;
-
-	m_tile_sz.x = get_as<std::int64_t>(data, "tilewidth");
-	m_tile_sz.y = get_as<std::int64_t>(data, "tileheight");
-
-	m_set_sz.x = get_as<std::int64_t>(data, "columns");
-	m_set_sz.y = get_as<std::int64_t>(data, "imageheight") / m_tile_sz.y;
-
-	std::filesystem::path path = get_as<std::string>(data, "image");
+	std::string path;
+	data.at("image", path);
 	m_texture = cog2d::assets::pixmaps.load_file(path);
-}
-
-void TileSet::parse_external(toml::table& data)
-{
-	//m_first_gid = *data["firstgid"].value<int>();
-
-	std::filesystem::path setpath = *data["source"].value<std::string>();
-	setpath.replace_extension("toml");
-
-	AssetFile setfile(setpath);
-	setfile.open(AssetFile::OPENMODE_READ);
-	toml::table table = toml::parse(setfile);
-	parse(table);
-	setfile.close();
 }
 
 }  //namespace cog2d

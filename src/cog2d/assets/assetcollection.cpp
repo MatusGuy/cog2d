@@ -80,39 +80,25 @@ Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
 
 Asset<PixmapFont> PixmapFontCollection::load(std::string_view name, IoDevice& device)
 {
-	if (!device.is_open())
-		device.open(IoDevice::OPENMODE_READ);
-
-	toml::table data = toml::parse(device);
-
-	device.close();
-
+	TomlResult data = toml_parse(device);
 	PixmapFont* font = new PixmapFont;
-	font->load(data);
+	font->load(data.tbl);
 	return add(name, font);
 }
 
 Asset<TileSet> TileSetCollection::load(std::string_view name, IoDevice& device)
 {
-	if (!device.is_open())
-		device.open(IoDevice::OPENMODE_READ);
-
-	toml::table data = toml::parse(device);
-
-	device.close();
-
+	TomlResult data = toml_parse(device);
 	TileSet* set = new TileSet;
-	set->load(data);
+	set->load(data.tbl);
 	return add(name, set);
 }
 
 Asset<MusicTrack> MusicTrackCollection::load(std::string_view name, IoDevice& device)
 {
+	TomlResult data = toml_parse(device);
 	MusicTrack* track = new MusicTrack;
-	device.open(IoDevice::OPENMODE_READ);
-	toml::table data = toml::parse(device);
-	device.close();
-	track->load(data);
+	track->load(data.tbl);
 	return add(name, track);
 }
 

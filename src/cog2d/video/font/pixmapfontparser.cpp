@@ -7,20 +7,22 @@
 
 namespace cog2d {
 
-void PixmapFont::load(toml::table& data)
+void PixmapFont::load(TomlTable& data)
 {
-	using namespace toml_util;
-
-	if (get_as<std::string>(data, "type") != "pixmapfont") {
+	std::string type;
+	data.at("type", type);
+	if (type != "pixmapfont") {
 		// error
 		return;
 	}
 
 	//auto version = get_as<std::int64_t>(data, "version");
 
-	set_horizontal_spacing(get_as<std::int64_t>(data, "horizontal_spacing"));
+	data.at("horizontal_spacing", horizontal_spacing());
 
-	AssetFile file(get_as<std::string>(data, "image"));
+	std::string image;
+	data.at("image", image);
+	AssetFile file(image);
 	file.open(AssetFile::OPENMODE_READ | AssetFile::OPENMODE_BINARY);
 	load_texture(file);
 	file.close();

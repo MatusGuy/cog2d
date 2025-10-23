@@ -3,26 +3,30 @@
 #include "musictrack.hpp"
 
 #include <iostream>
+#include <climits>
 
-#include <cog2d/filesystem/assetfile.hpp>
-#include <cog2d/audio/musictrack.hpp>
+#include "cog2d/filesystem/assetfile.hpp"
+#include "cog2d/audio/musictrack.hpp"
+#include "cog2d/util/toml.hpp"
 
 namespace cog2d {
 
-void MusicTrack::load(toml::table& data)
+void MusicTrack::load(TomlTable& data)
 {
-	using namespace toml_util;
+	std::string source;
+	data.at("source", source);
+	load_source(std::make_unique<AssetFile>(source));
 
-	load_source(std::make_unique<AssetFile>(get_as<std::string>(data, "source")));
+	TomlArray sections;
+	if (data.at("sections", sections) == 0) {
+		m_metadata.start_section = 0;
+		data.at("start_section", m_metadata.start_section);
 
-	toml::array* sections = data.get_as<toml::array>("sections");
-	if (sections) {
-		toml::value<std::int64_t>* start_section = data.get_as<std::int64_t>("start_section");
-		m_metadata.start_section = start_section ? start_section->get() : 0;
-
-		for (toml::array::iterator it = sections->begin(); it != sections->end(); ++it) {
+		for (int i = 0; i < sections.len(); ++i) {
 			MusicTrackSection section;
-			load_section(as_table(*it), section, m_spec.samplerate);
+			TomlTable table;
+			sections.at(i, table);
+			load_section(table, section, m_spec.samplerate);
 			m_metadata.sections.push_back(section);
 		}
 	} else {
@@ -32,34 +36,29 @@ void MusicTrack::load(toml::table& data)
 	}
 }
 
-std::uint32_t parse_time_point(toml::node* data, std::uint32_t samplerate,
+std::uint32_t parse_time_point(TomlTable& tbl, std::string_view key, std::uint32_t samplerate,
                                std::uint32_t default_value)
 {
-	if (!data)
-		return default_value;
+	double sec;
+	if (tbl.at(key, sec) == 0)
+		return sec * samplerate;
 
-	switch (data->type()) {
-	case toml::node_type::floating_point:
-		return data->as_floating_point()->get() * samplerate;
-	case toml::node_type::integer:
-		return data->as_integer()->get();
-	default:
-		return default_value;
-	}
+	std::uint32_t samples;
+	if (tbl.at(key, samples) == 0)
+		return samples;
+
+	return default_value;
 }
 
-void MusicTrack::load_section(toml::table& data, MusicTrackSection& result,
-                              std::uint32_t samplerate)
+void MusicTrack::load_section(TomlTable& data, MusicTrackSection& result, std::uint32_t samplerate)
 {
-	using namespace toml_util;
+	result.start = parse_time_point(data, "start", samplerate, 0);
+	result.loop_start = parse_time_point(data, "loop_start", samplerate, result.start);
+	result.end = parse_time_point(data, "end", samplerate, UINT_MAX);
 
-	result.start = parse_time_point(data.get("start"), samplerate, 0);
-	result.loop_start = parse_time_point(data.get("loop_start"), samplerate, result.start);
-	result.end = parse_time_point(data.get("end"), samplerate,
-	                              std::numeric_limits<std::uint32_t>::max());
-
-	toml::value<double>* val = data.get_as<double>("bpm");
-	result.bpm = val ? val->get() : 0.f;
+	double bpm;
+	data.at("bpm", bpm);
+	result.bpm = bpm;
 }
 
 }  //namespace cog2d

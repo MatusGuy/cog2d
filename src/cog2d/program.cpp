@@ -96,10 +96,8 @@ int run(int argc, char* argv[])
 		File file(std::filesystem::path(SDL_GetPrefPath(s_program.settings.org_name.data(),
 		                                                s_program.settings.app_name.data())) /
 		          "config.toml");
-		file.open(File::OPENMODE_READ);
-		toml::table config = toml::parse(file);
-		file.close();
-		ext::load_config(config);
+		TomlResult config = toml_parse(file);
+		ext::load_config(config.tbl);
 	}
 
 	// Run this after all essential systems
@@ -153,9 +151,10 @@ void quit()
 		                                                s_program.settings.app_name.data())) /
 		          "config.toml");
 		file.open(File::OPENMODE_WRITE);
-		toml::table config;
-		ext::save_config(config);
-		*file.stl_stream() << config;
+		// TODO: save config
+		//toml::table config;
+		//ext::save_config(config);
+		//*file.stl_stream() << config;
 		file.close();
 	}
 

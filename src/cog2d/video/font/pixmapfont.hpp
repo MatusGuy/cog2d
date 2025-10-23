@@ -9,7 +9,7 @@
 #include "cog2d/filesystem/iodevice.hpp"
 #include "cog2d/video/texture.hpp"
 #include "cog2d/video/color.hpp"
-#include "cog2d/util/parsing.hpp"
+#include "cog2d/util/toml.hpp"
 
 namespace cog2d {
 
@@ -23,14 +23,13 @@ class PixmapFont
 public:
 	PixmapFont();
 
-	void load(toml::table& data);
+	void load(TomlTable& data);
 
 	int get_text_width(std::string_view text);
 	void write_text(Texture* texture, std::string_view text, const Vector& pos = {0, 0});
 	Texture* create_text(std::string_view text);
 
-	inline void set_horizontal_spacing(int spacing) { m_horizontal_spacing = spacing; }
-	inline int get_horizontal_spacing() { return m_horizontal_spacing; }
+	inline int& horizontal_spacing() { return m_horizontal_spacing; }
 
 public:
 	std::unique_ptr<Texture> m_texture;

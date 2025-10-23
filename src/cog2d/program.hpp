@@ -9,7 +9,7 @@
 #include <chrono>
 
 #include "cog2d/input/inputmanager.hpp"
-#include "cog2d/util/parsing.hpp"
+#include "cog2d/util/toml.hpp"
 #include "cog2d/screen.hpp"
 #include "cog2d/util/typetraits.hpp"
 #include "cog2d/util/timing.hpp"
@@ -94,8 +94,8 @@ void program_settings(ProgramSettings& settings);
 void init();
 bool event(SDL_Event* ev);
 
-void load_config(const toml::table& table);
-void save_config(toml::table& table);
+void load_config(const TomlTable& table);
+void save_config(TomlTable& table);
 
 // Return false if you won't be using the InputManager.
 void register_actions();

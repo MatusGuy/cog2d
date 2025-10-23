@@ -47,9 +47,9 @@ find_package(SDL2 REQUIRED)
 pkg_check_modules(SDL2_image REQUIRED IMPORTED_TARGET SDL2_image)
 pkg_check_modules(SDL2_ttf REQUIRED IMPORTED_TARGET SDL2_ttf)
 pkg_check_modules(OpenAL REQUIRED IMPORTED_TARGET openal)
-pkg_check_modules(tomlplusplus REQUIRED IMPORTED_TARGET tomlplusplus)
 
 add_subdirectory(external/qoa)
+add_subdirectory(external/tomlc)
 
 ## fmt ##
 if(COG2D_USE_FMT OR (COG2D_CXX_STANDARD LESS 20))
@@ -102,6 +102,7 @@ target_sources(cog2d INTERFACE
 	src/cog2d/scene/viewport.cpp
 	src/cog2d/util/timer.cpp
 	src/cog2d/util/timing.cpp
+	src/cog2d/util/toml.cpp
 	src/cog2d/video/font/sdl2ttffont.cpp
 	src/cog2d/video/font/fontcache.cpp
 	src/cog2d/video/font/pixmapfont.cpp
@@ -153,7 +154,7 @@ target_sources(cog2d INTERFACE
 	src/cog2d/util/math/rect.hpp
 	src/cog2d/util/math/util.hpp
 	src/cog2d/util/math/vector.hpp
-	src/cog2d/util/parsing.hpp
+	src/cog2d/util/toml.hpp
 	src/cog2d/util/timer.hpp
 	src/cog2d/util/timing.hpp
 	src/cog2d/util/typetraits.hpp
@@ -177,8 +178,8 @@ target_link_libraries(cog2d INTERFACE
 	PkgConfig::SDL2_image
 	PkgConfig::SDL2_ttf
 	PkgConfig::OpenAL
-	PkgConfig::tomlplusplus
 	qoa
+	tomlc
 )
 
 if(COG2D_USE_FMT)

@@ -15,7 +15,7 @@
 #include "cog2d/audio/soundeffect.hpp"
 
 #include "cog2d/assets/asset.hpp"
-#include "cog2d/util/parsing.hpp"
+#include "cog2d/util/toml.hpp"
 
 namespace cog2d {
 

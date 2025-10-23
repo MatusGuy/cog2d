@@ -3,7 +3,9 @@
 
 #include "tilemap.hpp"
 
-#include "cog2d/util/parsing.hpp"
+#include <cstring>
+
+#include "cog2d/util/toml.hpp"
 #include "cog2d/util/logger.hpp"
 #include "cog2d/scene/actormanager.hpp"
 #include "cog2d/assets/assetmanager.hpp"
@@ -13,7 +15,7 @@ namespace cog2d {
 static void parse_object_group(IoDevice& device, ActorManager& actormanager);
 static bool parse_property(IoDevice& device, Actor& actor);
 
-void TileMap::parse(IoDevice& device, ActorManager& actormanager)
+void TileMap::load(IoDevice& device, ActorManager& actormanager)
 {
 	if (!device.is_open())
 		device.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);

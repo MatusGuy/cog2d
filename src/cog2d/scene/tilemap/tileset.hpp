@@ -7,7 +7,7 @@
 
 #include "cog2d/assets/asset.hpp"
 #include "cog2d/util/math/vector.hpp"
-#include "cog2d/util/parsing.hpp"
+#include "cog2d/util/toml.hpp"
 #include "cog2d/scene/tilemap/tile.hpp"
 
 namespace cog2d {
@@ -24,11 +24,7 @@ public:
 public:
 	TileSet();
 
-	void load(toml::table& data);
-
-private:
-	void parse(toml::table& data);
-	void parse_external(toml::table& data);
+	void load(TomlTable& data);
 };
 
 }  //namespace cog2d
