@@ -3,6 +3,8 @@
 
 #include "file.hpp"
 
+#include <SDL_rwops.h>
+
 #include "cog2d/util/logger.hpp"
 #include "cog2d/util/fmt.hpp"
 
@@ -85,8 +87,14 @@ std::size_t File::write(const void* ptr, std::size_t size, std::size_t num)
 
 int File::close()
 {
-	std::fclose(m_file);
-	return std::ferror(m_file);
+	if (!is_open())
+		return 0;
+
+	int err = std::fclose(m_file);
+	if (err == 0)
+		m_file = nullptr;
+
+	return err;
 }
 
 bool File::eof()
@@ -96,7 +104,7 @@ bool File::eof()
 
 SDL_RWops* File::to_sdl()
 {
-	return SDL_RWFromFP(m_file, false);
+	return SDL_RWFromFP(m_file, SDL_FALSE);
 }
 
 }  //namespace cog2d

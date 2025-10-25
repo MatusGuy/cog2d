@@ -7,6 +7,7 @@
 
 namespace cog2d {
 
+/*
 class AssetFile : public File
 {
 public:
@@ -14,5 +15,6 @@ public:
 
 	int open(OpenMode mode) override;
 };
+*/
 
 }

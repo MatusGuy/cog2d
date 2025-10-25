@@ -4,14 +4,12 @@
 #pragma once
 
 #include <cstdio>
+#include <cstdint>
 #include <string>
 
 struct SDL_RWops;
 
 namespace cog2d {
-
-#define COG2D_FILE_TEMPLATE(defaultfile) \
-	template<class F = defaultfile, class = std::enable_if_t<std::is_base_of_v<File, F>>>
 
 class File
 {
@@ -39,6 +37,26 @@ public:
 	std::size_t write(const void* ptr, std::size_t size, std::size_t num);
 	int close();
 	bool eof();
+
+	template<class T>
+	inline std::size_t read(T& ref, std::size_t maxnum = 1)
+	{
+		return read(static_cast<void*>(&ref), sizeof(T), maxnum);
+	}
+
+	template<class T>
+	inline std::size_t read(std::basic_string<T>& ref)
+	{
+		T c;
+		while (true) {
+			read(c);
+			if (c == 0)
+				break;
+			ref += c;
+		}
+
+		return ref.size() + 1;
+	}
 
 	SDL_RWops* to_sdl();
 };

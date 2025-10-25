@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <functional>
 
-#include "cog2d/filesystem/assetfile.hpp"
+#include "cog2d/filesystem/file.hpp"
 #include "cog2d/video/texture.hpp"
 #include "cog2d/video/font/pixmapfont.hpp"
 #include "cog2d/scene/tilemap/tileset.hpp"
@@ -34,16 +34,14 @@ public:
 	{
 	}
 
-	COG2D_FILE_TEMPLATE(AssetFile)
-	Asset<A> load_file(const std::filesystem::path& path, std::string_view name = "")
+	Asset<A> load_file(std::string_view path)
 	{
-		std::string assetname = name.empty() ? path.stem().string() : std::string{name};
-		auto it = m_assets.find(assetname);
+		auto it = m_assets.find(path.data());
 		if (it != m_assets.end())
 			return Asset<A>((*it).second.lock(), this);
 
-		F file(path);
-		return load(assetname, file);
+		File file = File::from_asset(path);
+		return load(path, file);
 	}
 
 	// FIXME: virtual?? really??

@@ -150,7 +150,7 @@ void quit()
 		File file(std::filesystem::path(SDL_GetPrefPath(s_program.settings.org_name.data(),
 		                                                s_program.settings.app_name.data())) /
 		          "config.toml");
-		file.open(File::OPENMODE_WRITE);
+		file.open("r");
 		// TODO: save config
 		//toml::table config;
 		//ext::save_config(config);

@@ -15,7 +15,8 @@ void MusicTrack::load(TomlTable& data)
 {
 	std::string source;
 	data.at("source", source);
-	load_source(std::make_unique<AssetFile>(source));
+	File file = File::from_asset(source);
+	load_source(std::make_unique<File>(std::move(file)));
 
 	TomlArray sections;
 	if (data.at("sections", sections) == 0) {

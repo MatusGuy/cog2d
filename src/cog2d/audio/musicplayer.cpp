@@ -5,6 +5,7 @@
 #include <thread>
 #include <cstring>
 #include <cassert>
+#include <cmath>
 
 #include <qoa.h>
 
