@@ -4,15 +4,15 @@
 
 #include <SDL2/SDL_image.h>
 
-#include "cog2d/filesystem/iodevice.hpp"
+#include "cog2d/filesystem/file.hpp"
 #include "cog2d/video/graphicsengine.hpp"
 
 namespace cog2d {
 
-Surface Surface::from_pixmap(IoDevice& iodevice)
+Surface Surface::from_pixmap(File& iodevice)
 {
 	if (!iodevice.is_open())
-		iodevice.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
+		iodevice.open("rb");
 
 #ifdef COG2D_GRAPHICS_BACKEND_SDL2
 	return Surface(IMG_Load_RW(iodevice.to_sdl(), true));

@@ -23,10 +23,10 @@ PixmapFont::PixmapFont()
 {
 }
 
-void PixmapFont::load_texture(IoDevice& device)
+void PixmapFont::load_texture(File& device)
 {
 	if (!device.is_open())
-		device.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
+		device.open("rb");
 
 	Surface surface = IMG_Load_RW(device.to_sdl(), 1);
 

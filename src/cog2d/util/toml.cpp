@@ -48,13 +48,11 @@ int TomlTable::at(std::string_view key, TomlTable& out)
 	return 0;
 }
 
-TomlResult toml_parse(IoDevice& device)
+TomlResult toml_parse(File& device)
 {
-	device.open(IoDevice::OPENMODE_READ);
+	device.open("r");
 
-	device.seek(0, IoDevice::SEEKPOS_END);
-	std::size_t size = device.tell();
-	device.seek(0, IoDevice::SEEKPOS_BEGIN);
+	std::size_t size = device.size();
 
 	char* toml = new char[size];
 	device.read(toml, sizeof(char), size);

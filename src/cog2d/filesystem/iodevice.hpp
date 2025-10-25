@@ -97,4 +97,4 @@ public:
 	virtual std::iostream* stl_stream() { return nullptr; }
 };
 
-}
+}  //namespace cog2d

@@ -78,10 +78,10 @@ SoundEffect::~SoundEffect()
 		SDL_FreeWAV(data);
 }
 
-void SoundEffect::load(IoDevice& device)
+void SoundEffect::load(File& device)
 {
 	if (!device.is_open())
-		device.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
+		device.open("rb");
 
 	SDL_AudioSpec wavspec;
 	SDL_LoadWAV_RW(device.to_sdl(), true, &wavspec, &data, &size);

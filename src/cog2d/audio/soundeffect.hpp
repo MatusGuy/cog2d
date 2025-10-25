@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 #pragma once
 
-#include "cog2d/filesystem/iodevice.hpp"
+#include "cog2d/filesystem/file.hpp"
 #include "cog2d/audio/audioengine.hpp"
 
 namespace cog2d {
@@ -19,7 +19,7 @@ public:
 	SoundEffect();
 	~SoundEffect();
 
-	void load(IoDevice& device);
+	void load(File& device);
 };
 
 }  //namespace cog2d

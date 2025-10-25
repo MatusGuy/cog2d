@@ -4,74 +4,99 @@
 #include "file.hpp"
 
 #include "cog2d/util/logger.hpp"
-
-#include <iostream>
-#include <ios>
+#include "cog2d/util/fmt.hpp"
 
 namespace cog2d {
 
-File::File(const std::filesystem::path& path)
-    : m_path(path),
-      m_stream()
+File File::from_asset(std::string_view path)
 {
-	m_path.make_preferred();
-	m_stream.exceptions(std::ios::badbit);
+	File file(fmt::format(COG2D_ASSET_PATH "/{}", path));
+	return file;
+	// TODO: Symlink detection logic
 }
 
-int File::open(OpenMode mode)
+File::File()
+    : m_path(),
+      m_file(nullptr)
 {
-	m_stream.open(m_path, static_cast<std::ios::openmode>(mode));
+}
 
-	return m_stream.good() ? 0 : -1;
+File::File(const std::string& path)
+    : m_path(path),
+      m_file(nullptr)
+{
+}
+
+File::~File()
+{
+	close();
+}
+
+int File::open(const char* mode)
+{
+	if (is_open()) {
+		seek(0, SEEK_SET);
+	}
+
+	m_file = std::fopen(m_path.c_str(), mode);
+	return std::ferror(m_file);
 }
 
 bool File::is_open()
 {
-	return m_stream.is_open();
+	return m_file != nullptr;
 }
 
 std::int64_t File::size()
 {
-	std::streampos original = tell();
+	std::int64_t original = tell();
 
-	seek(0, SEEKPOS_BEGIN);
-	m_stream.ignore(std::numeric_limits<std::streamsize>::max());
-	std::streamsize length = m_stream.gcount();
+	seek(0, SEEK_SET);
+	seek(0, SEEK_END);
+	std::int64_t length = tell();
 
-	m_stream.clear();
-	seek(original, SEEKPOS_BEGIN);
+	seek(original, SEEK_SET);
 
 	return length;
 }
 
 std::int64_t File::seek(std::int64_t offset, SeekPos seekpos)
 {
-	m_stream.seekg(static_cast<std::streamoff>(offset), static_cast<std::ios::seekdir>(seekpos));
-	//m_stream.clear();
+	std::fseek(m_file, offset, seekpos);
 	return tell();
 }
 
 std::int64_t File::tell()
 {
-	return m_stream.tellg();
+	return std::ftell(m_file);
 }
 
 std::size_t File::read(void* ptr, std::size_t size, std::size_t maxnum)
 {
-	m_stream.read(static_cast<char*>(ptr), size * maxnum);
-	return m_stream.gcount();
+	std::fread(static_cast<char*>(ptr), size, maxnum, m_file);
+	return std::ftell(m_file);
 }
 
 std::size_t File::write(const void* ptr, std::size_t size, std::size_t num)
 {
-	m_stream.write(static_cast<const char*>(ptr), size * num);
+	std::fwrite(static_cast<const char*>(ptr), size, num, m_file);
 	return num;
 }
 
 int File::close()
 {
-	m_stream.close();
-	return m_stream.good() ? 0 : -1;
+	std::fclose(m_file);
+	return std::ferror(m_file);
 }
 
+bool File::eof()
+{
+	return std::feof(m_file) != 0;
 }
+
+SDL_RWops* File::to_sdl()
+{
+	return SDL_RWFromFP(m_file, false);
+}
+
+}  //namespace cog2d

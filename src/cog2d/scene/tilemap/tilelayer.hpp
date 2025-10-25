@@ -13,7 +13,7 @@ namespace cog2d {
 class TileSet;
 class TileMap;
 
-class IoDevice;
+class File;
 
 class TileLayer
 {
@@ -40,7 +40,7 @@ public:
 public:
 	TileLayer();
 
-	void parse(IoDevice& device);
+	void parse(File& device);
 
 	void draw();
 

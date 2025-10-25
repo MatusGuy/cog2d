@@ -47,7 +47,7 @@ public:
 	}
 
 	// FIXME: virtual?? really??
-	virtual Asset<A> load(std::string_view name, IoDevice& device) = 0;
+	virtual Asset<A> load(std::string_view name, File& device) = 0;
 
 	Asset<A> add(std::string_view name, A* asset);
 	void try_remove_key(std::string_view name, bool check = true);
@@ -65,31 +65,31 @@ private:
 class PixmapCollection : public AssetCollection<Texture>
 {
 public:
-	Asset<Texture> load(std::string_view name, IoDevice& device) override;
+	Asset<Texture> load(std::string_view name, File& device) override;
 };
 
 class PixmapFontCollection : public AssetCollection<PixmapFont>
 {
 public:
-	Asset<PixmapFont> load(std::string_view name, IoDevice& device) override;
+	Asset<PixmapFont> load(std::string_view name, File& device) override;
 };
 
 class TileSetCollection : public AssetCollection<TileSet>
 {
 public:
-	Asset<TileSet> load(std::string_view name, IoDevice& device) override;
+	Asset<TileSet> load(std::string_view name, File& device) override;
 };
 
 class MusicTrackCollection : public AssetCollection<MusicTrack>
 {
 public:
-	Asset<MusicTrack> load(std::string_view name, IoDevice& device) override;
+	Asset<MusicTrack> load(std::string_view name, File& device) override;
 };
 
 class SoundEffectCollection : public AssetCollection<SoundEffect>
 {
 public:
-	Asset<SoundEffect> load(std::string_view name, IoDevice& device) override;
+	Asset<SoundEffect> load(std::string_view name, File& device) override;
 };
 
 }  //namespace cog2d

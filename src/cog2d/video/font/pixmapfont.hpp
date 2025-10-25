@@ -6,7 +6,7 @@
 #include <filesystem>
 #include <unordered_map>
 
-#include "cog2d/filesystem/iodevice.hpp"
+#include "cog2d/filesystem/file.hpp"
 #include "cog2d/video/texture.hpp"
 #include "cog2d/video/color.hpp"
 #include "cog2d/util/toml.hpp"
@@ -46,7 +46,7 @@ private:
 
 	int m_horizontal_spacing;
 
-	void load_texture(IoDevice& device);
+	void load_texture(File& device);
 
 private:
 	static Color get_pixel(Surface& surface, Vector_t<int> pos);

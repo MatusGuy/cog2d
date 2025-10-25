@@ -7,7 +7,7 @@
 
 #include "cog2d/util/timing.hpp"
 #include "cog2d/util/toml.hpp"
-#include "cog2d/filesystem/iodevice.hpp"
+#include "cog2d/filesystem/file.hpp"
 #include "cog2d/audio/audioengine.hpp"
 
 namespace cog2d {
@@ -45,7 +45,7 @@ public:
 	void* m_data;
 	MusicType m_type;
 	AudioSpec m_spec;
-	std::unique_ptr<IoDevice> m_device;
+	std::unique_ptr<File> m_device;
 	MusicTrackMetadata m_metadata;
 
 public:
@@ -74,7 +74,7 @@ private:
 
 	std::size_t buffer_qoa(void* chunk, std::size_t chunk_size);
 
-	void load_source(std::unique_ptr<IoDevice> device);
+	void load_source(std::unique_ptr<File> device);
 	void load_section(TomlTable& data, MusicTrackSection& result, std::uint32_t samplerate);
 };
 

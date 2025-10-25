@@ -7,7 +7,7 @@
 
 namespace cog2d {
 
-class IoDevice;
+class File;
 
 // TODO: should this really be dependent on sdl surface?? I mean it doesn't matter but......
 class Surface
@@ -28,7 +28,7 @@ public:
 
 	inline SDL_Surface* to_sdl() { return m_surface; }
 
-	static Surface from_pixmap(IoDevice& iodevice);
+	static Surface from_pixmap(File& iodevice);
 
 private:
 	SDL_Surface* m_surface;

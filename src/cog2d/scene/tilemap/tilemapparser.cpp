@@ -12,14 +12,14 @@
 
 namespace cog2d {
 
-static void parse_object_group(IoDevice& device, ActorManager& actormanager);
-static bool parse_property(IoDevice& device, Actor& actor);
+static void parse_object_group(File& device, ActorManager& actormanager);
+static bool parse_property(File& device, Actor& actor);
 
-void TileMap::load(IoDevice& device, ActorManager& actormanager)
+void TileMap::load(File& device, ActorManager& actormanager)
 {
 	if (!device.is_open())
-		device.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
-	device.seek(0, IoDevice::SEEKPOS_BEGIN);
+		device.open("rb");
+	device.seek(0, SEEK_SET);
 
 	char header[4];
 	device.read(header, sizeof(char), 3);
@@ -94,14 +94,14 @@ void TileMap::load(IoDevice& device, ActorManager& actormanager)
 			parse_object_group(device, actormanager);
 		} else {
 			// bye
-			device.seek(0, IoDevice::SEEKPOS_END);
+			device.seek(0, SEEK_END);
 		}
 	}
 
 	device.close();
 }
 
-void TileLayer::parse(IoDevice& device)
+void TileLayer::parse(File& device)
 {
 	device.read(m_type);
 	device.read(m_size);
@@ -128,7 +128,7 @@ void TileLayer::parse(IoDevice& device)
 	}
 }
 
-static void parse_object_group(IoDevice& device, ActorManager& actormanager)
+static void parse_object_group(File& device, ActorManager& actormanager)
 {
 	ActorFactory* factory = actormanager.factory();
 
@@ -143,7 +143,7 @@ static void parse_object_group(IoDevice& device, ActorManager& actormanager)
 		if (end == 0x0)
 			break;
 
-		device.seek(-1, IoDevice::SEEKPOS_CURSOR);
+		device.seek(-1, SEEK_CUR);
 
 		std::string classname;
 		device.read(classname);
@@ -161,7 +161,7 @@ static void parse_object_group(IoDevice& device, ActorManager& actormanager)
 	}
 }
 
-static bool parse_property(IoDevice& device, Actor& actor)
+static bool parse_property(File& device, Actor& actor)
 {
 	std::uint8_t idx;
 	device.read(idx);

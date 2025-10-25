@@ -22,8 +22,8 @@ void PixmapFont::load(TomlTable& data)
 
 	std::string image;
 	data.at("image", image);
-	AssetFile file(image);
-	file.open(AssetFile::OPENMODE_READ | AssetFile::OPENMODE_BINARY);
+	auto file = File::from_asset(image);
+	file.open("rb");
 	load_texture(file);
 	file.close();
 }

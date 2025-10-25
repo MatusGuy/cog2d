@@ -37,7 +37,7 @@ public:
 public:
 	TileMap();
 
-	void load(IoDevice& device, ActorManager& actormanager);
+	void load(File& device, ActorManager& actormanager);
 
 	void draw();
 

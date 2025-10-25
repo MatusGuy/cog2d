@@ -79,9 +79,9 @@ target_sources(cog2d INTERFACE
 	src/cog2d/audio/musictrack.cpp
 	src/cog2d/audio/soundeffect.cpp
 	src/cog2d/audio/musictrackparser.cpp
-	src/cog2d/filesystem/assetfile.cpp
+	#src/cog2d/filesystem/assetfile.cpp
 	src/cog2d/filesystem/file.cpp
-	src/cog2d/filesystem/iodevice.cpp
+	#src/cog2d/filesystem/iodevice.cpp
 	src/cog2d/input/inputmanager.cpp
 	src/cog2d/program.cpp
 	src/cog2d/scene/actor.cpp
@@ -121,9 +121,9 @@ target_sources(cog2d INTERFACE
 	src/cog2d/audio/musicplayer.hpp
 	src/cog2d/audio/musictrack.hpp
 	src/cog2d/audio/soundeffect.hpp
-	src/cog2d/filesystem/assetfile.hpp
+	#src/cog2d/filesystem/assetfile.hpp
 	src/cog2d/filesystem/file.hpp
-	src/cog2d/filesystem/iodevice.hpp
+	#src/cog2d/filesystem/iodevice.hpp
 	src/cog2d/input/inputmanager.hpp
 	src/cog2d/program.hpp
 	src/cog2d/scene/actor.hpp

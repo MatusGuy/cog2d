@@ -60,10 +60,10 @@ Asset<T>::~Asset()
 	this->reset();
 }
 
-Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
+Asset<Texture> PixmapCollection::load(std::string_view name, File& device)
 {
 	if (!device.is_open())
-		device.open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
+		device.open("rb");
 
 	Texture* texture = Texture::from_pixmap(device);
 
@@ -78,7 +78,7 @@ Asset<Texture> PixmapCollection::load(std::string_view name, IoDevice& device)
 	return add(name, texture);
 }
 
-Asset<PixmapFont> PixmapFontCollection::load(std::string_view name, IoDevice& device)
+Asset<PixmapFont> PixmapFontCollection::load(std::string_view name, File& device)
 {
 	TomlResult data = toml_parse(device);
 	PixmapFont* font = new PixmapFont;
@@ -86,7 +86,7 @@ Asset<PixmapFont> PixmapFontCollection::load(std::string_view name, IoDevice& de
 	return add(name, font);
 }
 
-Asset<TileSet> TileSetCollection::load(std::string_view name, IoDevice& device)
+Asset<TileSet> TileSetCollection::load(std::string_view name, File& device)
 {
 	TomlResult data = toml_parse(device);
 	TileSet* set = new TileSet;
@@ -94,7 +94,7 @@ Asset<TileSet> TileSetCollection::load(std::string_view name, IoDevice& device)
 	return add(name, set);
 }
 
-Asset<MusicTrack> MusicTrackCollection::load(std::string_view name, IoDevice& device)
+Asset<MusicTrack> MusicTrackCollection::load(std::string_view name, File& device)
 {
 	TomlResult data = toml_parse(device);
 	MusicTrack* track = new MusicTrack;
@@ -102,7 +102,7 @@ Asset<MusicTrack> MusicTrackCollection::load(std::string_view name, IoDevice& de
 	return add(name, track);
 }
 
-Asset<SoundEffect> SoundEffectCollection::load(std::string_view name, IoDevice& device)
+Asset<SoundEffect> SoundEffectCollection::load(std::string_view name, File& device)
 {
 	SoundEffect* sound = new SoundEffect;
 	sound->load(device);

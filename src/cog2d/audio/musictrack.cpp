@@ -5,7 +5,7 @@
 #include <cstring>
 #include <thread>
 
-#include "cog2d/filesystem/iodevice.hpp"
+#include "cog2d/filesystem/file.hpp"
 #include "cog2d/util/logger.hpp"
 
 #include <qoa.h>
@@ -33,13 +33,12 @@ MusicTrack::~MusicTrack()
 	}
 }
 
-void MusicTrack::load_source(std::unique_ptr<IoDevice> device)
+void MusicTrack::load_source(std::unique_ptr<File> device)
 {
 	m_device = std::move(device);
-	m_device->open(IoDevice::OPENMODE_READ | IoDevice::OPENMODE_BINARY);
+	m_device->open("rb");
 
-	std::size_t filesz = m_device->seek(0, IoDevice::SEEKPOS_END);
-	m_device->seek(0, IoDevice::SEEKPOS_BEGIN);
+	std::size_t filesz = m_device->size();
 
 	MusicQoaData* data = new MusicQoaData;
 	m_data = static_cast<void*>(data);
@@ -50,7 +49,7 @@ void MusicTrack::load_source(std::unique_ptr<IoDevice> device)
 	m_spec.channels = data->desc.channels;
 	m_spec.samplerate = data->desc.samplerate;
 	m_spec.format = AUDIOFORMAT_S16_LE;
-	m_device->seek(-8, IoDevice::SEEKPOS_CURSOR);
+	m_device->seek(-8, SEEK_CUR);
 
 	//data->qoa_size = qoa_max_frame_size(&data->desc) * std::ceil(data->desc.samples / (256 * 20));
 	data->qoa_size = filesz - 8;
