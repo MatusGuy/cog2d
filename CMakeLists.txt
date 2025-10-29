@@ -107,6 +107,7 @@ target_sources(cog2d INTERFACE
 	src/cog2d/input/inputmanager.hpp
 	src/cog2d/program.hpp
 	src/cog2d/ecs/entity.hpp
+	src/cog2d/ecs/ecs.hpp
 	src/cog2d/screen.hpp
 	src/cog2d/util/backend.hpp
 	src/cog2d/util/buffer.hpp
