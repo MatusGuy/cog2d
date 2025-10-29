@@ -79,27 +79,9 @@ target_sources(cog2d INTERFACE
 	src/cog2d/audio/musictrack.cpp
 	src/cog2d/audio/soundeffect.cpp
 	src/cog2d/audio/musictrackparser.cpp
-	#src/cog2d/filesystem/assetfile.cpp
 	src/cog2d/filesystem/file.cpp
-	#src/cog2d/filesystem/iodevice.cpp
 	src/cog2d/input/inputmanager.cpp
 	src/cog2d/program.cpp
-	src/cog2d/scene/actor.cpp
-	src/cog2d/scene/actormanager.cpp
-	src/cog2d/scene/actorrefsiterator.cpp
-	src/cog2d/scene/actorstage.cpp
-	src/cog2d/scene/camera.cpp
-	src/cog2d/scene/collision/collision.cpp
-	src/cog2d/scene/collision/collisionbody.cpp
-	src/cog2d/scene/collision/collisionsystem.cpp
-	src/cog2d/scene/scene.cpp
-	src/cog2d/scene/tilemap/tilemapparser.cpp
-	src/cog2d/scene/tilemap/cameratilelayeriterator.cpp
-	src/cog2d/scene/tilemap/tilelayer.cpp
-	src/cog2d/scene/tilemap/tilemap.cpp
-	src/cog2d/scene/tilemap/tilescene.cpp
-	src/cog2d/scene/tilemap/tileset.cpp
-	src/cog2d/scene/viewport.cpp
 	src/cog2d/util/timer.cpp
 	src/cog2d/util/timing.cpp
 	src/cog2d/util/toml.cpp
@@ -121,30 +103,10 @@ target_sources(cog2d INTERFACE
 	src/cog2d/audio/musicplayer.hpp
 	src/cog2d/audio/musictrack.hpp
 	src/cog2d/audio/soundeffect.hpp
-	#src/cog2d/filesystem/assetfile.hpp
 	src/cog2d/filesystem/file.hpp
-	#src/cog2d/filesystem/iodevice.hpp
 	src/cog2d/input/inputmanager.hpp
 	src/cog2d/program.hpp
-	src/cog2d/scene/actor.hpp
-	src/cog2d/scene/actorcomponents.hpp
-	src/cog2d/scene/actorcontainers.hpp
-	src/cog2d/scene/actorfactory.hpp
-	src/cog2d/scene/actormanager.hpp
-	src/cog2d/scene/actorrefsiterator.hpp
-	src/cog2d/scene/actorstage.hpp
-	src/cog2d/scene/camera.hpp
-	src/cog2d/scene/collision/collision.hpp
-	src/cog2d/scene/collision/collisionbody.hpp
-	src/cog2d/scene/collision/collisionsystem.hpp
-	src/cog2d/scene/scene.hpp
-	src/cog2d/scene/tilemap/cameratilelayeriterator.hpp
-	src/cog2d/scene/tilemap/tile.hpp
-	src/cog2d/scene/tilemap/tilelayer.hpp
-	src/cog2d/scene/tilemap/tilemap.hpp
-	src/cog2d/scene/tilemap/tilescene.hpp
-	src/cog2d/scene/tilemap/tileset.hpp
-	src/cog2d/scene/viewport.hpp
+	src/cog2d/ecs/entity.hpp
 	src/cog2d/screen.hpp
 	src/cog2d/util/backend.hpp
 	src/cog2d/util/buffer.hpp

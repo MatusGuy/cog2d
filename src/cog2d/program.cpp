@@ -53,10 +53,6 @@ void poll_sdl_events()
 			continue;
 		}
 
-		if (!s_program.screen_stack.top()->event(&ev)) {
-			continue;
-		}
-
 		input::event(&ev);
 	}
 }
@@ -124,11 +120,10 @@ int run(int argc, char* argv[])
 		update_fonts_gc();
 		//MusicPlayer::get().update();
 
-		std::unique_ptr<Screen>& screen = s_program.screen_stack.top();
-		screen->update();
+		ext::update();
 
 		graphics::pre_draw();
-		screen->draw();
+		ext::draw();
 		graphics::post_draw();
 
 		now = Clock::now();
@@ -162,14 +157,6 @@ void quit()
 
 	TTF_Quit();
 	SDL_Quit();
-}
-
-void push_screen(std::unique_ptr<Screen> screen)
-{
-	Screen* screenptr = screen.get();
-	s_program.screen_stack.push(std::move(screen));
-
-	screenptr->init();
 }
 
 }  //namespace program

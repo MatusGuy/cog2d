@@ -70,7 +70,6 @@ struct Program
 
 	TimePoint prog_time;
 	Duration delta_time;
-	std::stack<std::unique_ptr<Screen>> screen_stack;
 	bool keep_running = true;
 };
 
@@ -80,19 +79,12 @@ int run(int argc, char* argv[]);
 
 void quit();
 
-void push_screen(std::unique_ptr<Screen> screen);
-void pop_screen();
-
-template<class T>
-inline T& get_screen_as()
-{
-	return *static_cast<T*>(s_program.screen_stack.top().get());
-}
-
 namespace ext {
 void program_settings(ProgramSettings& settings);
 void init();
 bool event(SDL_Event* ev);
+void update();
+void draw();
 
 void load_config(const TomlTable& table);
 void save_config(TomlTable& table);

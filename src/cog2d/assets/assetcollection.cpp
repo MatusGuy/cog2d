@@ -88,10 +88,11 @@ Asset<PixmapFont> PixmapFontCollection::load(std::string_view name, File& device
 
 Asset<TileSet> TileSetCollection::load(std::string_view name, File& device)
 {
-	TomlResult data = toml_parse(device);
-	TileSet* set = new TileSet;
-	set->load(data.tbl);
-	return add(name, set);
+	//TomlResult data = toml_parse(device);
+	//TileSet* set = new TileSet;
+	//set->load(data.tbl);
+	//return add(name, set);
+	return add(name, nullptr);
 }
 
 Asset<MusicTrack> MusicTrackCollection::load(std::string_view name, File& device)
