@@ -9,7 +9,7 @@ namespace cog2d {
 
 struct EntityBase
 {
-	std::uint64_t comps;
+	std::uint16_t builtins = 0;
 
 	/// Geometry
 	Rect bbox;

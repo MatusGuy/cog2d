@@ -21,7 +21,11 @@ public:
 		return out;
 	}
 
-	void clear() { std::memset(m_entities, 0, sizeof(m_entities)); }
+	void clear()
+	{
+		std::memset(m_entities, 0, sizeof(m_entities));
+		m_num_entities = 0;
+	}
 
 	inline E* entities() { return m_entities; }
 	inline int num_entities() { return m_num_entities; }
