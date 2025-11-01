@@ -1,10 +1,10 @@
 #include "builtins.hpp"
 
-namespace cog2d::system {
+namespace cog2d::systems {
 
-void velocity(EntityBase& ent, CompCollision& col)
+void velocity_update(EntityBase& ent, CompCollision& col)
 {
-	if (ent.builtins & COMP_COLLISION) {
+	if (ent.builtins & COMP_COLLISION && false) {
 		col.mov = ent.vel;
 		//if (ent.follow_camera)
 		//	col.mov += viewport.get_camera()->m_delta;
@@ -17,4 +17,4 @@ void velocity(EntityBase& ent, CompCollision& col)
 	}
 }
 
-}  //namespace cog2d::system
+}  //namespace cog2d::systems

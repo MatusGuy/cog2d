@@ -8,6 +8,8 @@ template<class E>
 class Ecs
 {
 public:
+	using Entity = E;
+
 	static constexpr int MAX_ENTITIES = 100;
 
 public:

@@ -62,18 +62,13 @@ Asset<T>::~Asset()
 
 Asset<Texture> PixmapCollection::load(std::string_view name, File& device)
 {
-	if (!device.is_open())
-		device.open("rb");
-
-	Texture* texture = Texture::from_pixmap(device);
+	Texture* texture = Texture::from_pixmap(std::move(device));
 
 	if (!texture) {
 		log::error("PixmapCollection",
 		           fmt::format("Could not load pixmap \"{}\": {}", name, SDL_GetError()));
 		return {};
 	}
-
-	device.close();
 
 	return add(name, texture);
 }

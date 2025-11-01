@@ -25,7 +25,7 @@ public:
 public:
 	static Texture* from_surface(Surface& surface);
 	static Texture* create(const Vector_t<int>& size);
-	static Texture* from_pixmap(File& device);
+	static Texture* from_pixmap(File&& device);
 
 public:
 	Texture(Data tex);

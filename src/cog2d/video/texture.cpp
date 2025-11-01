@@ -7,6 +7,7 @@
 #include "cog2d/video/surface.hpp"
 #include "cog2d/util/logger.hpp"
 #include "cog2d/video/sdl2graphicsengine.hpp"
+#include "cog2d/filesystem/file.hpp"
 
 namespace cog2d {
 
@@ -58,9 +59,11 @@ Texture* Texture::create(const Vector_t<int>& size)
 	return tex;
 }
 
-Texture* Texture::from_pixmap(File& device)
+Texture* Texture::from_pixmap(File&& device)
 {
+	device.open("rb");
 	Surface surface = Surface::from_pixmap(device);
+	device.close();
 	return Texture::from_surface(surface);
 }
 
