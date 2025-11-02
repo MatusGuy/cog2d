@@ -10,6 +10,7 @@
  */
 
 #include "cog2d/ecs/builtins/texture.hpp"
+#include "cog2d/ecs/builtins/properties.hpp"
 
 namespace cog2d {
 
@@ -30,6 +31,7 @@ enum Component
 	COMP_GRAVITY = 1 << 2,
 	COMP_TEXTURE = 1 << 3,
 	COMP_SPRITE = 1 << 4,
+	COMP_PROPERTIES = 1 << 5,
 
 	COMP_COUNT = 2
 };

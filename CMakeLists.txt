@@ -97,6 +97,16 @@ target_sources(cog2d INTERFACE
 	src/cog2d/video/font/sdl2ttffont.cpp
 	src/cog2d/video/surface.cpp
 	src/cog2d/video/texture.cpp
+	src/cog2d/tilemap/tilemapparser.cpp
+	src/cog2d/tilemap/tilemap.hpp
+	src/cog2d/tilemap/tilelayer.hpp
+	src/cog2d/tilemap/tileset.hpp
+	src/cog2d/tilemap/tileset.cpp
+	src/cog2d/tilemap/tilemap.cpp
+	src/cog2d/tilemap/tilelayer.cpp
+	src/cog2d/tilemap/tile.hpp
+	src/cog2d/tilemap/cameratilelayeriterator.hpp
+	src/cog2d/tilemap/cameratilelayeriterator.cpp
 
 	src/cog2d/assets/asset.hpp
 	src/cog2d/assets/assetcollection.hpp
@@ -113,6 +123,7 @@ target_sources(cog2d INTERFACE
 	src/cog2d/ecs/world.hpp
 	src/cog2d/ecs/builtins.hpp
 	src/cog2d/ecs/builtins/texture.hpp
+	src/cog2d/ecs/builtins/properties.hpp
 	src/cog2d/screen.hpp
 	src/cog2d/util/backend.hpp
 	src/cog2d/util/buffer.hpp

@@ -10,7 +10,7 @@
 #include "cog2d/filesystem/file.hpp"
 #include "cog2d/video/texture.hpp"
 #include "cog2d/video/font/pixmapfont.hpp"
-#include "cog2d/scene/tilemap/tileset.hpp"
+#include "cog2d/tilemap/tileset.hpp"
 #include "cog2d/audio/musictrack.hpp"
 #include "cog2d/audio/soundeffect.hpp"
 
