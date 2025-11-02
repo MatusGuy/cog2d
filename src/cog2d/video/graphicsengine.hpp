@@ -53,7 +53,7 @@ void draw_texture(Texture* tex, Rect dest, Color color = 0xFFFFFFFF, Flip flip =
 void draw_texture(Texture* tex, Vector pos, Color color = 0xFFFFFFFF, Flip flip = FLIP_NONE,
                   float angle = 0.f);
 
-Vector_t<int> get_logical_size();
+Vector_t<int> logical_size();
 
 void push_target(Texture* tex);
 void pop_target();

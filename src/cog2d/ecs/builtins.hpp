@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "cog2d/ecs/entity.hpp"
+#include "cog2d/ecs/entitybase.hpp"
 #include "cog2d/util/timing.hpp"
 
 /**

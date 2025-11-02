@@ -16,6 +16,7 @@ static struct
 	SDL_Renderer* renderer;
 	SDL_Texture* proxy;
 	std::stack<Texture*> target_stack;
+	Vector_t<int> logical_size;
 } s_engine;
 
 void init(ProgramSettings& settings)
@@ -61,8 +62,8 @@ void init(ProgramSettings& settings)
 	SDL_RenderSetLogicalSize(s_engine.renderer, settings.lwidth, settings.lheight);
 	SDL_SetWindowMinimumSize(s_engine.window, settings.lwidth, settings.lheight);
 
-	//s_engine.logical_size.x = settings.lwidth;
-	//s_engine.logical_size.y = settings.lheight;
+	s_engine.logical_size.x = settings.lwidth;
+	s_engine.logical_size.y = settings.lheight;
 
 	if (settings.proxy_texture) {
 		s_engine.proxy = SDL_CreateTexture(s_engine.renderer, SDL_PIXELFORMAT_RGBA8888,
@@ -266,11 +267,9 @@ void pop_target()
 	                    s_engine.target_stack.empty() ? nullptr : get_target()->data());
 }
 
-Vector_t<int> get_logical_size()
+Vector_t<int> logical_size()
 {
-	Vector_t<int> out;
-	SDL_GetWindowSize(s_engine.window, &out.x, &out.y);
-	return out;
+	return s_engine.logical_size;
 }
 
 Texture* get_target()

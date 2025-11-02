@@ -84,6 +84,7 @@ target_sources(cog2d INTERFACE
 	src/cog2d/program.cpp
 	src/cog2d/ecs/builtins.cpp
 	src/cog2d/ecs/builtins/texture.cpp
+	src/cog2d/ecs/entitybase.cpp
 	src/cog2d/util/timer.cpp
 	src/cog2d/util/timing.cpp
 	src/cog2d/util/toml.cpp
@@ -108,8 +109,8 @@ target_sources(cog2d INTERFACE
 	src/cog2d/filesystem/file.hpp
 	src/cog2d/input/inputmanager.hpp
 	src/cog2d/program.hpp
-	src/cog2d/ecs/entity.hpp
-	src/cog2d/ecs/ecs.hpp
+	src/cog2d/ecs/entitybase.hpp
+	src/cog2d/ecs/world.hpp
 	src/cog2d/ecs/builtins.hpp
 	src/cog2d/ecs/builtins/texture.hpp
 	src/cog2d/screen.hpp

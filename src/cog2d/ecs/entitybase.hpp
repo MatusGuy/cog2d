@@ -11,11 +11,10 @@ struct EntityBase
 {
 	std::uint16_t builtins = 0;
 
-	/// Geometry
 	Rect bbox;
 	bool follow_camera = false;
+	Vector viewport_pos();
 
-	/// Velocity
 	Vector vel;
 };
 }  //namespace cog2d
