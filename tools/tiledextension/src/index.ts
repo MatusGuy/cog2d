@@ -636,16 +636,28 @@ let binMap: ScriptedMapFormat = {
 
 		let nextGid = 1;
 		let usedTilesets = map.usedTilesets();
+		let mainTileset: Tileset | undefined = undefined;
+		for (let setIndex = 0; setIndex < usedTilesets.length; setIndex++) {
+			let tileset = usedTilesets[setIndex];
+			if (!(tileset.property("skip") as boolean)) {
+				mainTileset = tileset;
+				break;
+			}
+		}
+
+		if (!mainTileset) {
+			tiled.error("Could not retrieve main tileset.", () => {});
+			return;
+		}
 
 		// There can only be one tilesize per map.
-		out.write_object(usedTilesets[0].tileWidth, 2, true);
-		out.write_object(usedTilesets[0].tileHeight, 2, true);
+		out.write_object(mainTileset.tileWidth, 2, true);
+		out.write_object(mainTileset.tileHeight, 2, true);
 
 		for (let setIndex = 0; setIndex < usedTilesets.length; setIndex++) {
 			let activeSet = usedTilesets[setIndex];
 
-			// TODO: Customizable thru editor
-			if (activeSet.name == "collision")
+			if (activeSet.property("skip") as boolean)
 				continue;
 
 			out.write_object(nextGid, 2, true);
