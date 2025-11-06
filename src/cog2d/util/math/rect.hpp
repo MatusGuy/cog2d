@@ -151,8 +151,8 @@ public:
 	COG2D_NUMERIC_TEMPLATE(U)
 	inline Vector_t<U> middle() { return pos + (size / 2); }
 
-	//COG2D_NUMERIC_TEMPLATE(U)
-	inline Vector_t<T> moved(Vector_t<T> off) { return {pos + off, size + off}; }
+	COG2D_NUMERIC_TEMPLATE(U)
+	inline Rect_t<U> moved(Vector_t<T> off) { return {pos + off, size}; }
 };
 using Rect = Rect_t<>;
 

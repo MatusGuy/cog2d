@@ -11,18 +11,8 @@
 
 #include "cog2d/ecs/builtins/texture.hpp"
 #include "cog2d/ecs/builtins/properties.hpp"
+#include "cog2d/ecs/builtins/collision/collisionsystem.hpp"
 
-namespace cog2d {
-
-union CompGraphic
-{
-	CompTexture texture;
-	//CompSprite sprite;
-};
-
-}  //namespace cog2d
-
-// TODO: Move these to seperate files?
 namespace cog2d {
 
 enum Component
@@ -36,18 +26,17 @@ enum Component
 	COMP_COUNT = 2
 };
 
-struct CompCollision
-{
-	Vector mov;
-	std::uint32_t group;
-
-	/// static and immovable
-	bool stabile;
-};
+struct CompCollision;
 
 namespace systems {
 void velocity_update(EntityBase& ent, CompCollision& col);
 }  //namespace systems
+
+union CompGraphic
+{
+	CompTexture texture;
+	//CompSprite sprite;
+};
 
 struct CompGravity
 {

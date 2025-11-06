@@ -38,6 +38,7 @@ public:
 	{
 		E& out = this->entities[num_entities];
 		out = E{};
+		static_cast<EntityBase&>(out).id = this->num_entities;
 		++this->num_entities;
 		return out;
 	}

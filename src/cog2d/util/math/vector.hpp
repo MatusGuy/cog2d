@@ -52,6 +52,8 @@ public:
 		return {std::floor(static_cast<float>(x)), std::floor(static_cast<float>(y))};
 	}
 
+	inline bool is_null() { return x == 0 && y == 0; }
+
 	inline float magnitude() { return std::sqrt((x * x) + (y * y)); }
 	inline float length() { return magnitude(); }
 	inline Vector_t<T> normalized()

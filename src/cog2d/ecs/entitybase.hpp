@@ -7,8 +7,11 @@
 
 namespace cog2d {
 
+using EntityId = std::uint32_t;
+
 struct EntityBase
 {
+	EntityId id;
 	std::uint16_t builtins = 0;
 
 	Rect bbox;

@@ -124,6 +124,8 @@ target_sources(cog2d INTERFACE
 	src/cog2d/ecs/builtins.hpp
 	src/cog2d/ecs/builtins/texture.hpp
 	src/cog2d/ecs/builtins/properties.hpp
+	src/cog2d/ecs/builtins/collision/collision.cpp
+	src/cog2d/ecs/builtins/collision/collisionsystem.cpp
 	src/cog2d/screen.hpp
 	src/cog2d/util/backend.hpp
 	src/cog2d/util/buffer.hpp
