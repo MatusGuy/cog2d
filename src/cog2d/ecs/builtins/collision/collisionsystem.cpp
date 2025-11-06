@@ -57,6 +57,8 @@ void CollisionSystem::update()
 			if (i == j)
 				continue;
 
+			// log::debug(fmt::format("{}, {}", i, j));
+
 			rect_rect(m_entities[i], m_entities[j]);
 		}
 	}
@@ -67,7 +69,7 @@ void CollisionSystem::update()
 		CompCollision* col;
 		ext::entity_collision(m_entities[i], &ent, &col);
 		ent->bbox.pos += col->mov;
-		log::debug(fmt::format("{} {}", col->mov, ent->bbox));
+		// log::debug(fmt::format("{} {}", col->mov, ent->bbox));
 		col->mov = {0, 0};
 	}
 }
@@ -103,7 +105,7 @@ void CollisionSystem::rect_rect(EntityId a, EntityId b)
 	//if (resp1 == COLRESP_REJECT || resp2 == COLRESP_REJECT)
 	//	return;
 
-	Vector& mov = col_b->mov;
+	Vector& mov = col_a->mov;
 
 	CollideInfo<Vector::type> info = collision::rect_rect<Vector::type>(dest_a, dest_b);
 

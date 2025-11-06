@@ -79,6 +79,6 @@ CollideInfo<T> rect_rect(Rect_t<T> r1, Rect_t<T> r2)
 	return out;
 }
 
-}  //namespace Collision
+}  //namespace collision
 
 }  //namespace cog2d
