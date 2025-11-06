@@ -57,6 +57,8 @@ public:
 public:
 	CollisionSystem();
 
+	void enable_interaction(std::uint32_t group_a, std::uint32_t group_b);
+
 	void update();
 
 	void rect_rect(EntityId a, EntityId b);

@@ -12,6 +12,12 @@ CollisionSystem::CollisionSystem()
 {
 }
 
+void CollisionSystem::enable_interaction(std::uint32_t group_a, std::uint32_t group_b)
+{
+	m_groups[group_a][group_b] = true;
+	m_groups[group_b][group_a] = true;
+}
+
 void CollisionSystem::update()
 {
 	/*
@@ -89,8 +95,8 @@ void CollisionSystem::rect_rect(EntityId a, EntityId b)
 
 	// TODO: There should be a way to specify if the interaction should
 	// trigger if both are accepted or only one is.
-	//if (!m_groups[col_a->group][col_b->group] && !m_groups[col_a->group][col_b->group])
-	//	return;
+	if (!m_groups[col_a->group][col_b->group] && !m_groups[col_a->group][col_b->group])
+		return;
 
 	Rect dest_a = ent_a->bbox.moved(col_a->mov);
 	Rect dest_b = ent_b->bbox.moved(col_b->mov);
