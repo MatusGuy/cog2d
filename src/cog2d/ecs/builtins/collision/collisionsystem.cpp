@@ -5,6 +5,7 @@
 
 #include "cog2d/util/logger.hpp"
 #include "cog2d/util/timing.hpp"
+#include "cog2d/tilemap/tilemap.hpp"
 
 namespace cog2d {
 
@@ -20,43 +21,43 @@ void CollisionSystem::enable_interaction(std::uint32_t group_a, std::uint32_t gr
 
 void CollisionSystem::update()
 {
-	/*
-	ActorRefsIterator it(m_actors.begin(), m_actors);
-	if (m_tilelayer && true) {
-		while (it.m_it != m_actors.end()) {
-			Actor* a = *it;
+	if (m_tilemap && m_tilemap->m_collision_layer && true) {
+		TileLayer* layer = m_tilemap->m_collision_layer.get();
+		for (int i = 0; i < m_entities.size(); ++i) {
+			// Actor* a = *it;
+			EntityBase* ent;
+			CompCollision* col;
+			ext::entity_collision(m_entities[i], &ent, &col);
 
 			//Vector mov = a->col().mov;
-			Rect_t<int> tiles = m_tilelayer->get_tiles_overlapping(a->get_dest());
+			Rect_t<int> tiles = layer->get_tiles_overlapping(ent->bbox.moved(col->mov));
 			Vector_t<int> tilepos = tiles.pos;
-			const Vector_t<std::uint16_t> tilesz = m_tilelayer->m_map->m_tile_sz;
+			const Vector_t<std::uint16_t> tilesz = layer->m_map->m_tile_sz;
 			CollideInfo<Vector::type> collideinfo;
 			//log::debug(fmt::format("{}", tiles));
 			for (; tilepos.x < tiles.get_right(); ++tilepos.x) {
 				for (; tilepos.y < tiles.get_bottom(); ++tilepos.y) {
 					Rect tilerect(tilepos * static_cast<Vector>(tilesz),
-								  static_cast<Vector>(tilesz));
+					              static_cast<Vector>(tilesz));
 
 					//log::debug(fmt::format("{}", a->classidx()));
 					//log::debug(fmt::format("{}, {}", tilepos,
 					//                            m_tilelayer->get_tile_id(tilepos)));
 					//log::debug(fmt::format("{}, {}", tilepos, tilerect));
 
-					CollideInfo<Vector::type>
-						collideinfo2 = rect_tile(a, m_tilelayer->get_tile_id(tilepos), tilerect);
+					CollideInfo<Vector::type> collideinfo2 = rect_tile(i,
+					                                                   layer->get_tile_id(tilepos),
+					                                                   tilerect);
 					//collideinfo.merge(collideinfo2);
 					//collideinfo2.apply(mov);
-					collideinfo2.apply(a->col().mov);
+					collideinfo2.apply(col->mov);
 				}
 				tilepos.y = tiles.pos.y;
 			}
 			//collideinfo.apply(a->col().mov);
 			//a->col().mov = mov;
-
-			++it;
 		}
 	}
-	*/
 
 	for (int i = 0; i < m_entities.size(); ++i) {
 		for (int j = 1; j < m_entities.size(); ++j) {
@@ -132,8 +133,9 @@ void CollisionSystem::rect_rect(EntityId a, EntityId b)
 		}
 	}
 }
-/*
-CollideInfo<Vector::type> CollisionSystem::rect_tile(Actor* a, TileId tileid, const Rect& tilerect)
+
+CollideInfo<Vector::type> CollisionSystem::rect_tile(EntityId id, TileId tileid,
+                                                     const Rect& tilerect)
 {
 	switch (tileid) {
 	case 0:
@@ -141,27 +143,30 @@ CollideInfo<Vector::type> CollisionSystem::rect_tile(Actor* a, TileId tileid, co
 
 	case 1:
 	default:
-		return rect_tilerect(a, tilerect);
+		return rect_tilerect(id, tilerect);
 	}
 }
 
-CollideInfo<Vector::type> CollisionSystem::rect_tilerect(Actor* a, const Rect& tilerect)
+CollideInfo<Vector::type> CollisionSystem::rect_tilerect(EntityId id, const Rect& tilerect)
 {
-	Rect d1 = a->get_dest();
-	Rect d2 = tilerect;
+	EntityBase* ent;
+	CompCollision* col;
+	ext::entity_collision(m_entities[id], &ent, &col);
 
-	if (!d1.overlaps(d2))
-		return {};
+	Rect dest = ent->bbox.moved(col->mov);
+
+	// if (!dest_a.overlaps(tilerect))
+	// return {};
 
 	//CollisionSystem::Response resp1 = a->collision(b);
 	//CollisionSystem::Response resp2 = b->collision(a);
 	//if (resp1 == COLRESP_REJECT || resp2 == COLRESP_REJECT)
 	//	return;
 
-	Vector& mov = a->col().mov;
+	//Vector& mov = mov;
 
-	CollideInfo<Vector::type> info = collision::rect_rect<Vector::type>(d1, tilerect);
+	CollideInfo<Vector::type> info = collision::rect_rect<Vector::type>(dest, tilerect);
 	return info;
 }
-*/
+
 }  //namespace cog2d

@@ -5,16 +5,6 @@
 
 #include <fstream>
 
-/*
-// this is kind of ridiculous but whatevz
-#ifdef _WIN32
-#include <winsock.h>
-#else
-#include <netinet/in.h>
-#endif
-#include <SDL2/SDL_config.h>
-*/
-
 #include "cog2d/util/logger.hpp"
 #include "cog2d/assets/assetmanager.hpp"
 

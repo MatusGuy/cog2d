@@ -55,13 +55,13 @@ namespace collision {
 template<typename T>
 CollideInfo<T> rect_rect(Rect_t<T> r1, Rect_t<T> r2)
 {
+	if (!r1.overlaps(r2))
+		return {};
+
 	T itop = r1.get_bottom() - r2.get_top();
 	T ibottom = r2.get_bottom() - r1.get_top();
 	T ileft = r1.get_right() - r2.get_left();
 	T iright = r2.get_right() - r1.get_left();
-
-	if (!r1.overlaps(r2))
-		return {};
 
 	//CollideInfo<T> out{ileft, iright, itop, ibottom};
 	CollideInfo<T> out{iright, ileft, ibottom, itop};

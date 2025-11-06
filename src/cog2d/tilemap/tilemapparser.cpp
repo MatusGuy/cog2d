@@ -87,7 +87,7 @@ void TileMap::load(File&& device, CreateEntityFunc createentity)
 				break;
 
 			case TileLayer::TILELAYER_COLLISION:
-				//actormanager.colsystem().m_tilelayer = std::move(layer);
+				m_collision_layer = std::move(layer);
 				break;
 			}
 

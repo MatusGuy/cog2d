@@ -48,11 +48,9 @@ public:
 public:
 	bool m_groups[COG2D_NUM_COLGROUPS][COG2D_NUM_COLGROUPS];
 
-	// TODO: multiple collision tilelayers?? Ehhhhhhhhhhh
-	// FIXME: should this be owned by the tilemap??
-	std::unique_ptr<TileLayer> m_tilelayer;
-
 	std::vector<EntityId> m_entities;
+
+	TileMap* m_tilemap = nullptr;
 
 public:
 	CollisionSystem();
@@ -63,8 +61,8 @@ public:
 
 	void rect_rect(EntityId a, EntityId b);
 
-	//CollideInfo<Vector::type> rect_tile(EntityId ent, TileId tileid, const Rect& tilerect);
-	//CollideInfo<Vector::type> rect_tilerect(Actor* a, const Rect& tilerect);
+	CollideInfo<Vector::type> rect_tile(EntityId id, TileId tileid, const Rect& tilerect);
+	CollideInfo<Vector::type> rect_tilerect(EntityId id, const Rect& tilerect);
 
 	Rect_t<int> get_tiles_overlapping(const Rect& rect);
 };

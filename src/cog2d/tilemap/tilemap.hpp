@@ -35,6 +35,8 @@ public:
 	TileSets m_sets;
 	TileLayers m_layers;
 
+	std::unique_ptr<TileLayer> m_collision_layer;
+
 	Vector_t<std::uint16_t> m_tile_sz;
 
 public:
