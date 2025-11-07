@@ -20,5 +20,10 @@ extern TileSetCollection tilesets;
 extern MusicTrackCollection musictracks;
 extern SoundEffectCollection sounds;
 
+using CollectionId = std::uint32_t;
+
+int load_pixmap(CollectionId col, std::string_view filename, Texture*& tex);
+int clear_pixmap_collection(CollectionId col);
+
 }  //namespace assets
 }  //namespace cog2d
