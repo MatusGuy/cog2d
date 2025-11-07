@@ -21,33 +21,29 @@ SoundEffectCollection sounds;
 
 static struct
 {
-	Texture* pixmaps[COG2D_NUM_ASSET_COLLECTIONS][USHRT_MAX] = {0};
-	std::uint32_t pixmap_count[COG2D_NUM_ASSET_COLLECTIONS] = {0};
+	std::unordered_map<std::string, Texture*> pixmaps[COG2D_NUM_ASSET_COLLECTIONS];
 
 } s_manager;
 
 int load_pixmap(CollectionId col, std::string_view filename, Texture*& tex)
 {
-	std::hash<std::string_view> hash;
-	std::uint16_t key = hash(filename) & 0xffff;
-	tex = s_manager.pixmaps[col][key];
+	tex = s_manager.pixmaps[col][std::string{filename}];
 	if (tex)
 		return 0;
 
-	Texture* result = Texture::from_pixmap(File::from_asset(filename));
-	tex = result;
+	tex = Texture::from_pixmap(File::from_asset(filename));
 	return 0;
 }
 
 int clear_pixmap_collection(CollectionId col)
 {
-	for (int i = 0; i < USHRT_MAX; ++i) {
-		Texture*& tex = s_manager.pixmaps[col][i];
-		if (tex != nullptr)
-			delete tex;
-
-		tex = nullptr;
+	for (auto it = s_manager.pixmaps[col].begin(); it != s_manager.pixmaps[col].end(); ++it) {
+		if (it->second != nullptr)
+			delete it->second;
 	}
+
+	s_manager.pixmaps[col].clear();
+	return 0;
 }
 
 }  //namespace cog2d::assets
