@@ -23,7 +23,7 @@ void TileSet::load(TomlTable& data)
 
 	std::string path;
 	data.at("image", path);
-	m_texture = cog2d::assets::pixmaps.load_file(path);
+	cog2d::assets::load_pixmap(0, path, m_texture);
 }
 
 }  //namespace cog2d

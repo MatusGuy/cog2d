@@ -22,10 +22,10 @@ class TileMap
 public:
 	struct TileSetRef
 	{
-		Asset<TileSet> set;
+		TileSet* set;
 		TileId firstgid;
 
-		Asset<TileSet>& operator->() { return set; }
+		TileSet* operator->() { return set; }
 	};
 
 	using TileSets = std::vector<TileSetRef>;

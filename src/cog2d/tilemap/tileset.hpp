@@ -19,7 +19,7 @@ class TileSet
 public:
 	Vector_t<std::uint16_t> m_tile_sz;
 	Vector_t<int> m_set_sz;
-	Asset<Texture> m_texture;
+	Texture* m_texture;
 
 public:
 	TileSet();

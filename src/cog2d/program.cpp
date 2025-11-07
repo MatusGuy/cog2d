@@ -138,6 +138,8 @@ int run(int argc, char* argv[])
 
 void quit()
 {
+	ext::quit();
+
 	input::deinit();
 
 	graphics::deinit();

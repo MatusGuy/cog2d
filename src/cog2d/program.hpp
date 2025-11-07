@@ -85,6 +85,7 @@ void init();
 bool event(SDL_Event* ev);
 void update();
 void draw();
+void quit();
 
 void load_config(const TomlTable& table);
 void save_config(TomlTable& table);

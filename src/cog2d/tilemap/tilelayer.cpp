@@ -56,7 +56,7 @@ void TileLayer::draw()
 		dest.size = m_map->m_tile_sz;
 		dest.pos = destpos;
 
-		graphics::draw_texture(set->m_texture.get(), src, dest);
+		graphics::draw_texture(set->m_texture, src, dest);
 
 		next_tile();
 	}

@@ -58,7 +58,7 @@ void TileMap::load(File&& device, CreateEntityFunc createentity)
 		std::string name;
 		device.read(name);
 
-		set.set = cog2d::assets::tilesets.load_file(name);
+		cog2d::assets::load_tileset(0, name, set.set);
 
 		m_sets.push_back(set);
 	}
