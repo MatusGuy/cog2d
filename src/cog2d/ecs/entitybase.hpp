@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 #pragma once
 
+#include <cinttypes>
+
 #include "cog2d/util/math/vector.hpp"
 #include "cog2d/util/math/rect.hpp"
 

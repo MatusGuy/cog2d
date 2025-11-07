@@ -89,9 +89,10 @@ int run(int argc, char* argv[])
 
 	ext::register_config();
 	if (s_program.settings.systems & System::SYSTEM_CONFIG) {
-		File file(std::filesystem::path(SDL_GetPrefPath(s_program.settings.org_name.data(),
-		                                                s_program.settings.app_name.data())) /
-		          "config.toml");
+		File file((std::filesystem::path(SDL_GetPrefPath(s_program.settings.org_name.data(),
+		                                                 s_program.settings.app_name.data())) /
+		           "config.toml")
+		              .string());
 		TomlResult config = toml_parse(file);
 		ext::load_config(config.tbl);
 	}
@@ -142,9 +143,10 @@ void quit()
 	graphics::deinit();
 
 	if (s_program.settings.systems & System::SYSTEM_CONFIG) {
-		File file(std::filesystem::path(SDL_GetPrefPath(s_program.settings.org_name.data(),
-		                                                s_program.settings.app_name.data())) /
-		          "config.toml");
+		File file((std::filesystem::path(SDL_GetPrefPath(s_program.settings.org_name.data(),
+		                                                 s_program.settings.app_name.data())) /
+		           "config.toml")
+		              .string());
 		file.open("r");
 		// TODO: save config
 		//toml::table config;
