@@ -14,8 +14,10 @@ namespace cog2d {
 
 struct EntityBase;
 struct CompProperties;
-typedef int (*CreateEntityFunc)(std::string_view classname, EntityBase** ent,
-                                CompProperties** props);
+
+typedef int (*CreateEntityFunc)(std::string_view classname, EntityBase*& ent,
+                                CompProperties*& props);
+typedef int (*InitEntityFunc)(EntityBase& ent);
 
 class TileMap
 {
@@ -42,7 +44,7 @@ public:
 public:
 	TileMap();
 
-	void load(File&& device, CreateEntityFunc createentity);
+	void load(File&& device, CreateEntityFunc createentity, InitEntityFunc initentity);
 
 	void draw();
 

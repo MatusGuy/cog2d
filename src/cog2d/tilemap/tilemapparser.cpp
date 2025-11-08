@@ -13,10 +13,11 @@
 
 namespace cog2d {
 
-static void parse_object_group(File& device, CreateEntityFunc createentity);
+static void parse_object_group(File& device, CreateEntityFunc createentity,
+                               InitEntityFunc initentity);
 static bool parse_property(File& device, EntityBase& ent, CompProperties& props);
 
-void TileMap::load(File&& device, CreateEntityFunc createentity)
+void TileMap::load(File&& device, CreateEntityFunc createentity, InitEntityFunc initentity)
 {
 	if (!device.is_open())
 		device.open("rb");
@@ -92,7 +93,7 @@ void TileMap::load(File&& device, CreateEntityFunc createentity)
 			}
 
 		} else if (type == 1) {
-			parse_object_group(device, createentity);
+			parse_object_group(device, createentity, initentity);
 		} else {
 			// bye
 			device.seek(0, SEEK_END);
@@ -129,7 +130,8 @@ void TileLayer::parse(File& device)
 	}
 }
 
-static void parse_object_group(File& device, CreateEntityFunc createentity)
+static void parse_object_group(File& device, CreateEntityFunc createentity,
+                               InitEntityFunc initentity)
 {
 	if (createentity == nullptr) {
 		log::warn("BinTileMapParser", "Unspecified entity factory. Aborting object group.");
@@ -151,13 +153,15 @@ static void parse_object_group(File& device, CreateEntityFunc createentity)
 		CompProperties* props;
 
 		// HACK: This is not enough. I need Protogent.
-		if (createentity(classname, &ent, &props) != 0)
+		if (createentity(classname, ent, props) != 0)
 			break;
 
 		while (true) {
 			if (!parse_property(device, *ent, *props))
 				break;
 		}
+
+		initentity(*ent);
 	}
 }
 

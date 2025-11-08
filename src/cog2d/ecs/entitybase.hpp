@@ -16,7 +16,7 @@ struct EntityBase
 	EntityId id;
 	std::uint16_t builtins = 0;
 
-	Rect bbox;
+	Rect bbox = {};
 	bool follow_camera = false;
 	Vector viewport_pos();
 

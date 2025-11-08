@@ -23,7 +23,7 @@ public:
 	inline Duration get_period() const { return m_period; }
 	inline Duration get_timeleft() const { return m_period - (s_program.prog_time - m_start); }
 	inline Duration get_timegone() const { return s_program.prog_time - m_start; }
-	inline float get_progress() const
+	inline float progress() const
 	{
 		return static_cast<float>(get_timegone().count()) / get_period().count();
 	}

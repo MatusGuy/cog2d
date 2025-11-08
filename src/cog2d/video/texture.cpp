@@ -13,7 +13,7 @@ namespace cog2d {
 
 Texture::Texture(Data tex)
     : m_data(tex),
-      m_size()
+      m_size(query_size())
 {
 }
 

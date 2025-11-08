@@ -4,6 +4,7 @@
 #include "texture.hpp"
 
 #include "cog2d/ecs/entitybase.hpp"
+#include "cog2d/util/logger.hpp"
 
 namespace cog2d::systems {
 
