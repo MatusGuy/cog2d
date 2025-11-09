@@ -29,6 +29,9 @@ void CollisionSystem::update()
 			CompCollision* col;
 			ext::entity_collision(m_entities[i], &ent, &col);
 
+			if (!(ent->active & cog2d::ACTIVE_VIEWPORT) || !(ent->active & cog2d::ACTIVE_MANUAL))
+				continue;
+
 			//Vector mov = a->col().mov;
 			Rect_t<int> tiles = layer->get_tiles_overlapping(ent->bbox.moved(col->mov));
 			Vector_t<int> tilepos = tiles.pos;
@@ -75,8 +78,11 @@ void CollisionSystem::update()
 		EntityBase* ent;
 		CompCollision* col;
 		ext::entity_collision(m_entities[i], &ent, &col);
+
+		if (!(ent->active & cog2d::ACTIVE_VIEWPORT) || !(ent->active & cog2d::ACTIVE_MANUAL))
+			continue;
+
 		ent->bbox.pos += col->mov;
-		// log::debug(fmt::format("{} {}", col->mov, ent->bbox));
 		col->mov = {0, 0};
 	}
 }
@@ -89,7 +95,14 @@ void CollisionSystem::rect_rect(EntityId a, EntityId b)
 	CompCollision* col_b;
 
 	ext::entity_collision(a, &ent_a, &col_a);
+
+	if (!(ent_a->active & cog2d::ACTIVE_VIEWPORT) || !(ent_a->active & cog2d::ACTIVE_MANUAL))
+		return;
+
 	ext::entity_collision(b, &ent_b, &col_b);
+
+	if (!(ent_b->active & cog2d::ACTIVE_VIEWPORT) || !(ent_b->active & cog2d::ACTIVE_MANUAL))
+		return;
 
 	if (col_a->mov.is_null() && col_b->mov.is_null())
 		return;
