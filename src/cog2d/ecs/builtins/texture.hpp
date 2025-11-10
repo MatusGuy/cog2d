@@ -12,6 +12,7 @@ struct CompTexture
 {
 	cog2d::Texture* texdata = nullptr;
 
+	Vector off = {0, 0};
 	Color color = 0xFFFFFFFF;
 	float angle = 0.f;
 	graphics::Flip flip = graphics::FLIP_NONE;
