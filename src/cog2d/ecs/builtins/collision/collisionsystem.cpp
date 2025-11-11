@@ -27,7 +27,7 @@ void CollisionSystem::update()
 			// Actor* a = *it;
 			EntityBase* ent;
 			CompCollision* col;
-			ext::entity_collision(m_entities[i], &ent, &col);
+			ext::entity_get_collision(m_entities[i], &ent, &col);
 
 			if (!(ent->active & cog2d::ACTIVE_VIEWPORT) || !(ent->active & cog2d::ACTIVE_MANUAL))
 				continue;
@@ -77,7 +77,7 @@ void CollisionSystem::update()
 		/// Apply movements
 		EntityBase* ent;
 		CompCollision* col;
-		ext::entity_collision(m_entities[i], &ent, &col);
+		ext::entity_get_collision(m_entities[i], &ent, &col);
 
 		if (!(ent->active & cog2d::ACTIVE_VIEWPORT) || !(ent->active & cog2d::ACTIVE_MANUAL))
 			continue;
@@ -94,12 +94,12 @@ void CollisionSystem::rect_rect(EntityId a, EntityId b)
 	CompCollision* col_a;
 	CompCollision* col_b;
 
-	ext::entity_collision(a, &ent_a, &col_a);
+	ext::entity_get_collision(a, &ent_a, &col_a);
 
 	if (!(ent_a->active & cog2d::ACTIVE_VIEWPORT) || !(ent_a->active & cog2d::ACTIVE_MANUAL))
 		return;
 
-	ext::entity_collision(b, &ent_b, &col_b);
+	ext::entity_get_collision(b, &ent_b, &col_b);
 
 	if (!(ent_b->active & cog2d::ACTIVE_VIEWPORT) || !(ent_b->active & cog2d::ACTIVE_MANUAL))
 		return;
@@ -120,10 +120,10 @@ void CollisionSystem::rect_rect(EntityId a, EntityId b)
 	if (!dest_a.overlaps_exc(dest_b))
 		return;
 
-	//CollisionSystem::Response resp1 = a->collision(b);
-	//CollisionSystem::Response resp2 = b->collision(a);
-	//if (resp1 == COLRESP_REJECT || resp2 == COLRESP_REJECT)
-	//	return;
+	CollisionResponse resp1 = ext::entity_collision(*ent_b, *ent_a);
+	CollisionResponse resp2 = ext::entity_collision(*ent_a, *ent_b);
+	if (resp1 == COLRESP_REJECT || resp2 == COLRESP_REJECT)
+		return;
 
 	Vector& mov = col_a->mov;
 
@@ -164,7 +164,7 @@ CollideInfo<Vector::type> CollisionSystem::rect_tilerect(EntityId id, const Rect
 {
 	EntityBase* ent;
 	CompCollision* col;
-	ext::entity_collision(m_entities[id], &ent, &col);
+	ext::entity_get_collision(m_entities[id], &ent, &col);
 
 	Rect dest = ent->bbox.moved(col->mov);
 

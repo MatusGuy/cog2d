@@ -23,6 +23,12 @@ namespace cog2d {
 struct EntityBase;
 class TileLayer;
 
+enum CollisionResponse : std::uint8_t
+{
+	COLRESP_ACCEPT,
+	COLRESP_REJECT
+};
+
 struct CompCollision
 {
 	Vector mov;
@@ -33,18 +39,12 @@ struct CompCollision
 };
 
 namespace ext {
-void entity_collision(EntityId id, EntityBase** ent, CompCollision** col);
-}
+void entity_get_collision(EntityId id, EntityBase** ent, CompCollision** col);
+CollisionResponse entity_collision(EntityBase& a, EntityBase& b);
+}  //namespace ext
 
 class CollisionSystem
 {
-public:
-	enum Response : std::uint8_t
-	{
-		COLRESP_ACCEPT,
-		COLRESP_REJECT
-	};
-
 public:
 	bool m_groups[COG2D_NUM_COLGROUPS][COG2D_NUM_COLGROUPS];
 
