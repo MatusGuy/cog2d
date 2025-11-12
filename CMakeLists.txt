@@ -105,8 +105,6 @@ target_sources(cog2d INTERFACE
 	src/cog2d/tilemap/tilemap.cpp
 	src/cog2d/tilemap/tilelayer.cpp
 	src/cog2d/tilemap/tile.hpp
-	src/cog2d/tilemap/cameratilelayeriterator.hpp
-	src/cog2d/tilemap/cameratilelayeriterator.cpp
 
 	src/cog2d/assets/asset.hpp
 	src/cog2d/assets/assetcollection.hpp
