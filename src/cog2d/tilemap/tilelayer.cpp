@@ -9,8 +9,6 @@
 #include "cog2d/tilemap/tilemap.hpp"
 #include "cog2d/ecs/world.hpp"
 
-#include <iterator>
-
 namespace cog2d {
 
 TileLayer::TileLayer()
@@ -66,17 +64,6 @@ void TileLayer::draw()
 			tile.x = region.pos.x;
 		}
 	}
-}
-
-CameraTileLayerIterator TileLayer::cambegin()
-{
-	Vector campos = ext::viewport.region.pos / 16;
-	return CameraTileLayerIterator(*this, m_tiles.begin() + get_tile_index(campos, m_size));
-}
-
-CameraTileLayerIterator TileLayer::camend()
-{
-	return CameraTileLayerIterator(*this, m_tiles.end());
 }
 
 int TileLayer::get_tile_index(const Vector_t<int>& pos, const Vector_t<int>& size)

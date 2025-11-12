@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <vector>
 
+#include "cog2d/tilemap/tile.hpp"
 #include "cog2d/util/math/rect.hpp"
 
 namespace cog2d {

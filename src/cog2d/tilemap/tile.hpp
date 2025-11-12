@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <cstdint>
+#include <cinttypes>
 #include <vector>
 
 namespace cog2d {
@@ -11,4 +11,4 @@ namespace cog2d {
 using TileId = std::uint16_t;
 using TileIds = std::vector<TileId>;
 
-}
+}  //namespace cog2d
