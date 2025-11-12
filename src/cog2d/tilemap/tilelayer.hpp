@@ -6,7 +6,6 @@
 #include <cstdint>
 #include <vector>
 
-#include "cog2d/tilemap/cameratilelayeriterator.hpp"
 #include "cog2d/util/math/rect.hpp"
 
 namespace cog2d {
@@ -44,9 +43,6 @@ public:
 
 	void draw();
 
-	CameraTileLayerIterator cambegin();
-	CameraTileLayerIterator camend();
-
 	Rect_t<int> get_tiles_overlapping(const Rect& rect);
 
 	inline int get_tile_index(const Vector_t<int>& pos) { return get_tile_index(pos, m_size); }
@@ -57,6 +53,9 @@ public:
 		return get_tile_id(get_tile_index(pos, m_size));
 	}
 	TileId get_tile_id(int idx);
+
+private:
+	void draw_tile(TileId id, Vector_t<int> pos);
 };
 
 }  //namespace cog2d

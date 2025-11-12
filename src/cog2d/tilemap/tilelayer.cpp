@@ -17,48 +17,54 @@ TileLayer::TileLayer()
 {
 }
 
+void TileLayer::draw_tile(TileId id, Vector_t<int> pos)
+{
+	if (id == 0)
+		return;
+
+	TileMap::TileSetRef& set = m_map->get_tileset(id);
+	id -= set.firstgid;
+
+	Vector_t<int> srcpos = get_tile_pos(id, set->m_set_sz);
+	Rect_t<int> src;
+
+	src.size = m_map->m_tile_sz;
+	src.pos = srcpos * src.size;
+
+	Rect dest;
+	dest.size = m_map->m_tile_sz;
+	dest.pos = (pos * m_map->m_tile_sz) - ext::viewport.region.pos;
+
+	graphics::draw_texture(set->m_texture, src, dest);
+}
+
 void TileLayer::draw()
 {
-	// Position of the camera in tiles
-	Vector camtilepos = ext::viewport.region.pos / m_map->m_tile_sz;
+	Rect_t<int> region = ext::viewport.region.grown(m_map->m_tile_sz);
 
-	// Final position of tile on screen
-	Vector destpos = (camtilepos.floor() - camtilepos) * m_map->m_tile_sz;
-	float startx = destpos.x;
+	region.pos.x = std::max(0, region.pos.x);
+	region.pos.y = std::max(0, region.pos.y);
+	region.pos /= m_map->m_tile_sz;
 
-	const auto next_tile = [this, &destpos, &startx]() {
-		destpos.x += m_map->m_tile_sz.x;
+	region.size /= m_map->m_tile_sz;
+	region.size += {1, 1};
 
-		if (destpos.x >= ext::viewport.region.size.x + m_map->m_tile_sz.x - (-startx)) {
-			destpos.y += m_map->m_tile_sz.y;
-			destpos.x = startx;
-		}
-	};
+	if (!region.overlaps_exc({{0, 0}, m_size}))
+		return;
 
-	for (auto it = cambegin(); it != camend(); ++it) {
-		TileId id = *it;
-
-		if (id == 0) {
-			next_tile();
-			continue;
+	Vector_t<int> tile = region.pos;
+	while (true) {
+		if (tile.y >= region.pos.y + std::min(m_size.y - region.pos.y, region.size.y)) {
+			break;
 		}
 
-		TileMap::TileSetRef& set = m_map->get_tileset(id);
-		id -= set.firstgid;
+		draw_tile(get_tile_id(tile), tile);
 
-		Vector_t<int> srcpos = get_tile_pos(id, set->m_set_sz);
-		Rect_t<int> src;
-
-		src.size = m_map->m_tile_sz;
-		src.pos = srcpos * src.size;
-
-		Rect dest;
-		dest.size = m_map->m_tile_sz;
-		dest.pos = destpos;
-
-		graphics::draw_texture(set->m_texture, src, dest);
-
-		next_tile();
+		++tile.x;
+		if (tile.x >= region.pos.x + std::min(m_size.x - region.pos.x, region.size.x)) {
+			++tile.y;
+			tile.x = region.pos.x;
+		}
 	}
 }
 

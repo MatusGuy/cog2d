@@ -47,6 +47,12 @@ public:
 		size = other.size;
 	}
 
+	COG2D_NUMERIC_TEMPLATE(U)
+	inline operator Rect_t<U>() const
+	{
+		return {static_cast<Vector_t<U>>(pos), static_cast<Vector_t<U>>(size)};
+	}
+
 	inline SDL_Rect to_sdl_rect() const
 	{
 		return {static_cast<int>(pos.x), static_cast<int>(pos.y), static_cast<int>(size.x),
@@ -91,7 +97,8 @@ public:
 		size *= other;
 	}
 
-	Rect_t<T> operator/(Rect_t<T>& other) { return Rect_t<T>(pos / other.pos, size / other.size); }
+	COG2D_NUMERIC_TEMPLATE(U)
+	Rect_t<T> operator/(Rect_t<U>& other) { return Rect_t<T>(pos / other.pos, size / other.size); }
 
 	Rect_t<T> operator/(T& other) { return Rect_t<T>(pos / other, size / other); }
 
@@ -144,9 +151,10 @@ public:
 		return Rect_t<T>(left, top, right - left, bottom - top);
 	}
 
-	Rect_t<T> grown(T x, T y) { return {pos - Vector_t<T>(x, y), size + Vector_t<T>(x, y)}; }
+	COG2D_NUMERIC_TEMPLATE(U)
+	inline Rect_t<T> grown(Vector_t<U> other) { return {pos - other, size + other}; }
 
-	inline Rect_t<T> grown(T value) { return grown(value, value); }
+	inline Rect_t<T> grown(T value) { return grown({value, value}); }
 
 	COG2D_NUMERIC_TEMPLATE(U)
 	inline Vector_t<U> middle() { return pos + (size / 2); }
