@@ -46,7 +46,8 @@ CollisionResponse entity_collision(EntityBase& a, EntityBase& b);
 class CollisionSystem
 {
 public:
-	bool m_groups[COG2D_NUM_COLGROUPS][COG2D_NUM_COLGROUPS];
+	bool m_groups[COG2D_NUM_COLGROUPS][COG2D_NUM_COLGROUPS] = {0};
+	bool m_tile_colgroups[COG2D_NUM_COLGROUPS] = {0};  // Collision groups that interact with tiles
 
 	std::vector<EntityId> m_entities;
 
@@ -55,7 +56,8 @@ public:
 public:
 	CollisionSystem();
 
-	void enable_interaction(std::uint32_t group_a, std::uint32_t group_b);
+	void enable_interaction(std::uint32_t group_a, std::uint32_t group_b, bool value = true);
+	void enable_tile_interaction(std::uint32_t group, bool value = true);
 
 	void update();
 

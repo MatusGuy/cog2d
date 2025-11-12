@@ -13,10 +13,15 @@ CollisionSystem::CollisionSystem()
 {
 }
 
-void CollisionSystem::enable_interaction(std::uint32_t group_a, std::uint32_t group_b)
+void CollisionSystem::enable_interaction(uint32_t group_a, uint32_t group_b, bool value)
 {
-	m_groups[group_a][group_b] = true;
-	m_groups[group_b][group_a] = true;
+	m_groups[group_a][group_b] = value;
+	m_groups[group_b][group_a] = value;
+}
+
+void CollisionSystem::enable_tile_interaction(std::uint32_t group, bool value)
+{
+	m_tile_colgroups[group] = value;
 }
 
 void CollisionSystem::update()
@@ -28,6 +33,9 @@ void CollisionSystem::update()
 			EntityBase* ent;
 			CompCollision* col;
 			ext::entity_get_collision(m_entities[i], &ent, &col);
+
+			if (!m_tile_colgroups[col->group])
+				continue;
 
 			if (!(ent->active & cog2d::ACTIVE_VIEWPORT) || !(ent->active & cog2d::ACTIVE_MANUAL))
 				continue;
