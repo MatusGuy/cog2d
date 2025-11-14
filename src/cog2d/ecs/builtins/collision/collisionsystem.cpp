@@ -128,8 +128,8 @@ void CollisionSystem::rect_rect(EntityId a, EntityId b)
 	if (!dest_a.overlaps_exc(dest_b))
 		return;
 
-	CollisionResponse resp1 = ext::entity_collision(*ent_b, *ent_a);
-	CollisionResponse resp2 = ext::entity_collision(*ent_a, *ent_b);
+	CollisionResponse resp1 = ext::entity_collision(*ent_a, *ent_b);
+	CollisionResponse resp2 = ext::entity_collision(*ent_b, *ent_a);
 	if (resp1 == COLRESP_REJECT || resp2 == COLRESP_REJECT)
 		return;
 
