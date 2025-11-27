@@ -479,7 +479,6 @@ function getResolvedObjectProperties(props: TiledObjectProperties): TiledObjectP
 function resolveSuperclassProperties(obj: any) {
 	let out: TiledObjectProperties = {};
 
-	// If I have to write another line of TypeScript... That's it. No more Marty.
 	let superclass = obj["cog2d.super"] as PropertyValue;
 	if (superclass != undefined && typeof superclass.value === "object")
 		Object.assign(out, resolveSuperclassProperties(superclass.value as any));
@@ -496,7 +495,6 @@ function resolveSuperclassProperties(obj: any) {
 function resolveObjectProperties(obj: TiledObject): TiledObjectProperties {
 	let out: TiledObjectProperties = {};
 
-	// If I have to write another line of TypeScript... That's it. No more Marty.
 	let superclass = obj.resolvedProperties()["cog2d.super"] as PropertyValue;
 	if (superclass !== undefined && typeof superclass.value === "object")
 		Object.assign(out, resolveSuperclassProperties(superclass.value as any));
@@ -558,24 +556,17 @@ function writeObjectGroupBin(stream: BinaryFileStream, group: ObjectGroup) {
 		// Increment this every time a cog2d-only property is written.
 		let startidx = 0;
 
-		let comps = props.components?.toString().split("\n");
-		if (comps) {
-			if (comps.find(comp => comp == "Geometry")) {
-				writePropertyBin(stream, startidx, {
-					value: { x: obj.pos.x, y: obj.pos.y },
-					typeId: 69420, // u can tell it doesnt matter what i put here
-					typeName: "cog2d.Vector"
-				});
-				++startidx;
-			}
-			// add more soon...
-		}
+		writePropertyBin(stream, startidx, {
+			value: { x: obj.pos.x, y: obj.pos.y },
+			typeId: 69420, // u can tell it doesnt matter what i put here
+			typeName: "cog2d.Vector"
+		});
+		++startidx;
 
 		let memberOrder = props["memberOrder"]?.toString().split("\n");
 		let keys = Object.keys(props);
 		for (let j = 0; j < keys.length && memberOrder !== undefined; ++j) {
 			let key = keys[j];
-
 			let value = props[key];
 
 			if (value == undefined) {

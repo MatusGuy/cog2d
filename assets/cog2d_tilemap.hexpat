@@ -54,7 +54,6 @@ using ObjectLayerData;
 
 struct Layer {
     LayerType type;
-    char name[];
     
     match (type) {
         (LayerType::TileLayer): TileLayerData data;
@@ -63,6 +62,7 @@ struct Layer {
 };
 
 struct TileLayerData {
+    u8 type;
     Vectoru32 size;
     u16 tiles[size.x * size.y];
 };
@@ -103,11 +103,10 @@ struct ActorProperty {
 };
 
 struct Actor {
-    char name[];
     char classname[];
     
-    ActorProperty properties[while(std::mem::read_unsigned($+1, 1) != 0x0)];
-    padding[2];
+    ActorProperty properties[while(std::mem::read_unsigned($, 1) != 0x0)];
+    padding[1];
 };
 
 struct Document {
@@ -117,6 +116,7 @@ struct Document {
     TileSet sets[while(std::mem::read_unsigned($, 2) != 0x0)];
     padding[2];
     Layer layers[while(!std::mem::eof())];
+    //Layer layers[1];
 };
 
 Document doc @ 0x00;
