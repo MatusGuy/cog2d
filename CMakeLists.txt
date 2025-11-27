@@ -117,6 +117,7 @@ target_sources(cog2d INTERFACE
 	src/cog2d/filesystem/file.hpp
 	src/cog2d/input/inputmanager.hpp
 	src/cog2d/program.hpp
+	src/cog2d/ecs/activestate.hpp
 	src/cog2d/ecs/entitybase.hpp
 	src/cog2d/ecs/world.hpp
 	src/cog2d/ecs/builtins.hpp

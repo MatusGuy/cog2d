@@ -3,6 +3,7 @@
 #include <cstring>
 
 #include "cog2d/util/math/rect.hpp"
+#include "cog2d/ecs/activestate.hpp"
 
 namespace cog2d {
 
@@ -47,6 +48,31 @@ public:
 	{
 		std::memset(this->entities, 0, sizeof(this->entities));
 		this->num_entities = 0;
+	}
+
+	typedef void (*ActivateEntityFunc)(E& ent);
+	typedef void (*DeactivateEntityFunc)(E& ent);
+	bool update_viewport_state(E& ent, ActivateEntityFunc activate_ent,
+	                           DeactivateEntityFunc deactivate_ent)
+	{
+		if (!(ent.active & ACTIVE_MANUAL))
+			return false;
+
+		if (ent.bbox.overlaps(this->viewport.region.grown(32.f))) {
+			if (!(ent.active & ACTIVE_VIEWPORT)) {
+				ent.active |= ACTIVE_VIEWPORT;
+				activate_ent(ent);
+			} else
+				ent.active |= ACTIVE_VIEWPORT;
+		} else if (ent.active & ACTIVE_VIEWPORT) {
+			ent.active &= ~ACTIVE_VIEWPORT;
+			deactivate_ent(ent);
+		}
+
+		if (!(ent.active & ACTIVE_VIEWPORT))
+			return false;
+
+		return true;
 	}
 
 	inline E& operator[](int idx) { return this->entities[idx]; }

@@ -7,14 +7,9 @@
 #include "cog2d/util/math/vector.hpp"
 #include "cog2d/util/math/rect.hpp"
 #include "cog2d/ecs/entityid.hpp"
+#include "cog2d/ecs/activestate.hpp"
 
 namespace cog2d {
-
-enum ActiveState
-{
-	ACTIVE_MANUAL = 1 << 0,
-	ACTIVE_VIEWPORT = 1 << 1
-};
 
 struct EntityBase
 {
