@@ -71,12 +71,8 @@ void CollisionSystem::update()
 	}
 
 	for (int i = 0; i < m_entities.size(); ++i) {
-		for (int j = 1; j < m_entities.size(); ++j) {
-			if (i == j)
-				continue;
-
+		for (int j = i + 1; j < m_entities.size(); ++j) {
 			// log::debug(fmt::format("{}, {}", i, j));
-
 			rect_rect(m_entities[i], m_entities[j]);
 		}
 	}
