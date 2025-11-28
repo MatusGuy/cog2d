@@ -167,8 +167,11 @@ if(COG2D_USE_FMT)
 endif()
 
 # Warnings #
-if(CMAKE_COMPILER_IS_GNUCXX)
-	target_compile_options(cog2d INTERFACE -Wunused-function)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+	# TODO: Warn about unused functions
+	#target_compile_options(cog2d INTERFACE -Wunused-function)
+	#target_compile_options(cog2d INTERFACE -ffunction-sections)
+	#target_link_options(cog2d INTERFACE -Wl,--gc-sections,--print-gc-sections)
 endif()
 
 # Preprocessor definitions #
