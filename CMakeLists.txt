@@ -12,10 +12,11 @@ set(COG2D_ASSET_PATH "${CMAKE_SOURCE_DIR}" CACHE STRING "Where cog2d looks for a
 set(COG2D_GRAPHICS_BACKEND SDL2 CACHE STRING "Backend to use for graphics")
 set(COG2D_AUDIO_BACKEND ALSOFT CACHE STRING "Backend to use for graphics")
 
-option(COG2D_TESTS "Add little programs that test cog2d." NO)
-option(COG2D_UTIL "Add little utilities for cog2d development." NO)
+option(COG2D_UTIL "Enable utilities for cog2d development." NO)
 option(COG2D_USE_FMT "Use fmt formatting library for cog2d instead of std::format" NO)
 option(COG2D_GRAPHICS_USE_INT "Disable SDL's subpixel rendering." NO)
+
+option(COG2D_TESTS_UNIT "Enable unit tests." ${BUILD_TESTING})
 
 # Utilities #
 
@@ -190,16 +191,10 @@ target_compile_definitions(cog2d INTERFACE COG2D_AUDIO_BACKEND_${COG2D_GRAPHICS_
 
 # Misc. #
 
-if(COG2D_TESTS)
+if(BUILD_TESTING)
 	add_subdirectory(tests)
 endif()
 
 if(COG2D_UTIL)
-	add_custom_target(tidy_files
-		COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${PROJECT_SOURCE_DIR}
-		                         -P ${PROJECT_SOURCE_DIR}/cmake/Cog2dTidySources.cmake
-		COMMENT "Tidying source files"
-	)
-
 	add_subdirectory(tools)
 endif()
