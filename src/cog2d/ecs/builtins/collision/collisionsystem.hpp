@@ -41,6 +41,7 @@ struct CompCollision
 namespace ext {
 void entity_get_collision(EntityId id, EntityBase** ent, CompCollision** col);
 CollisionResponse entity_collision(EntityBase& a, EntityBase& b);
+CollisionResponse entity_collision_tile(EntityBase& base, std::size_t tileidx);
 }  //namespace ext
 
 class CollisionSystem
@@ -63,8 +64,8 @@ public:
 
 	void rect_rect(EntityId a, EntityId b);
 
-	CollideInfo<Vector::type> rect_tile(EntityId id, TileId tileid, const Rect& tilerect);
-	CollideInfo<Vector::type> rect_tilerect(EntityId id, const Rect& tilerect);
+	CollideInfo<Vector::type> rect_tile(EntityId id, std::size_t tileidx);
+	CollideInfo<Vector::type> rect_tilerect(EntityId id, std::size_t tileidx);
 
 	Rect_t<int> get_tiles_overlapping(const Rect& rect);
 };

@@ -44,21 +44,21 @@ void CollisionSystem::update()
 			Rect_t<int> tiles = layer->get_tiles_overlapping(ent->bbox.moved(col->mov));
 			Vector_t<int> tilepos = tiles.pos;
 			const Vector_t<std::uint16_t> tilesz = layer->m_map->m_tile_sz;
-			CollideInfo<Vector::type> collideinfo;
+			// CollideInfo<Vector::type> collideinfo;
 			//log::debug(fmt::format("{}", tiles));
 			for (; tilepos.x < tiles.get_right(); ++tilepos.x) {
 				for (; tilepos.y < tiles.get_bottom(); ++tilepos.y) {
-					Rect tilerect(tilepos * static_cast<Vector>(tilesz),
-					              static_cast<Vector>(tilesz));
+					// Rect tilerect(tilepos * static_cast<Vector>(tilesz),
+					// static_cast<Vector>(tilesz));
 
 					//log::debug(fmt::format("{}", a->classidx()));
 					//log::debug(fmt::format("{}, {}", tilepos,
 					//                            m_tilelayer->get_tile_id(tilepos)));
 					//log::debug(fmt::format("{}, {}", tilepos, tilerect));
 
-					CollideInfo<Vector::type> collideinfo2 = rect_tile(i,
-					                                                   layer->get_tile_id(tilepos),
-					                                                   tilerect);
+					CollideInfo<Vector::type>
+					    collideinfo2 = rect_tile(i, m_tilemap->m_collision_layer
+					                                    ->get_tile_index(tilepos));
 					//collideinfo.merge(collideinfo2);
 					//collideinfo2.apply(mov);
 					collideinfo2.apply(col->mov);
@@ -151,37 +151,37 @@ void CollisionSystem::rect_rect(EntityId a, EntityId b)
 	}
 }
 
-CollideInfo<Vector::type> CollisionSystem::rect_tile(EntityId id, TileId tileid,
-                                                     const Rect& tilerect)
+CollideInfo<Vector::type> CollisionSystem::rect_tile(EntityId id, std::size_t tileidx)
 {
-	switch (tileid) {
+	switch (m_tilemap->m_collision_layer->get_tile_id(tileidx)) {
 	case 0:
 		return {};
 
 	case 1:
 	default:
-		return rect_tilerect(id, tilerect);
+		return rect_tilerect(id, tileidx);
 	}
 }
 
-CollideInfo<Vector::type> CollisionSystem::rect_tilerect(EntityId id, const Rect& tilerect)
+CollideInfo<Vector::type> CollisionSystem::rect_tilerect(EntityId id, std::size_t tileidx)
 {
 	EntityBase* ent;
 	CompCollision* col;
 	ext::entity_get_collision(m_entities[id], &ent, &col);
 
-	Rect dest = ent->bbox.moved(col->mov);
-
 	// if (!dest_a.overlaps(tilerect))
 	// return {};
 
 	//CollisionSystem::Response resp1 = a->collision(b);
-	//CollisionSystem::Response resp2 = b->collision(a);
-	//if (resp1 == COLRESP_REJECT || resp2 == COLRESP_REJECT)
-	//	return;
+	CollisionResponse resp = ext::entity_collision_tile(*ent, tileidx);
+	if (resp == COLRESP_REJECT)
+		return {};
 
 	//Vector& mov = mov;
 
+	Rect dest = ent->bbox.moved(col->mov);
+	Rect tilerect(m_tilemap->m_collision_layer->get_tile_pos(tileidx) * m_tilemap->m_tile_sz,
+	              m_tilemap->m_tile_sz);
 	CollideInfo<Vector::type> info = collision::rect_rect<Vector::type>(dest, tilerect);
 	return info;
 }

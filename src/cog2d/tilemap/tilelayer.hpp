@@ -47,7 +47,7 @@ public:
 	Rect_t<int> get_tiles_overlapping(const Rect& rect);
 
 	inline int get_tile_index(const Vector_t<int>& pos) { return get_tile_index(pos, m_size); }
-	inline Vector_t<int> get_tile_pos(int i) { return get_tile_pos(i); }
+	inline Vector_t<int> get_tile_pos(int i) { return get_tile_pos(i, m_size); }
 
 	inline TileId get_tile_id(Vector_t<int> pos)
 	{
