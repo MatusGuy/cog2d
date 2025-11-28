@@ -166,6 +166,11 @@ if(COG2D_USE_FMT)
 	target_link_libraries(cog2d INTERFACE PkgConfig::fmt)
 endif()
 
+# Warnings #
+if(CMAKE_COMPILER_IS_GNUCXX)
+	target_compile_options(cog2d INTERFACE -Wunused-function)
+endif()
+
 # Preprocessor definitions #
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	target_compile_definitions(cog2d INTERFACE COG2D_DEBUG)
