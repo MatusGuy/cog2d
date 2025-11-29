@@ -1,1 +1,2 @@
 add_subdirectory(tiledextension)
+add_subdirectory(qtcwizards)

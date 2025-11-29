@@ -1,0 +1,25 @@
+@if '%{HasCollisionTile}'
+#include <cinttypes>
+@endif
+
+struct %{Component} {
+};
+
+struct Entity;
+namespace systems {
+
+void %{System}_construct(Entity& ent);
+@if %{HasDraw}
+void %{System}_draw(Entity& ent);
+@endif
+@if %{HasUpdate}
+void %{System}_update(Entity& ent);
+@endif
+@if %{HasCollision}
+void %{System}_collision(Entity& ent, Entity& other);
+@endif
+@if %{HasCollisionTile}
+void %{System}_collision_tile(Entity& ent, std::size_t tileidx);
+@endif
+
+}

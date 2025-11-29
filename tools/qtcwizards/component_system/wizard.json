@@ -1,0 +1,137 @@
+{
+	"version": 1,
+	"supportedProjectTypes": {},
+	"id": "cog2d.Component",
+	"category": "cog2d",
+	"trDescription": "Create a component and a system for a cog2d project",
+	"trDisplayName": "cog2d Component/System (Type)",
+	"trDisplayCategory": "cog2d",
+	"iconText": "h/cpp",
+	"enabled": "%{JS: isPluginRunning('cppeditor')}",
+	"platformIndependent": true,
+	"options": [
+		{ "key": "TargetPath", "value": "%{Path}" },
+		{ "key": "SrcPath", "value": "%{Path}/%{SrcFileName}" },
+		{ "key": "HdrPath", "value": "%{Path}/%{HdrFileName}" }
+	],
+	"pages": [
+		{
+			"trDisplayName": "Define component/system",
+			"trShortTitle": "Details",
+			"typeId": "Fields",
+			"data": [
+				{
+					"name": "Component",
+					"trDisplayName": "Component name:",
+					"mandatory": true,
+					"type": "LineEdit",
+					"data": {
+						"trPlaceholder": "Name of component struct"
+					}
+				},
+				{
+					"name": "System",
+					"trDisplayName": "System name:",
+					"mandatory": true,
+					"type": "LineEdit",
+					"data": {
+						"trPlaceholder": "Name of system functions",
+						"text": "%{JS: (value('Component').charAt(0).toLowerCase() + value('Component').slice(1)).replace(/[A-Z]/g, l => '_'+l.toLowerCase())}"
+					}
+				},
+				{
+					"name": "Sp2",
+					"type": "Spacer"
+				},
+				{
+					"name": "HasUpdate",
+					"trDisplayName": "Implement update system",
+					"type": "CheckBox",
+					"data": {
+						"checked": true
+					}
+				},
+				{
+					"name": "HasDraw",
+					"trDisplayName": "Implement draw system",
+					"type": "CheckBox",
+					"data": {
+						"checked": true
+					}
+				},
+				{
+					"name": "HasCollision",
+					"trDisplayName": "Implement collision system",
+					"type": "CheckBox",
+					"data": {
+						"checked": false
+					}
+				},
+				{
+					"name": "HasCollisionTile",
+					"trDisplayName": "Implement tile collision system",
+					"type": "CheckBox",
+					"data": {
+						"checked": false
+					}
+				},
+				{
+					"name": "Sp2",
+					"type": "Spacer",
+					"data": { "factor": 5 }
+				},
+				{
+					"name": "HdrFileName",
+					"type": "LineEdit",
+					"trDisplayName": "Header file:",
+					"mandatory": true,
+					"data": {
+						"text": "%{JS: Cpp.classToFileName(value('Component'), Cpp.cxxHeaderSuffix())}"
+					}
+				},
+				{
+					"name": "SrcFileName",
+					"type": "LineEdit",
+					"trDisplayName": "Source file:",
+					"mandatory": true,
+					"data": {
+						"text": "%{JS: Cpp.classToFileName(value('Component'), Cpp.cxxSourceSuffix())}"
+					}
+				},
+				{
+					"name": "Path",
+					"trDisplayName": "Path:",
+					"mandatory": true,
+					"type": "PathChooser",
+					"data": {
+						"kind": "directory",
+						"basePath": "%{InitialPath}",
+						"path": "%{InitialPath}"
+					}
+				}
+			]
+		},
+		{
+			"trDisplayName": "Project Management",
+			"trShortTitle": "Summary",
+			"typeId": "Summary"
+		}
+	],
+	"generators": [
+		{
+			"typeId": "File",
+			"data": [
+				{
+					"source": "file.hpp.in",
+					"target": "%{HdrPath}",
+					"openInEditor": false
+				},
+				{
+					"source": "file.cpp.in",
+					"target": "%{SrcPath}",
+					"openInEditor": true
+				}
+			]
+		}
+	]
+}
