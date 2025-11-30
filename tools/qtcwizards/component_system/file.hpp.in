@@ -1,7 +1,11 @@
-@if '%{HasCollisionTile}'
+@if %{HasCollisionTile}
 #include <cinttypes>
-@endif
 
+@endif
+@if %{HasCollision} || %{HasCollisionTile}
+#include <cog2d/ecs/builtins/collisionsystem.hpp>
+
+@endif
 struct %{Component} {
 };
 
@@ -16,10 +20,10 @@ void %{System}_draw(Entity& ent);
 void %{System}_update(Entity& ent);
 @endif
 @if %{HasCollision}
-void %{System}_collision(Entity& ent, Entity& other);
+cog2d::CollisionResponse %{System}_collision(Entity& ent, Entity& other);
 @endif
 @if %{HasCollisionTile}
-void %{System}_collision_tile(Entity& ent, std::size_t tileidx);
+cog2d::CollisionResponse %{System}_collision_tile(Entity& ent, std::size_t tileidx);
 @endif
 
 }
