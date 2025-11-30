@@ -1,3 +1,11 @@
+%{JS: Cpp.licenseTemplate()}\
+@if '%{JS: Cpp.usePragmaOnce()}' === 'true'
+#pragma once
+@else
+#ifndef %{GUARD}
+#define %{GUARD}
+@endif
+
 @if %{HasCollisionTile}
 #include <cinttypes>
 
@@ -27,3 +35,7 @@ cog2d::CollisionResponse %{System}_collision_tile(Entity& ent, std::size_t tilei
 @endif
 
 }
+
+@if '%{JS: Cpp.usePragmaOnce()}' === 'false'
+#endif // %{GUARD}
+@endif

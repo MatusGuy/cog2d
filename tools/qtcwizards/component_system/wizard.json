@@ -86,7 +86,7 @@
 					"trDisplayName": "Header file:",
 					"mandatory": true,
 					"data": {
-						"text": "%{JS: Cpp.classToFileName(value('Component'), Cpp.cxxHeaderSuffix())}"
+						"text": "%{JS: Cpp.classToFileName(value('System'), Cpp.cxxHeaderSuffix())}"
 					}
 				},
 				{
@@ -95,7 +95,7 @@
 					"trDisplayName": "Source file:",
 					"mandatory": true,
 					"data": {
-						"text": "%{JS: Cpp.classToFileName(value('Component'), Cpp.cxxSourceSuffix())}"
+						"text": "%{JS: Cpp.classToFileName(value('System'), Cpp.cxxSourceSuffix())}"
 					}
 				},
 				{

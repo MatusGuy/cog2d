@@ -1,3 +1,4 @@
+%{JS: Cpp.licenseTemplate()}\
 #include "%{HdrFileName}"
 
 namespace systems {
