@@ -60,6 +60,22 @@
 					}
 				},
 				{
+					"name": "HasActivate",
+					"trDisplayName": "Implement activate system",
+					"type": "CheckBox",
+					"data": {
+						"checked": true
+					}
+				},
+				{
+					"name": "HasDeactivate",
+					"trDisplayName": "Implement deactivate system",
+					"type": "CheckBox",
+					"data": {
+						"checked": true
+					}
+				},
+				{
 					"name": "HasCollision",
 					"trDisplayName": "Implement collision system",
 					"type": "CheckBox",

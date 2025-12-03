@@ -2,6 +2,7 @@
 @if '%{JS: Cpp.usePragmaOnce()}' === 'true'
 #pragma once
 @else
+%{# I don't know if this GUARD thing is actually defined. Whatever}
 #ifndef %{GUARD}
 #define %{GUARD}
 @endif
@@ -26,6 +27,12 @@ void %{System}_draw(Entity& ent);
 @endif
 @if %{HasUpdate}
 void %{System}_update(Entity& ent);
+@endif
+@if %{HasActivate}
+void %{System}_activate(Entity& ent);
+@endif
+@if %{HasDeactivate}
+void %{System}_deactivate(Entity& ent);
 @endif
 @if %{HasCollision}
 cog2d::CollisionResponse %{System}_collision(Entity& ent, Entity& other);

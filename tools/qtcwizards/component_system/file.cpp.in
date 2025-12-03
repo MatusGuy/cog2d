@@ -1,6 +1,8 @@
 %{JS: Cpp.licenseTemplate()}\
 #include "%{HdrFileName}"
 
+#include "entity.hpp"
+
 namespace systems {
 
 void %{System}_construct(Entity& ent)
@@ -15,6 +17,18 @@ void %{System}_draw(Entity& ent)
 @endif
 @if %{HasUpdate}
 void %{System}_update(Entity& ent)
+{
+}
+
+@endif
+@if %{HasActivate}
+void %{System}_activate(Entity& ent)
+{
+}
+
+@endif
+@if %{HasDeactivate}
+void %{System}_deactivate(Entity& ent)
 {
 }
 
