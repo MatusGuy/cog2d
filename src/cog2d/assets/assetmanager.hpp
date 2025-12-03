@@ -3,22 +3,13 @@
 
 #pragma once
 
-#include <filesystem>
-#include <string>
-#include <unordered_map>
-#include <list>
-
-#include "cog2d/assets/assetcollection.hpp"
-#include "cog2d/util/currenton.hpp"
+#include "cog2d/audio/musictrack.hpp"
+#include "cog2d/tilemap/tileset.hpp"
+#include "cog2d/video/font/pixmapfont.hpp"
+#include "cog2d/video/texture.hpp"
 
 namespace cog2d {
 namespace assets {
-
-extern PixmapCollection pixmaps;
-extern PixmapFontCollection pixmapfonts;
-extern TileSetCollection tilesets;
-extern MusicTrackCollection musictracks;
-extern SoundEffectCollection sounds;
 
 using CollectionId = std::uint32_t;
 

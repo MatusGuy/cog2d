@@ -9,7 +9,6 @@
 #include <string>
 #include <stack>
 
-#include "cog2d/util/currenton.hpp"
 #include "cog2d/util/math/rect.hpp"
 #include "cog2d/video/color.hpp"
 #include "cog2d/video/texture.hpp"

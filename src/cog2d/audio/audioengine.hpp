@@ -6,7 +6,6 @@
 #include <string>
 #include <functional>
 
-#include "cog2d/util/currenton.hpp"
 #include "cog2d/util/timing.hpp"
 #include "cog2d/util/backend.hpp"
 #include "cog2d/audio/musicplayer.hpp"

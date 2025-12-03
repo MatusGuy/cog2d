@@ -5,7 +5,6 @@
 
 #include <filesystem>
 
-#include "cog2d/assets/asset.hpp"
 #include "cog2d/util/math/vector.hpp"
 #include "cog2d/util/toml.hpp"
 #include "cog2d/tilemap/tile.hpp"

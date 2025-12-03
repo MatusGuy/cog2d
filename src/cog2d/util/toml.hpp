@@ -7,7 +7,6 @@
 
 #include "cog2d/filesystem/file.hpp"
 #include "cog2d/util/fmt.hpp"
-#include "cog2d/util/typetraits.hpp"
 
 namespace cog2d {
 

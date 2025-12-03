@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 #include "pixmapfont.hpp"
 
-#include "cog2d/filesystem/assetfile.hpp"
 #include "cog2d/video/font/pixmapfont.hpp"
 
 namespace cog2d {

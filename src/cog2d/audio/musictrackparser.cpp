@@ -5,7 +5,6 @@
 #include <iostream>
 #include <climits>
 
-#include "cog2d/filesystem/assetfile.hpp"
 #include "cog2d/audio/musictrack.hpp"
 #include "cog2d/util/toml.hpp"
 

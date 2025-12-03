@@ -8,7 +8,6 @@
 #include "cog2d/tilemap/tileset.hpp"
 #include "cog2d/tilemap/tilelayer.hpp"
 #include "cog2d/util/toml.hpp"
-#include "cog2d/assets/asset.hpp"
 
 namespace cog2d {
 

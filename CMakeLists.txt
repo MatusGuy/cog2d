@@ -72,7 +72,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
 add_library(cog2d INTERFACE)
 target_sources(cog2d INTERFACE
-	src/cog2d/assets/assetcollection.cpp
 	src/cog2d/assets/assetmanager.cpp
 	src/cog2d/audio/alsoftaudioengine.cpp
 	src/cog2d/audio/audioengine.cpp
@@ -107,8 +106,6 @@ target_sources(cog2d INTERFACE
 	src/cog2d/tilemap/tilelayer.cpp
 	src/cog2d/tilemap/tile.hpp
 
-	src/cog2d/assets/asset.hpp
-	src/cog2d/assets/assetcollection.hpp
 	src/cog2d/assets/assetmanager.hpp
 	src/cog2d/audio/alsoftaudioengine.hpp
 	src/cog2d/audio/audioengine.hpp
@@ -126,10 +123,8 @@ target_sources(cog2d INTERFACE
 	src/cog2d/ecs/builtins/properties.hpp
 	src/cog2d/ecs/builtins/collision/collision.cpp
 	src/cog2d/ecs/builtins/collision/collisionsystem.cpp
-	src/cog2d/screen.hpp
 	src/cog2d/util/backend.hpp
 	src/cog2d/util/buffer.hpp
-	src/cog2d/util/currenton.hpp
 	src/cog2d/util/fmt.hpp
 	src/cog2d/util/logger.hpp
 	src/cog2d/util/math/rect.hpp
@@ -138,7 +133,6 @@ target_sources(cog2d INTERFACE
 	src/cog2d/util/toml.hpp
 	src/cog2d/util/timer.hpp
 	src/cog2d/util/timing.hpp
-	src/cog2d/util/typetraits.hpp
 	src/cog2d/video/color.hpp
 	src/cog2d/video/font/ttffont.hpp
 	src/cog2d/video/font/fontcache.hpp

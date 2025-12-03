@@ -9,7 +9,6 @@
 #include "cog2d/util/math/vector.hpp"
 #include "cog2d/video/surface.hpp"
 #include "cog2d/video/graphicsengine.hpp"
-#include "cog2d/filesystem/assetfile.hpp"
 
 namespace cog2d {
 

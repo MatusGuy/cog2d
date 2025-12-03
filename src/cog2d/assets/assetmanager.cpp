@@ -6,6 +6,7 @@
 #include <utility>
 
 #include "cog2d/video/texture.hpp"
+#include "cog2d/audio/soundeffect.hpp"
 
 #ifndef COG2D_NUM_ASSET_COLLECTIONS
 #error "COG2D_NUM_ASSET_COLLECTIONS is not defined"
@@ -34,12 +35,6 @@
 	}
 
 namespace cog2d::assets {
-
-PixmapCollection pixmaps;
-PixmapFontCollection pixmapfonts;
-TileSetCollection tilesets;
-MusicTrackCollection musictracks;
-SoundEffectCollection sounds;
 
 static struct
 {

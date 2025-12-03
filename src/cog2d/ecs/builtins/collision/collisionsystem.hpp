@@ -8,7 +8,6 @@
 #include <cstdint>
 
 #include "cog2d/util/math/rect.hpp"
-#include "cog2d/util/currenton.hpp"
 #include "cog2d/tilemap/tilelayer.hpp"
 #include "cog2d/ecs/builtins.hpp"
 #include "cog2d/ecs/builtins/collision/collision.hpp"
