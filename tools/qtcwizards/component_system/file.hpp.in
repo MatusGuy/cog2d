@@ -2,7 +2,7 @@
 @if '%{JS: Cpp.usePragmaOnce()}' === 'true'
 #pragma once
 @else
-%{# I don't know if this GUARD thing is actually defined. Whatever}
+%{#: I don't know if this GUARD thing is actually defined. Whatever}
 #ifndef %{GUARD}
 #define %{GUARD}
 @endif
