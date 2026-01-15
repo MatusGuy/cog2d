@@ -85,6 +85,7 @@ target_sources(cog2d INTERFACE
 	src/cog2d/ecs/builtins.cpp
 	src/cog2d/ecs/builtins/texture.cpp
 	src/cog2d/ecs/entitybase.cpp
+	src/cog2d/util/cmdlineparser.cpp
 	src/cog2d/util/timer.cpp
 	src/cog2d/util/timing.cpp
 	src/cog2d/util/toml.cpp
@@ -125,6 +126,7 @@ target_sources(cog2d INTERFACE
 	src/cog2d/ecs/builtins/collision/collisionsystem.cpp
 	src/cog2d/util/backend.hpp
 	src/cog2d/util/buffer.hpp
+	src/cog2d/util/cmdlineparser.hpp
 	src/cog2d/util/fmt.hpp
 	src/cog2d/util/logger.hpp
 	src/cog2d/util/math/rect.hpp
@@ -163,7 +165,8 @@ endif()
 
 # Warnings #
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-	# TODO: Warn about unused functions
+	target_compile_options(cog2d INTERFACE -Wno-write-strings)
+	#TODO: Warn about unused functions
 	#target_compile_options(cog2d INTERFACE -Wunused-function)
 	#target_compile_options(cog2d INTERFACE -ffunction-sections)
 	#target_link_options(cog2d INTERFACE -Wl,--gc-sections,--print-gc-sections)
