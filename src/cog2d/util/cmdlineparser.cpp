@@ -30,6 +30,20 @@ int cmdline_parse(int argc, char** argv, CmdlineParams params)
 			*((std::string*) parsedparam->value) = std::string(arg);
 			break;
 
+		case CMDLINE_INT:
+			for (int j = 0; j < std::strlen(arg); ++j) {
+				if (arg[j] == '.')
+					// Invalid int
+					return -2;
+			}
+
+			*((int*) parsedparam->value) = std::stoi(arg);
+			break;
+
+		case CMDLINE_DOUBLE:
+			*((double*) parsedparam->value) = std::stod(arg);
+			break;
+
 		default:
 			break;
 		}
