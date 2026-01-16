@@ -40,7 +40,7 @@ struct CmdlineArgs
 };
 
 int cmdline_parse(const int argc, char** const argv, const CmdlineArgs args);
-int cmdline_parse_option(char* arg, const CmdlineArgs& args);
+int cmdline_parse_option(char* arg, CmdlineArgs const& args);
 int cmdline_parse_string(const CmdlineArg& arg);
 
 }  //namespace cog2d
