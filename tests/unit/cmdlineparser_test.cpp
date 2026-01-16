@@ -20,17 +20,27 @@ TEST(CmdlineParserTest, NoneTest)
 TEST(CmdlineParserTest, SwitchTest)
 {
 	bool result = false;
-	CmdlineParams args = {{{"test", 't', "This is a test", &result, CMDLINE_SWITCH}}};
-	char* argv[] = {"./game", "--test"};
+	CmdlineParams args = {{
+	                          {"test", 't', "This is a test", &result, CMDLINE_SWITCH},
+	                      },
+	                      {{"test2", '\0', "aeiou", nullptr, CMDLINE_STRING}}};
+	char* argv[5] = {"./game", "--test"};
 	int resp;
 
-	resp = cmdline_parse(sizeof(argv) / sizeof(char*), (char**) argv, args);
+	resp = cmdline_parse(2, (char**) argv, args);
 	EXPECT_GE(resp, 0);
 	EXPECT_TRUE(result);
 
 	result = false;
 	argv[1] = "-t";
-	resp = cmdline_parse(sizeof(argv) / sizeof(char*), (char**) argv, args);
+	resp = cmdline_parse(2, (char**) argv, args);
+	EXPECT_GE(resp, 0);
+	EXPECT_TRUE(result);
+
+	result = false;
+	argv[1] = "--test";
+	argv[2] = "hello";
+	resp = cmdline_parse(2, (char**) argv, args);
 	EXPECT_GE(resp, 0);
 	EXPECT_TRUE(result);
 }

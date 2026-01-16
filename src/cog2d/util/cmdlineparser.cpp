@@ -5,19 +5,22 @@
 namespace cog2d {
 int cmdline_parse(int argc, char** argv, CmdlineParams params)
 {
+	bool skip;
 	char* arg;
 	std::size_t arglen;
 	CmdlineParam* parsedparam = nullptr;
+
 	for (int i = 1; i < argc; ++i) {
 		arg = argv[i];
 		arglen = std::strlen(arg);
 
-		if (!parsedparam)
-			parsedparam = cmdline_parse_arg(arg, params);
-
-		if (!parsedparam)
+		if (cmdline_parse_arg(params, arg, parsedparam, skip) < 0) {
 			// Invalid argument
 			return -1;
+		}
+
+		if (skip)
+			continue;
 
 		switch (parsedparam->type) {
 		case CMDLINE_SWITCH:
@@ -34,9 +37,10 @@ int cmdline_parse(int argc, char** argv, CmdlineParams params)
 	return 0;
 }
 
-CmdlineParam* cmdline_parse_arg(char*& arg, CmdlineParams& params)
+int cmdline_parse_arg(CmdlineParams& params, char*& arg, CmdlineParam*& out, bool& next)
 {
-	CmdlineParam* out;
+	next = true;
+
 	std::size_t arglen = std::strlen(arg);
 
 	if (arglen >= 2 && arg[0] == '-') {
@@ -48,6 +52,9 @@ CmdlineParam* cmdline_parse_arg(char*& arg, CmdlineParams& params)
 					out = &a;
 				}
 			}
+
+			if (!out)
+				return -1;
 		} else {
 			// Short-form options
 			for (CmdlineParam& a : params.options) {
@@ -57,29 +64,32 @@ CmdlineParam* cmdline_parse_arg(char*& arg, CmdlineParams& params)
 			}
 
 			if (!out)
-				return out;
+				return -1;
 
-			if (out->type != CMDLINE_SWITCH && arglen >= 3) {
-				// With 'o' as the shortname of some option, get the value from what
-				// comes after:
-				//
-				//   -osomething
-				//     ^^^^^^^^^
-				//
-				// If this is not the case for this argument (in other words, arglen < 3), then get
-				// the value from the next argument
-				arg = &arg[2];
+			if (out->type != CMDLINE_SWITCH) {
+				if (arglen >= 3) {
+					// With 'o' as the shortname of some option, get the value from what
+					// comes after:
+					//
+					//   -osomething
+					//     ^^^^^^^^^
+					arg = &arg[2];
+					next = false;
+				}
 			}
 		}
 
-		return out;
+		if (out->type == CMDLINE_SWITCH)
+			next = false;
+
+		return 0;
 	}
 
 	// Parameters
 
 	// Variadic arguments
 
-	return out;
+	return 0;
 }
 
 }  //namespace cog2d
