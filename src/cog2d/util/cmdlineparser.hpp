@@ -6,7 +6,7 @@
 
 namespace cog2d {
 
-enum CmdlineArgType : std::uint8_t
+enum CmdlineParamType : std::uint8_t
 {
 	CMDLINE_SWITCH,
 	CMDLINE_STRING,
@@ -16,7 +16,7 @@ enum CmdlineArgType : std::uint8_t
 	CMDLINE_COUNT
 };
 
-struct CmdlineArg
+struct CmdlineParam
 {
 	std::string name = "";
 	char shortname = '\0';
@@ -29,18 +29,18 @@ struct CmdlineArg
 		int* i;
 		double* d;
 	} value = {(bool*) nullptr};
-	CmdlineArgType type = CMDLINE_SWITCH;
+	CmdlineParamType type = CMDLINE_SWITCH;
 };
 
-struct CmdlineArgs
+struct CmdlineParams
 {
-	std::vector<CmdlineArg> options;
-	std::vector<CmdlineArg> required;
-	CmdlineArg variadic;
+	std::vector<CmdlineParam> options;
+	std::vector<CmdlineParam> required;
+	CmdlineParam variadic;
 };
 
-int cmdline_parse(const int argc, char** const argv, const CmdlineArgs args);
-int cmdline_parse_option(char* arg, CmdlineArgs const& args);
-int cmdline_parse_string(const CmdlineArg& arg);
+int cmdline_parse(int argc, char** argv, CmdlineParams params);
+CmdlineParam* cmdline_parse_arg(char*& arg, CmdlineParams& params);
+int cmdline_parse_string(CmdlineParam& arg);
 
 }  //namespace cog2d

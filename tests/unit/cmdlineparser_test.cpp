@@ -9,7 +9,7 @@ using namespace cog2d;
 TEST(CmdlineParserTest, NoneTest)
 {
 	bool result = false;
-	CmdlineArgs args = {{{"test", 't', "This is a test", &result, CMDLINE_SWITCH}}};
+	CmdlineParams args = {{{"test", 't', "This is a test", &result, CMDLINE_SWITCH}}};
 	char* argv[] = {"./game"};
 
 	int resp = cmdline_parse(sizeof(argv) / sizeof(char*), (char**) argv, args);
@@ -20,7 +20,7 @@ TEST(CmdlineParserTest, NoneTest)
 TEST(CmdlineParserTest, SwitchTest)
 {
 	bool result = false;
-	CmdlineArgs args = {{{"test", 't', "This is a test", &result, CMDLINE_SWITCH}}};
+	CmdlineParams args = {{{"test", 't', "This is a test", &result, CMDLINE_SWITCH}}};
 	char* argv[] = {"./game", "--test"};
 	int resp;
 
