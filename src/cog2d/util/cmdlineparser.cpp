@@ -7,14 +7,13 @@ int cmdline_parse(int argc, char** argv, CmdlineParams params)
 {
 	bool skip;
 	char* arg;
-	std::size_t arglen;
 	CmdlineParam* parsedparam = nullptr;
 
 	for (int i = 1; i < argc; ++i) {
+		skip = false;
 		arg = argv[i];
-		arglen = std::strlen(arg);
 
-		if (cmdline_parse_arg(params, arg, parsedparam, skip) < 0) {
+		if (!parsedparam && cmdline_parse_arg(params, arg, parsedparam, skip) < 0) {
 			// Invalid argument
 			return -1;
 		}
@@ -24,7 +23,11 @@ int cmdline_parse(int argc, char** argv, CmdlineParams params)
 
 		switch (parsedparam->type) {
 		case CMDLINE_SWITCH:
-			(*parsedparam->value.b) = true;
+			*((bool*) parsedparam->value) = true;
+			break;
+
+		case CMDLINE_STRING:
+			*((std::string*) parsedparam->value) = std::string(arg);
 			break;
 
 		default:

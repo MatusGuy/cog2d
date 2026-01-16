@@ -22,13 +22,7 @@ struct CmdlineParam
 	char shortname = '\0';
 	std::string description = "";
 
-	union
-	{
-		bool* b;
-		std::string* s;
-		int* i;
-		double* d;
-	} value = {(bool*) nullptr};
+	void* value;
 	CmdlineParamType type = CMDLINE_SWITCH;
 };
 
