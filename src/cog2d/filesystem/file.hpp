@@ -58,6 +58,18 @@ public:
 		return ref.size() + 1;
 	}
 
+	template<class T>
+	inline std::size_t write(T& ref)
+	{
+		return write((const void*) ref, sizeof(T), 1);
+	}
+
+	template<class T>
+	inline std::size_t write(std::basic_string<T>& ref, bool nullend = false)
+	{
+		return write((const void*) ref.c_str(), sizeof(T), ref.size() + (nullend ? 1 : 0));
+	}
+
 	SDL_RWops* to_sdl();
 };
 

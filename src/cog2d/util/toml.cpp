@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 #include "toml.hpp"
 
+#include "cog2d/util/logger.hpp"
+
 namespace cog2d {
 
 int TomlArray::at(int idx, TomlTable& out)
@@ -64,6 +66,47 @@ TomlResult toml_parse(File& device)
 
 	delete[] toml;
 	return result;
+}
+
+int toml_write(File& device, const TomlWriteData data)
+{
+	device.open("w");
+
+	device.write(fmt::format("type = \"{}\"\n", data.type));
+	device.write(fmt::format("version = {}\n\n", data.version));
+
+	std::string table = "";
+	for (TomlWriteDataEntry& entry : data.values) {
+		if (table != entry.table)
+			device.write(fmt::format("[{}]\n\n"));
+
+		if (entry.type == TOML_TIMESTAMP) {
+			log::warn("Writing TOML timestamps is not supported yet.");
+			continue;
+		}
+
+		device.write(fmt::format("{} = ", entry.key));
+		switch (entry.type) {
+		case TOML_INT:
+			device.write(std::to_string(*((std::int64_t*) entry.value)));
+			break;
+
+		case TOML_DOUBLE:
+			device.write(std::to_string(*((double*) entry.value)));
+			break;
+
+		case TOML_BOOL:
+			device.write(*((bool*) entry.value) ? "true" : "false");
+
+		case TOML_STRING:
+			device.write(fmt::format("\"{}\"", *((std::string*) entry.value)));
+			break;
+
+		default:
+			break;
+		}
+		device.write("\n");
+	}
 }
 
 }  //namespace cog2d

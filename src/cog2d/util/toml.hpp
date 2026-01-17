@@ -3,12 +3,23 @@
 
 #pragma once
 
+#include <vector>
+
 #include <tomlc.h>
 
 #include "cog2d/filesystem/file.hpp"
 #include "cog2d/util/fmt.hpp"
 
 namespace cog2d {
+
+enum TomlType
+{
+	TOML_STRING,
+	TOML_BOOL,
+	TOML_INT,
+	TOML_DOUBLE,
+	TOML_TIMESTAMP,
+};
 
 struct TomlTable;
 
@@ -63,7 +74,7 @@ struct TomlArray
 		if (!v.ok)
 			return 1;
 
-		out.replace(0, out.length(), v.u.s, v.u.sl);
+		out = std::string(v.u.s, v.u.sl);
 		std::free(v.u.s);
 
 		return 0;
@@ -132,7 +143,7 @@ struct TomlTable
 		if (!v.ok)
 			return 1;
 
-		out.replace(0, out.length(), v.u.s, v.u.sl);
+		out = std::string(v.u.s, v.u.sl);
 		std::free(v.u.s);
 
 		return 0;
@@ -161,5 +172,22 @@ struct TomlResult
 };
 
 TomlResult toml_parse(File& device);
+
+struct TomlWriteDataEntry
+{
+	std::string table;
+	std::string key;
+	void* value;
+	TomlType type;
+};
+
+struct TomlWriteData
+{
+	std::string type;
+	int version;
+	std::vector<TomlWriteData> values;
+};
+
+int toml_write(File& device, const TomlWriteData data);
 
 }  //namespace cog2d
