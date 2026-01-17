@@ -48,16 +48,15 @@ static struct
 namespace internal {
 int load_pixmap(File&& file, Texture*& result)
 {
-	result = Texture::from_pixmap(std::move(file));
-	return 0;
+	result = new Texture;
+	return result->load_pixmap(std::move(file));
 }
 
 int load_pixmapfont(File&& file, PixmapFont*& result)
 {
 	TomlResult toml = toml_parse(file);
 	result = new PixmapFont;
-	result->load(toml.tbl);
-	return 0;
+	return result->load(toml.tbl);
 }
 
 int load_tileset(File&& file, TileSet*& result)

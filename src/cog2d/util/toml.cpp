@@ -76,9 +76,11 @@ int toml_write(File& device, const TomlWriteData data)
 	device.write(fmt::format("version = {}\n\n", data.version));
 
 	std::string table = "";
-	for (TomlWriteDataEntry& entry : data.values) {
-		if (table != entry.table)
-			device.write(fmt::format("[{}]\n\n"));
+	for (const TomlWriteDataEntry& entry : data.values) {
+		if (table != entry.table) {
+			device.write(fmt::format("[{}]\n\n", entry.table));
+			table = entry.table;
+		}
 
 		if (entry.type == TOML_TIMESTAMP) {
 			log::warn("Writing TOML timestamps is not supported yet.");
@@ -96,7 +98,7 @@ int toml_write(File& device, const TomlWriteData data)
 			break;
 
 		case TOML_BOOL:
-			device.write(*((bool*) entry.value) ? "true" : "false");
+			device.write(std::string(*((bool*) entry.value) ? "true" : "false"));
 
 		case TOML_STRING:
 			device.write(fmt::format("\"{}\"", *((std::string*) entry.value)));

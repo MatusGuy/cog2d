@@ -4,6 +4,7 @@
 
 #include "cog2d/program.hpp"
 #include "cog2d/video/font/ttffont.hpp"
+#include "cog2d/util/error.hpp"
 
 namespace cog2d {
 
@@ -12,20 +13,25 @@ FontCache::FontCache(TtfFont& font)
 {
 }
 
-Texture* FontCache::get(const std::string& text)
+int FontCache::get(const std::string& text, Texture*& out)
 {
+	COG2D_THROWS;
+
 	auto it = m_strings.find(text);
 	if (it != m_strings.end()) {
 		CacheEntry& entry = it->second;
 		entry.last_use = s_program.prog_time;
-		return entry.texture.get();
+		out = entry.texture.get();
 	} else {
-		Texture* texture = m_font.create_text(text);
+		auto texture = new Texture;
+		COG2D_ERROR_PROPAGATE(m_font.load_text, text, *texture);
+
 		m_strings.insert(std::make_pair<std::string, CacheEntry>(std::string(text),
 		                                                         CacheEntry{std::move(texture),
 		                                                                    s_program.prog_time}));
-		return texture;
 	}
+
+	return 0;
 }
 
 bool FontCache::update_gc()

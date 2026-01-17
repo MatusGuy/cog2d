@@ -25,8 +25,8 @@ public:
 	~TtfFont();
 
 	int get_text_width(std::string_view text);
-	void write_text(Texture* texture, std::string_view text, const Vector& pos);
-	Texture* create_text(std::string_view text);
+	int write_text(Texture* texture, std::string_view text, const Vector& pos);
+	int load_text(std::string_view text, Texture& out);
 
 	inline Data data() { return m_font; }
 

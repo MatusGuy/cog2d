@@ -13,10 +13,11 @@ class File;
 class Surface
 {
 public:
-	Surface(SDL_Surface* surface)
+	Surface(SDL_Surface* surface = nullptr)
 	    : m_surface(surface)
 	{
 	}
+
 	~Surface()
 	{
 		if (m_surface)
@@ -28,7 +29,7 @@ public:
 
 	inline SDL_Surface* to_sdl() { return m_surface; }
 
-	static Surface from_pixmap(File& iodevice);
+	int load(File& iodevice);
 
 private:
 	SDL_Surface* m_surface;

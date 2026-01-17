@@ -35,7 +35,7 @@ public:
 public:
 	FontCache(TtfFont& font);
 
-	Texture* get(const std::string& text);
+	int get(const std::string& text, Texture*& out);
 	bool update_gc();
 };
 

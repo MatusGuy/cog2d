@@ -22,14 +22,15 @@ public:
 	Data m_data;
 	Vector_t<int> m_size;
 
-public:
-	static Texture* from_surface(Surface& surface);
-	static Texture* create(const Vector_t<int>& size);
-	static Texture* from_pixmap(File&& device);
 
 public:
+	Texture();
 	Texture(Data tex);
 	~Texture();
+
+	int create(const Vector_t<int>& size);
+	int load_surface(Surface& surface);
+	int load_pixmap(File&& device);
 
 	inline Data data() { return m_data; }
 
@@ -42,10 +43,6 @@ public:
 	}
 
 	Vector_t<int> query_size();
-
-protected:
-	Texture(const Vector_t<int>& size);
-	bool construct();
 };
 
 }  //namespace cog2d

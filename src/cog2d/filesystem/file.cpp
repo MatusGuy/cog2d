@@ -12,9 +12,9 @@ namespace cog2d {
 
 File File::from_asset(std::string_view path)
 {
+	// TODO: Symlink detection logic
 	File file(fmt::format(COG2D_ASSET_PATH "/{}", path));
 	return file;
-	// TODO: Symlink detection logic
 }
 
 File::File()
@@ -38,10 +38,11 @@ int File::open(const char* mode)
 {
 	if (is_open()) {
 		seek(0, SEEK_SET);
+		close();
 	}
 
 	m_file = std::fopen(m_path.c_str(), mode);
-	return std::ferror(m_file);
+	return -std::abs(std::ferror(m_file));
 }
 
 bool File::is_open()

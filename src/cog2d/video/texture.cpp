@@ -5,11 +5,18 @@
 
 #include "cog2d/video/graphicsengine.hpp"
 #include "cog2d/video/surface.hpp"
+#include "cog2d/util/error.hpp"
 #include "cog2d/util/logger.hpp"
 #include "cog2d/video/sdl2graphicsengine.hpp"
 #include "cog2d/filesystem/file.hpp"
 
 namespace cog2d {
+
+Texture::Texture()
+    : m_data(),
+      m_size()
+{
+}
 
 Texture::Texture(Data tex)
     : m_data(tex),
@@ -21,50 +28,40 @@ Texture::~Texture()
 {
 }
 
-Texture::Texture(const Vector_t<int>& size)
-    : m_data(nullptr),
-      m_size(size)
+int Texture::load_surface(Surface& surface)
 {
-}
+	Texture::~Texture();
 
-Texture* Texture::from_surface(Surface& surface)
-{
 #ifdef COG2D_GRAPHICS_BACKEND_SDL2
-	return new Texture(SDL_CreateTextureFromSurface(graphics::sdl2::get_renderer(),
-	                                                surface.to_sdl()));
+	m_data = SDL_CreateTextureFromSurface(graphics::sdl2::get_renderer(), surface.to_sdl());
 #endif
+	return m_data == nullptr ? -1 : 0;
 }
 
-bool Texture::construct()
+int Texture::create(const Vector_t<int>& size)
 {
+	m_size = size;
+
 #ifdef COG2D_GRAPHICS_BACKEND_SDL2
 	m_data = SDL_CreateTexture(graphics::sdl2::get_renderer(), SDL_PIXELFORMAT_RGBA8888,
 	                           SDL_TEXTUREACCESS_TARGET, m_size.x, m_size.y);
-	if (!m_data) {
-		log::fatal("SDL2Texture", "Failed to create texture with size");
-		return false;
-	}
 #endif
 
-	return true;
+	return m_data == nullptr ? -1 : 0;
 }
 
-Texture* Texture::create(const Vector_t<int>& size)
+int Texture::load_pixmap(File&& device)
 {
-	Texture* tex = new Texture(size);
-	if (!tex->construct()) {
-		delete tex;
-		return nullptr;
-	}
-	return tex;
-}
+	COG2D_THROWS;
 
-Texture* Texture::from_pixmap(File&& device)
-{
-	device.open("rb");
-	Surface surface = Surface::from_pixmap(device);
+	Surface surface;
+	COG2D_ERROR_PROPAGATE(surface.load, device);
+
 	device.close();
-	return Texture::from_surface(surface);
+
+	COG2D_ERROR_PROPAGATE(load_surface, surface);
+
+	return 0;
 }
 
 Vector_t<int> Texture::query_size()

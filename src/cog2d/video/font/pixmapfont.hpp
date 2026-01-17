@@ -23,16 +23,16 @@ class PixmapFont
 public:
 	PixmapFont();
 
-	void load(TomlTable& data);
+	int load(TomlTable& data);
 
 	int get_text_width(std::string_view text);
 	void write_text(Texture* texture, std::string_view text, const Vector& pos = {0, 0});
-	Texture* create_text(std::string_view text);
+	int create_text(std::string_view text, Texture& out);
 
 	inline int& horizontal_spacing() { return m_horizontal_spacing; }
 
 public:
-	std::unique_ptr<Texture> m_texture;
+	Texture m_texture;
 
 private:
 	//using Glyph = Rect_t<int>;
@@ -46,7 +46,7 @@ private:
 
 	int m_horizontal_spacing;
 
-	void load_texture(File& device);
+	int load_texture(File& device);
 
 private:
 	static Color get_pixel(Surface& surface, Vector_t<int> pos);

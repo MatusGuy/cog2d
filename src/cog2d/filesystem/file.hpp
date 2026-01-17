@@ -65,7 +65,7 @@ public:
 	}
 
 	template<class T>
-	inline std::size_t write(std::basic_string<T>& ref, bool nullend = false)
+	inline std::size_t write(const std::basic_string<T>& ref, bool nullend = false)
 	{
 		return write((const void*) ref.c_str(), sizeof(T), ref.size() + (nullend ? 1 : 0));
 	}

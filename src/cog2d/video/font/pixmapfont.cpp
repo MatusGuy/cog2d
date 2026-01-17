@@ -5,6 +5,7 @@
 
 #include <SDL2/SDL_image.h>
 
+#include "cog2d/util/error.hpp"
 #include "cog2d/util/logger.hpp"
 #include "cog2d/util/math/vector.hpp"
 #include "cog2d/video/surface.hpp"
@@ -22,7 +23,7 @@ PixmapFont::PixmapFont()
 {
 }
 
-void PixmapFont::load_texture(File& device)
+int PixmapFont::load_texture(File& device)
 {
 	if (!device.is_open())
 		device.open("rb");
@@ -32,7 +33,7 @@ void PixmapFont::load_texture(File& device)
 	if (!surface.to_sdl()) {
 		// FIXME: This is not where this message goes. It goes outside of this function.
 		log::error("BitmapFont", "Couldn't open BitmapFont.");
-		return;
+		return -1;
 	}
 
 	Vector_t<int> size = {surface->w, surface->h};
@@ -59,7 +60,7 @@ void PixmapFont::load_texture(File& device)
 
 	if (m_glyph_height == -1) {
 		log::error("BitmapFont", "Couldn't determine glyph height.");
-		return;
+		return -1;
 	}
 
 	cursor.x = 0;
@@ -82,7 +83,9 @@ void PixmapFont::load_texture(File& device)
 		m_glyphs[c] = g;
 	}
 
-	m_texture.reset(Texture::from_surface(surface));
+	m_texture.load_surface(surface);
+
+	return 0;
 }
 
 int PixmapFont::get_text_width(std::string_view text)
@@ -111,7 +114,7 @@ void PixmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 			const Rect_t<int> src = {g.pos, size};
 			const Rect dest = {{static_cast<float>(x), pos.y}, static_cast<Vector>(size)};
 
-			graphics::draw_texture(m_texture.get(), src, dest);
+			graphics::draw_texture(&m_texture, src, dest);
 		}
 
 		x += g.width + m_horizontal_spacing;
@@ -120,13 +123,15 @@ void PixmapFont::write_text(Texture* texture, std::string_view text, const Vecto
 	graphics::pop_target();
 }
 
-Texture* PixmapFont::create_text(std::string_view text)
+int PixmapFont::create_text(std::string_view text, Texture& out)
 {
+	COG2D_THROWS;
+
 	int width = get_text_width(text);
 
-	Texture* texture = Texture::create({width, m_glyph_height});
-	write_text(texture, text);
-	return texture;
+	COG2D_ERROR_PROPAGATE(out.create, {width, m_glyph_height});
+	write_text(&out, text);
+	return 0;
 }
 
 Color PixmapFont::get_pixel(Surface& surface, Vector_t<int> pos)

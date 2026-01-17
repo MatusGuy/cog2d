@@ -9,16 +9,17 @@
 
 namespace cog2d {
 
-Surface Surface::from_pixmap(File& iodevice)
+int Surface::load(File& iodevice)
 {
-	if (!iodevice.is_open())
-		iodevice.open("rb");
+	iodevice.open("rb");
 
 #ifdef COG2D_GRAPHICS_BACKEND_SDL2
-	return Surface(IMG_Load_RW(iodevice.to_sdl(), true));
+	m_surface = IMG_Load_RW(iodevice.to_sdl(), true);
 #else
-	return Surface(nullptr);
+	m_surface = nullptr;
 #endif
+
+	return m_surface == nullptr ? -1 : 0;
 }
 
 }  //namespace cog2d

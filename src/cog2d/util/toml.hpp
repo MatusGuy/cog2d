@@ -185,7 +185,7 @@ struct TomlWriteData
 {
 	std::string type;
 	int version;
-	std::vector<TomlWriteData> values;
+	std::vector<TomlWriteDataEntry> values;
 };
 
 int toml_write(File& device, const TomlWriteData data);

@@ -7,6 +7,7 @@
 #include "cog2d/video/surface.hpp"
 #include "cog2d/video/font/ttffont.hpp"
 #include "cog2d/assets/assetmanager.hpp"
+#include "cog2d/util/error.hpp"
 #include "cog2d/util/math/rect.hpp"
 
 namespace cog2d {
@@ -29,22 +30,24 @@ int TtfFont::get_text_width(std::string_view text)
 	return width;
 }
 
-void TtfFont::write_text(Texture* texture, std::string_view text, const Vector& pos)
+int TtfFont::write_text(Texture* texture, std::string_view text, const Vector& pos)
 {
-	Surface textsurface = TTF_RenderUTF8_Solid(m_font, text.data(), Color(0xFFFFFFFF));
-	Texture* texttexture = Texture::from_surface(textsurface);
+	COG2D_THROWS;
+
+	Texture texttexture;
+	COG2D_ERROR_PROPAGATE(load_text, text, texttexture);
 
 	graphics::push_target(texture);
-	graphics::draw_texture(texttexture, pos);
+	graphics::draw_texture(&texttexture, pos);
 	graphics::pop_target();
 
-	delete texttexture;
+	return 0;
 }
 
-Texture* TtfFont::create_text(std::string_view text)
+int TtfFont::load_text(std::string_view text, Texture& out)
 {
 	Surface textsurface = TTF_RenderUTF8_Solid(data(), text.data(), Color(0xFFFFFFFF));
-	return Texture::from_surface(textsurface);
+	return out.load_surface(textsurface);
 }
 
 }  //namespace cog2d
