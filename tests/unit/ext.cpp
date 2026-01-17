@@ -13,6 +13,10 @@ namespace program::ext {
 void program_settings(ProgramSettings& settings)
 {
 }
+CmdlineParams cmdline_params()
+{
+	return {};
+}
 void init()
 {
 }

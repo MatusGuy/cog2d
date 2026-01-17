@@ -25,7 +25,7 @@ CmdlineParams PARAMS = {
     },
     {
         {"test", '\0', "This is a test positional string", &v_test, CMDLINE_STRING},
-        {"test2", '\0', "This is another test positional string", &v_test2, CMDLINE_INT},
+        {"test2", '\0', "This is test positional int", &v_test2, CMDLINE_INT},
     },
     {"variadic", '\0', "This is a test variadic parameter", &v_variadic, CMDLINE_STRING},
 };

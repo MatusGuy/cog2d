@@ -189,6 +189,7 @@ target_compile_definitions(cog2d INTERFACE COG2D_AUDIO_BACKEND_${COG2D_GRAPHICS_
 # Misc. #
 
 if(BUILD_TESTING)
+	enable_testing()
 	add_subdirectory(tests)
 endif()
 
