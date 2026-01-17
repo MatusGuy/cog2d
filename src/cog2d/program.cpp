@@ -74,6 +74,8 @@ int run(int argc, char* argv[])
 {
 	ext::program_settings(s_program.settings);
 
+	cmdline_parse(argc, (char**) argv, ext::cmdline_params());
+
 	// std::atexit(&Program::quit);
 	init_sdl();
 

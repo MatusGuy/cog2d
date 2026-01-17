@@ -9,8 +9,9 @@
 #include <chrono>
 
 #include "cog2d/input/inputmanager.hpp"
-#include "cog2d/util/toml.hpp"
+#include "cog2d/util/cmdlineparser.hpp"
 #include "cog2d/util/timing.hpp"
+#include "cog2d/util/toml.hpp"
 
 namespace cog2d {
 
@@ -78,6 +79,7 @@ void quit();
 
 namespace ext {
 void program_settings(ProgramSettings& settings);
+CmdlineParams cmdline_params();
 void init();
 bool event(SDL_Event* ev);
 void update();
