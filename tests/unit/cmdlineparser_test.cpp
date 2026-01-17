@@ -10,6 +10,12 @@ bool v_switch;
 std::string v_string;
 int v_int;
 double v_double;
+
+std::string v_test;
+int v_test2;
+
+std::vector<std::string> v_variadic;
+
 CmdlineParams PARAMS = {
     {
         {"switch", 'o', "This is a test switch", &v_switch, CMDLINE_SWITCH},
@@ -17,6 +23,11 @@ CmdlineParams PARAMS = {
         {"int", 'i', "This is a test int option", &v_int, CMDLINE_INT},
         {"double", 'd', "This is a test double option", &v_double, CMDLINE_DOUBLE},
     },
+    {
+        {"test", '\0', "This is a test positional string", &v_test, CMDLINE_STRING},
+        {"test2", '\0', "This is another test positional string", &v_test2, CMDLINE_INT},
+    },
+    {"variadic", '\0', "This is a test variadic parameter", &v_variadic, CMDLINE_STRING},
 };
 
 TEST(CmdlineParserTest, NoneTest)
@@ -27,6 +38,7 @@ TEST(CmdlineParserTest, NoneTest)
 	resp = cmdline_parse(1, (char**) argv, PARAMS);
 	EXPECT_GE(resp, 0);
 	EXPECT_FALSE(v_switch);
+	EXPECT_EQ(v_variadic.size(), 0);
 }
 
 TEST(CmdlineParserTest, SwitchTest)
@@ -139,4 +151,27 @@ TEST(CmdlineParserTest, AllTest)
 	EXPECT_STREQ(v_string.c_str(), "test");
 	EXPECT_EQ(v_int, 1);
 	EXPECT_DOUBLE_EQ(v_double, 7.125);
+}
+
+TEST(CmdlineParserTest, PositionalTest)
+{
+	char* argv[5] = {"./game", "value", "10"};
+	int resp;
+
+	resp = cmdline_parse(3, (char**) argv, PARAMS);
+	EXPECT_GE(resp, 0);
+	EXPECT_STREQ(v_test.c_str(), argv[1]);
+	EXPECT_EQ(v_test2, 10);
+}
+
+TEST(CmdlineParserTest, VariadicTest)
+{
+	char* argv[5] = {"./game", "value", "10", "hello", "world"};
+	int resp;
+
+	resp = cmdline_parse(5, (char**) argv, PARAMS);
+	EXPECT_GE(resp, 0);
+	EXPECT_EQ(v_variadic.size(), 2);
+	EXPECT_STREQ(v_variadic[0].c_str(), argv[3]);
+	EXPECT_STREQ(v_variadic[1].c_str(), argv[4]);
 }

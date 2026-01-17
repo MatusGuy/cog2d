@@ -29,12 +29,12 @@ struct CmdlineParam
 struct CmdlineParams
 {
 	std::vector<CmdlineParam> options;
-	std::vector<CmdlineParam> required;
+	std::vector<CmdlineParam> positional;
 	CmdlineParam variadic;
 };
 
 int cmdline_parse(int argc, char** argv, CmdlineParams params);
-int cmdline_parse_arg(CmdlineParams& params, char*& arg, CmdlineParam*& out, bool& next);
-int cmdline_parse_string(CmdlineParam& arg);
+int cmdline_parse_arg(CmdlineParams& params, char*& arg, CmdlineParam*& out, bool& next,
+                      int& requiredcount);
 
 }  //namespace cog2d

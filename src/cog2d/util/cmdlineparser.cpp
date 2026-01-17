@@ -6,6 +6,7 @@ namespace cog2d {
 int cmdline_parse(int argc, char** argv, CmdlineParams params)
 {
 	bool skip;
+	int requiredcount = 0;
 	char* arg;
 	CmdlineParam* parsedparam = nullptr;
 
@@ -13,7 +14,7 @@ int cmdline_parse(int argc, char** argv, CmdlineParams params)
 		skip = false;
 		arg = argv[i];
 
-		if (!parsedparam && cmdline_parse_arg(params, arg, parsedparam, skip) < 0) {
+		if (!parsedparam && cmdline_parse_arg(params, arg, parsedparam, skip, requiredcount) < 0) {
 			// Invalid argument
 			return -1;
 		}
@@ -21,31 +22,56 @@ int cmdline_parse(int argc, char** argv, CmdlineParams params)
 		if (skip)
 			continue;
 
-		switch (parsedparam->type) {
-		case CMDLINE_SWITCH:
-			*((bool*) parsedparam->value) = true;
-			break;
+		if (parsedparam == &params.variadic) {
+			switch (parsedparam->type) {
+			case CMDLINE_STRING:
+				((std::vector<std::string>*) parsedparam->value)->push_back(arg);
+				break;
 
-		case CMDLINE_STRING:
-			*((std::string*) parsedparam->value) = std::string(arg);
-			break;
+			case CMDLINE_INT:
+				for (int j = 0; j < std::strlen(arg); ++j) {
+					if (arg[j] == '.')
+						// Invalid int
+						return -2;
+				}
 
-		case CMDLINE_INT:
-			for (int j = 0; j < std::strlen(arg); ++j) {
-				if (arg[j] == '.')
-					// Invalid int
-					return -2;
+				((std::vector<int>*) parsedparam->value)->push_back(std::stoi(arg));
+				break;
+
+			case CMDLINE_DOUBLE:
+				((std::vector<double>*) parsedparam->value)->push_back(std::stod(arg));
+				break;
+
+			default:
+				break;
 			}
+		} else {
+			switch (parsedparam->type) {
+			case CMDLINE_SWITCH:
+				*((bool*) parsedparam->value) = true;
+				break;
 
-			*((int*) parsedparam->value) = std::stoi(arg);
-			break;
+			case CMDLINE_STRING:
+				*((std::string*) parsedparam->value) = std::string(arg);
+				break;
 
-		case CMDLINE_DOUBLE:
-			*((double*) parsedparam->value) = std::stod(arg);
-			break;
+			case CMDLINE_INT:
+				for (int j = 0; j < std::strlen(arg); ++j) {
+					if (arg[j] == '.')
+						// Invalid int
+						return -2;
+				}
 
-		default:
-			break;
+				*((int*) parsedparam->value) = std::stoi(arg);
+				break;
+
+			case CMDLINE_DOUBLE:
+				*((double*) parsedparam->value) = std::stod(arg);
+				break;
+
+			default:
+				break;
+			}
 		}
 
 		parsedparam = nullptr;
@@ -54,19 +80,22 @@ int cmdline_parse(int argc, char** argv, CmdlineParams params)
 	return 0;
 }
 
-int cmdline_parse_arg(CmdlineParams& params, char*& arg, CmdlineParam*& out, bool& next)
+int cmdline_parse_arg(CmdlineParams& params, char*& arg, CmdlineParam*& out, bool& next,
+                      int& requiredcount)
 {
-	next = true;
+	next = false;
 
 	std::size_t arglen = std::strlen(arg);
 
 	if (arglen >= 2 && arg[0] == '-') {
+		next = true;
 		if (arglen >= 3 && arg[1] == '-') {
 			// Long-form options
 			arg = &arg[2];
 			for (CmdlineParam& a : params.options) {
 				if (std::strcmp(arg, a.name.c_str()) == 0) {
 					out = &a;
+					break;
 				}
 			}
 
@@ -77,22 +106,21 @@ int cmdline_parse_arg(CmdlineParams& params, char*& arg, CmdlineParam*& out, boo
 			for (CmdlineParam& a : params.options) {
 				if (arg[1] == a.shortname) {
 					out = &a;
+					break;
 				}
 			}
 
 			if (!out)
 				return -1;
 
-			if (out->type != CMDLINE_SWITCH) {
-				if (arglen >= 3) {
-					// With 'o' as the shortname of some option, get the value from what
-					// comes after:
-					//
-					//   -osomething
-					//     ^^^^^^^^^
-					arg = &arg[2];
-					next = false;
-				}
+			if (out->type != CMDLINE_SWITCH && arglen >= 3) {
+				// With 'o' as the shortname of some option, get the value from what
+				// comes after:
+				//
+				//   -osomething
+				//     ^^^^^^^^^
+				arg = &arg[2];
+				next = false;
 			}
 		}
 
@@ -103,8 +131,14 @@ int cmdline_parse_arg(CmdlineParams& params, char*& arg, CmdlineParam*& out, boo
 	}
 
 	// Parameters
+	if (requiredcount < params.positional.size()) {
+		out = &params.positional[requiredcount];
+		requiredcount++;
+		return 0;
+	}
 
 	// Variadic arguments
+	out = &params.variadic;
 
 	return 0;
 }
