@@ -4,8 +4,7 @@
 		"sdl2",
 		"sdl2-image",
 		"sdl2-ttf",
-		"sdl2-mixer",
-		"tomlplusplus"
+		"openal-soft"
 	],
 	"features": {
 		"fmt": {
@@ -14,6 +13,5 @@
 				"fmt"
 			]
 		}
-	},
-	"default-features": ["nonwasm"]
+	}
 }
